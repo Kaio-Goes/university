@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:university/components/app_bar_component.dart';
+import 'package:university/components/drawer_component.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -6,75 +8,25 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80.0), // Altura da AppBar
-        child: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 1,
-          title: Transform.translate(
-            offset: const Offset(0, 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      height: 60,
-                      child: Image.asset(
-                        "assets/images/annamery.png",
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(width: 120),
-                    TextButton(
-                      onPressed: () {
-                        // Navegação para Home
-                      },
-                      child: const Text(
-                        'Início',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () {
-                        // Navegação para Sobre
-                      },
-                      child: const Text(
-                        'Sobre',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    TextButton(
-                      onPressed: () {
-                        // Navegação para Contato
-                      },
-                      child: const Text(
-                        'Contato',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  ],
+      appBar: appBarComponent(),
+      drawer: const DrawerComponent(),
+      body: Column(
+        children: [
+          Stack(
+            children: [
+              SizedBox(
+                height: 520,
+                width: double.infinity,
+                child: Image.asset(
+                  '/home/kaiogoes/university/assets/images/studants.jpg', // Certifique-se de que o caminho está correto
+                  fit: BoxFit.cover,
+                  alignment: Alignment.centerRight,
                 ),
-                Row(
-                  children: [
-                    IconButton(
-                      icon:
-                          const Icon(Icons.account_circle, color: Colors.black),
-                      onPressed: () {
-                        // Ação de perfil
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ),
-      ),
-      body: const Center(
-        child: Text('Conteúdo do Dashboard'),
+          const Text('Conteúdo do Dashboard'),
+        ],
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:university/core/utilities/styles.constants.dart';
 
 appBarComponent() {
   return PreferredSize(
@@ -62,7 +63,7 @@ appBarComponent() {
                         },
                         child: const Text(
                           'Início',
-                          style: TextStyle(color: Colors.black),
+                          style: textTitle,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -72,7 +73,7 @@ appBarComponent() {
                         },
                         child: const Text(
                           'Sobre',
-                          style: TextStyle(color: Colors.black),
+                          style: textTitle,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -82,7 +83,7 @@ appBarComponent() {
                         },
                         child: const Text(
                           'Contato',
-                          style: TextStyle(color: Colors.black),
+                          style: textTitle,
                         ),
                       ),
                     ],

@@ -11,93 +11,104 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       appBar: appBarComponent(),
       drawer: const DrawerComponent(),
-      body: Column(
-        children: [
-          Stack(
-            children: [
-              SizedBox(
-                height: 520,
-                width: double.infinity,
-                child: Image.asset(
-                  '/home/kaiogoes/university/assets/images/studants.jpg', // Certifique-se de que o caminho está correto
-                  fit: BoxFit.cover,
-                  alignment: Alignment.centerRight,
+      body: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+        bool isSmallScreen =
+            constraints.maxWidth < 600; // Exemplo de tamanho de tela de celular
+
+        return Column(
+          children: [
+            Stack(
+              children: [
+                SizedBox(
+                  height: 520,
+                  width: double.infinity,
+                  child: Image.asset(
+                    '/home/kaiogoes/university/assets/images/studants.jpg', // Certifique-se de que o caminho está correto
+                    fit: BoxFit.cover,
+                    alignment: Alignment.centerLeft,
+                  ),
                 ),
-              ),
-              Positioned(
-                top: 80,
-                left: 250,
-                child: Container(
-                  width: 500,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 45,
-                        width: 200,
-                        decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
-                        child: const Center(
-                          child: Text(
-                            'GRADUAÇÃO 2024.2',
-                            style: textBold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      const Text(
-                        'Transforme o seu futuro com o Anna Nery',
-                        style: texTitleCard,
-                      ),
-                      const Text(
-                        'Inscreva-se no nosso vestibular. São mais de 30 opções de cursos, nas modalidades Presencial, Híbrido e EaD. Só no UniProjeção você tem acesso a bolsas de até 100%!',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Row(
+                Positioned(
+                  top: 80,
+                  left: isSmallScreen
+                      ? 0
+                      : MediaQuery.of(context).size.height * 0.25,
+                  child: SizedBox(
+                    width: isSmallScreen ? 380 : 500,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 29, 25, 51),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                          Container(
+                            height: 45,
+                            width: 200,
+                            decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20))),
+                            child: const Center(
+                              child: Text(
+                                'GRADUAÇÃO 2024.2',
+                                style: textBold,
                               ),
                             ),
-                            child: const Text('Iniciar Inscrição'),
                           ),
-                          const SizedBox(width: 20),
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(0, 255, 255, 255),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                          const SizedBox(
+                            height: 8,
+                          ),
+                          const Text(
+                            'Transforme o seu futuro com o Anna Nery',
+                            style: texTitleCard,
+                          ),
+                          const Text(
+                            'Inscreva-se no nosso vestibular. São mais de 30 opções de cursos, nas modalidades Presencial, Híbrido e EaD. Só no UniProjeção você tem acesso a bolsas de até 100%!',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Row(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 29, 25, 51),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                                child: const Text('Iniciar Inscrição'),
                               ),
-                            ),
-                            child: const Text('Ver cursos'),
+                              const SizedBox(width: 20),
+                              ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(0, 255, 255, 255),
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                                child: const Text('Ver cursos'),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              )
-            ],
-          ),
-          const Text('Conteúdo do Dashboard'),
-        ],
-      ),
+                )
+              ],
+            ),
+            const Text('Conteúdo do Dashboard'),
+          ],
+        );
+      }),
     );
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const colorPlaceholder = Color(0xFF757575);
+
 const textTitle = TextStyle(fontSize: 18.0, color: Colors.black);
 
 const textBold = TextStyle(
@@ -8,3 +10,11 @@ const textBold = TextStyle(
     fontWeight: FontWeight.bold);
 
 const texTitleCard = TextStyle(fontSize: 45.0, color: Colors.white);
+
+const textLabel = TextStyle(fontSize: 13, fontWeight: FontWeight.bold);
+
+const textStylePlaceholder = TextStyle(
+  color: colorPlaceholder,
+  fontSize: 13.0,
+  fontFamily: 'inter',
+);

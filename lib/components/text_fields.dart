@@ -30,6 +30,7 @@ textFormField(
           controller: controller,
           validator: validator,
           obscureText: password,
+          style: const TextStyle(fontSize: 13),
           inputFormatters: inputFormatters,
           keyboardType: textInputType,
           decoration: InputDecoration(

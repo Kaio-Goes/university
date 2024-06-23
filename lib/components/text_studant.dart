@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 
 class TextStudant extends StatelessWidget {
-  const TextStudant({super.key});
+  final Function()? function;
+  const TextStudant({super.key, required this.function});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class TextStudant extends StatelessWidget {
         Row(
           children: [
             ElevatedButton(
-              onPressed: () {},
+              onPressed: function,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 29, 25, 51),
                 foregroundColor: Colors.white,

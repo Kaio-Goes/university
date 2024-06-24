@@ -7,3 +7,13 @@ String? validInputNome(String? value) {
   }
   return null;
 }
+
+String? validInputPhone(String? value) {
+  if (value!.isEmpty) {
+    return "Este campo é obrigatório";
+  }
+  if (value.length < 16) {
+    return 'Numero incompleto';
+  }
+  return null;
+}

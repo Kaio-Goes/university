@@ -22,7 +22,7 @@ textFormField(
       const SizedBox(height: 5),
       Container(
         alignment: Alignment.topLeft,
-        height: 40,
+        constraints: const BoxConstraints(minHeight: 40),
         width: size,
         child: TextFormField(
           key: key,

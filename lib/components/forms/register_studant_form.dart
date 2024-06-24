@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
+import 'package:university/core/utilities/styles.constants.dart';
 
 class RegisterStudantForm extends StatefulWidget {
   final bool isSmallScreen;
@@ -11,10 +12,20 @@ class RegisterStudantForm extends StatefulWidget {
 }
 
 class _RegisterStudantFormState extends State<RegisterStudantForm> {
+  final _formKey = GlobalKey<FormState>();
+  final _ctrlName = TextEditingController();
+  final _ctrlPhone = TextEditingController();
+
+  _clickButton() async {
+    bool formOk = _formKey.currentState!.validate();
+
+    if (!formOk) {
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    final ctrlName = TextEditingController();
     return Card(
       color: Colors.white,
       elevation: 8,
@@ -41,7 +52,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: Form(
-                  key: formKey,
+                  key: _formKey,
                   child: Column(
                     children: [
                       widget.isSmallScreen
@@ -50,42 +61,44 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                               runSpacing: 20, // Espaçamento entre as linhas
                               children: [
                                 textFormField(
-                                  controller: ctrlName,
+                                  controller: _ctrlName,
                                   validator: validInputNome,
                                   hint: "Digite seu nome completo",
                                   label: "Nome e sobrenome",
                                   size: MediaQuery.of(context).size.width * 1,
                                 ),
                                 textFormField(
-                                  controller: ctrlName,
-                                  validator: validInputNome,
+                                  controller: _ctrlPhone,
+                                  validator: validInputPhone,
+                                  textInputType: TextInputType.phone,
+                                  inputFormatters: [phoneMask],
                                   label: "Celular",
                                   hint: "(61) 99999-9999",
                                   size: MediaQuery.of(context).size.width * 1,
                                 ),
                                 textFormField(
-                                  controller: ctrlName,
+                                  controller: _ctrlName,
                                   validator: validInputNome,
                                   hint: "Digite seu e-mail",
                                   label: "E-mail:",
                                   size: MediaQuery.of(context).size.width * 1,
                                 ),
                                 textFormField(
-                                  controller: ctrlName,
+                                  controller: _ctrlName,
                                   validator: validInputNome,
                                   hint: "Selecione",
                                   label: "Modalidade:",
                                   size: MediaQuery.of(context).size.width * 1,
                                 ),
                                 textFormField(
-                                  controller: ctrlName,
+                                  controller: _ctrlName,
                                   validator: validInputNome,
                                   hint: "Selecione",
                                   label: "Escolha seu curso:",
                                   size: MediaQuery.of(context).size.width * 1,
                                 ),
                                 textFormField(
-                                  controller: ctrlName,
+                                  controller: _ctrlName,
                                   validator: validInputNome,
                                   hint: "Selecione",
                                   label: "Unidade de interesse:",
@@ -99,7 +112,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                 Column(
                                   children: [
                                     textFormField(
-                                        controller: ctrlName,
+                                        controller: _ctrlName,
                                         validator: validInputNome,
                                         hint: "Digite seu nome completo",
                                         label: "Nome e sobrenome",
@@ -108,16 +121,18 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                                 0.2),
                                     const SizedBox(height: 25),
                                     textFormField(
-                                        controller: ctrlName,
-                                        validator: validInputNome,
+                                        controller: _ctrlPhone,
+                                        validator: validInputPhone,
                                         label: "Celular",
                                         hint: "(61) 99999-9999",
+                                        textInputType: TextInputType.phone,
+                                        inputFormatters: [phoneMask],
                                         size:
                                             MediaQuery.of(context).size.width *
                                                 0.2),
                                     const SizedBox(height: 25),
                                     textFormField(
-                                        controller: ctrlName,
+                                        controller: _ctrlName,
                                         validator: validInputNome,
                                         hint: "Selecione",
                                         label: "Modalidade:",
@@ -131,7 +146,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                   children: [
                                     const SizedBox(height: 5),
                                     textFormField(
-                                        controller: ctrlName,
+                                        controller: _ctrlName,
                                         validator: validInputNome,
                                         hint: "Digite seu e-mail",
                                         label: "E-mail:",
@@ -140,7 +155,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                                 0.2),
                                     const SizedBox(height: 25),
                                     textFormField(
-                                        controller: ctrlName,
+                                        controller: _ctrlName,
                                         validator: validInputNome,
                                         hint: "Selecione",
                                         label: "Escolha seu curso:",
@@ -149,7 +164,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                                 0.2),
                                     const SizedBox(height: 25),
                                     textFormField(
-                                        controller: ctrlName,
+                                        controller: _ctrlName,
                                         validator: validInputNome,
                                         hint: "Selecione",
                                         label: "Unidade de interesse:",
@@ -164,7 +179,9 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                       SizedBox(
                         height: 40,
                         child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              _clickButton();
+                            },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.blue),
                             child: const Row(

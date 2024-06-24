@@ -15,6 +15,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
   final _formKey = GlobalKey<FormState>();
   final _ctrlName = TextEditingController();
   final _ctrlPhone = TextEditingController();
+  final _ctrlEmail = TextEditingController();
 
   _clickButton() async {
     bool formOk = _formKey.currentState!.validate();
@@ -77,9 +78,10 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                   size: MediaQuery.of(context).size.width * 1,
                                 ),
                                 textFormField(
-                                  controller: _ctrlName,
-                                  validator: validInputNome,
+                                  controller: _ctrlEmail,
+                                  validator: validInputEmail,
                                   hint: "Digite seu e-mail",
+                                  textInputType: TextInputType.emailAddress,
                                   label: "E-mail:",
                                   size: MediaQuery.of(context).size.width * 1,
                                 ),
@@ -146,9 +148,11 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                   children: [
                                     const SizedBox(height: 5),
                                     textFormField(
-                                        controller: _ctrlName,
-                                        validator: validInputNome,
+                                        controller: _ctrlEmail,
+                                        validator: validInputEmail,
                                         hint: "Digite seu e-mail",
+                                        textInputType:
+                                            TextInputType.emailAddress,
                                         label: "E-mail:",
                                         size:
                                             MediaQuery.of(context).size.width *

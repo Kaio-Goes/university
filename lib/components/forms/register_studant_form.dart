@@ -205,6 +205,12 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                 )
                               ],
                             )),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Ao enviar seus dados, você autoriza que a Anna Nery entre em contato e declara estar ciente da da nossa Política de Privacidade.',
+                        style: textStylePlaceholder,
+                        textAlign: TextAlign.center,
                       )
                     ],
                   ),

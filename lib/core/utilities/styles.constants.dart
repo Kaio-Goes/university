@@ -18,6 +18,9 @@ const textBold = TextStyle(
 
 const texTitleCard = TextStyle(fontSize: 45.0, color: Colors.white);
 
+const textSubTitle =
+    TextStyle(fontSize: 30.0, color: Colors.black, fontWeight: FontWeight.bold);
+
 const textLabel = TextStyle(fontSize: 13, fontWeight: FontWeight.bold);
 
 const textStylePlaceholder = TextStyle(
@@ -25,3 +28,12 @@ const textStylePlaceholder = TextStyle(
   fontSize: 13.0,
   fontFamily: 'inter',
 );
+
+const textPlaceholder = TextStyle(
+    color: Colors.black,
+    fontSize: 10.5,
+    fontFamily: 'inter',
+    fontWeight: FontWeight.bold);
+
+const textTitleCard =
+    TextStyle(fontSize: 14.0, color: Colors.black, fontWeight: FontWeight.bold);

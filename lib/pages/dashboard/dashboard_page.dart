@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:university/components/app_bar_component.dart';
 import 'package:university/components/drawer_component.dart';
 import 'package:university/components/forms/register_studant_form.dart';
+import 'package:university/components/my_courses.dart';
 import 'package:university/components/text_studant.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -41,7 +42,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       height: 520,
                       width: double.infinity,
                       child: Image.asset(
-                        '/home/kaiogoes/university/assets/images/studants.jpg',
+                        'assets/images/studants.jpg',
                         fit: BoxFit.cover,
                         alignment: Alignment.centerLeft,
                       ),
@@ -68,7 +69,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   child: Column(
                     children: [
                       Transform.translate(
-                        offset: const Offset(0, -50), // Ajuste a posição Y aqui
+                        offset: const Offset(0, -50),
                         child: SizedBox(
                           width: isLargeScreen
                               ? MediaQuery.of(context).size.width * 0.52
@@ -77,7 +78,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               RegisterStudantForm(isSmallScreen: isSmallScreen),
                         ),
                       ),
-                      const Text('Conteúdo do Dashboard'),
+                      MyCourses(isSmallScreen: isSmallScreen)
                     ],
                   ),
                 ),

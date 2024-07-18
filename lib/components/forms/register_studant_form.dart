@@ -30,11 +30,14 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
 
   @override
   Widget build(BuildContext context) {
+    final widthResponsive = MediaQuery.of(context).size.width > 1100
+        ? MediaQuery.of(context).size.width * 0.2
+        : MediaQuery.of(context).size.width * 0.35;
     return Card(
       color: Colors.white,
       elevation: 8,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
+        padding: const EdgeInsets.symmetric(vertical: 40),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -54,7 +57,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
             ),
             const SizedBox(height: 20),
             Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
+                padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -161,9 +164,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                         validator: validInputNome,
                                         hint: "Digite seu nome completo",
                                         label: "Nome e sobrenome",
-                                        size:
-                                            MediaQuery.of(context).size.width *
-                                                0.2),
+                                        size: widthResponsive),
                                     const SizedBox(height: 25),
                                     textFormField(
                                         controller: _ctrlPhone,
@@ -172,13 +173,10 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                         hint: "(61) 99999-9999",
                                         textInputType: TextInputType.phone,
                                         inputFormatters: [phoneMask],
-                                        size:
-                                            MediaQuery.of(context).size.width *
-                                                0.2),
+                                        size: widthResponsive),
                                     const SizedBox(height: 25),
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2,
+                                      width: widthResponsive,
                                       child: dropDownField(
                                           label: 'Modalidade:',
                                           select: _selectedModality,
@@ -210,21 +208,10 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                         textInputType:
                                             TextInputType.emailAddress,
                                         label: "E-mail:",
-                                        size:
-                                            MediaQuery.of(context).size.width *
-                                                0.2),
+                                        size: widthResponsive),
                                     const SizedBox(height: 25),
-                                    // textFormField(
-                                    //     controller: _ctrlName,
-                                    //     validator: validInputNome,
-                                    //     hint: "Selecione",
-                                    //     label: "Escolha seu curso:",
-                                    //     size:
-                                    //         MediaQuery.of(context).size.width *
-                                    //             0.2),
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2,
+                                      width: widthResponsive,
                                       child: dropDownField(
                                         label: 'Escolha seu curso',
                                         select: _selectedCourse,
@@ -251,8 +238,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                     ),
                                     const SizedBox(height: 25),
                                     SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2,
+                                      width: widthResponsive,
                                       child: dropDownField(
                                         label: 'Unidade de Interesse',
                                         select: _selectedUnit,

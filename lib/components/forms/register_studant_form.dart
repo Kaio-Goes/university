@@ -17,6 +17,8 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
   final _ctrlPhone = TextEditingController();
   final _ctrlEmail = TextEditingController();
   String? _selectedModality;
+  String? _selectedCourse;
+  String? _selectedUnit;
 
   _clickButton() async {
     bool formOk = _formKey.currentState!.validate();
@@ -87,37 +89,66 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                   size: MediaQuery.of(context).size.width * 1,
                                 ),
                                 dropDownField(
-                                    label: 'Modalidade',
-                                    select: _selectedModality,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedModality = value;
-                                      });
-                                    },
-                                    hintText: 'Selecione a Modalidade',
-                                    items:
-                                        <String>['Noturno'].map((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
-                                    validator: (value) =>
-                                        validatorDropdown(value)),
-                                textFormField(
-                                  controller: _ctrlName,
-                                  validator: validInputNome,
-                                  hint: "Selecione",
-                                  label: "Escolha seu curso:",
-                                  size: MediaQuery.of(context).size.width * 1,
+                                  label: 'Modalidade',
+                                  select: _selectedModality,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedModality = value;
+                                    });
+                                  },
+                                  hintText: 'Selecione a Modalidade',
+                                  items:
+                                      <String>['Noturno'].map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  validator: (value) =>
+                                      validatorDropdown(value),
                                 ),
-                                textFormField(
-                                  controller: _ctrlName,
-                                  validator: validInputNome,
-                                  hint: "Selecione",
-                                  label: "Unidade de interesse:",
-                                  size: MediaQuery.of(context).size.width * 1,
+                                dropDownField(
+                                  label: 'Escolha seu curso',
+                                  select: _selectedCourse,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedCourse = value;
+                                    });
+                                  },
+                                  items: <String>[
+                                    'Técnico de Enfermagem',
+                                    'Especialização em Sala Vermelha',
+                                    'Especialização em Oncologia',
+                                    'Especialização em Hemodiálise'
+                                  ].map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  hintText: 'Selecione o curso',
+                                  validator: (value) =>
+                                      validatorDropdown(value),
                                 ),
+                                dropDownField(
+                                  label: 'Unidade de Interesse',
+                                  select: _selectedUnit,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _selectedUnit = value;
+                                    });
+                                  },
+                                  items: <String>['Planaltina']
+                                      .map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  hintText: 'Selecione a unidade',
+                                  validator: (value) =>
+                                      validatorDropdown(value),
+                                )
                               ],
                             )
                           : Row(
@@ -149,7 +180,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                       width: MediaQuery.of(context).size.width *
                                           0.2,
                                       child: dropDownField(
-                                          label: 'Modalidade',
+                                          label: 'Modalidade:',
                                           select: _selectedModality,
                                           onChanged: (value) {
                                             setState(() {
@@ -172,7 +203,6 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const SizedBox(height: 5),
                                     textFormField(
                                         controller: _ctrlEmail,
                                         validator: validInputEmail,
@@ -184,23 +214,65 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                             MediaQuery.of(context).size.width *
                                                 0.2),
                                     const SizedBox(height: 25),
-                                    textFormField(
-                                        controller: _ctrlName,
-                                        validator: validInputNome,
-                                        hint: "Selecione",
-                                        label: "Escolha seu curso:",
-                                        size:
-                                            MediaQuery.of(context).size.width *
-                                                0.2),
+                                    // textFormField(
+                                    //     controller: _ctrlName,
+                                    //     validator: validInputNome,
+                                    //     hint: "Selecione",
+                                    //     label: "Escolha seu curso:",
+                                    //     size:
+                                    //         MediaQuery.of(context).size.width *
+                                    //             0.2),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.2,
+                                      child: dropDownField(
+                                        label: 'Escolha seu curso',
+                                        select: _selectedCourse,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedCourse = value;
+                                          });
+                                        },
+                                        items: <String>[
+                                          'Técnico de Enfermagem',
+                                          'Especialização em Sala Vermelha',
+                                          'Especialização em Oncologia',
+                                          'Especialização em Hemodiálise'
+                                        ].map((String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                        hintText: 'Selecione o curso',
+                                        validator: (value) =>
+                                            validatorDropdown(value),
+                                      ),
+                                    ),
                                     const SizedBox(height: 25),
-                                    textFormField(
-                                        controller: _ctrlName,
-                                        validator: validInputNome,
-                                        hint: "Selecione",
-                                        label: "Unidade de interesse:",
-                                        size:
-                                            MediaQuery.of(context).size.width *
-                                                0.2),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.2,
+                                      child: dropDownField(
+                                        label: 'Unidade de Interesse',
+                                        select: _selectedUnit,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedUnit = value;
+                                          });
+                                        },
+                                        items: <String>['Planaltina']
+                                            .map((String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                        hintText: 'Selecione a unidade',
+                                        validator: (value) =>
+                                            validatorDropdown(value),
+                                      ),
+                                    )
                                   ],
                                 ),
                               ],

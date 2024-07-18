@@ -50,3 +50,43 @@ textFormField(
     ],
   );
 }
+
+dropDownField(
+    {required String label,
+    required String? select,
+    required void Function(String?)? onChanged,
+    required List<DropdownMenuItem<String>>? items,
+    required String hintText,
+    required String? Function(String?)? validator}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        label,
+        style: textLabel,
+      ),
+      const SizedBox(height: 5),
+      DropdownButtonFormField<String>(
+        value: select,
+        items: items,
+        style: const TextStyle(fontSize: 13),
+        decoration: const InputDecoration(
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey, width: 0.0),
+          ),
+          border: OutlineInputBorder(),
+          filled: true,
+          fillColor: Colors.white,
+          counterText: '',
+          contentPadding: EdgeInsets.only(top: 14.0, left: 14.0),
+        ),
+        onChanged: onChanged,
+        validator: validator,
+        hint: Align(
+          alignment: Alignment.center,
+          child: Text(hintText, style: textStylePlaceholder),
+        ),
+      ),
+    ],
+  );
+}

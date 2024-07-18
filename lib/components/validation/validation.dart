@@ -30,3 +30,10 @@ String? validInputEmail(String? value) {
   }
   return null;
 }
+
+validatorDropdown(value) {
+  if (value == null) {
+    return 'Selecione uma das opções';
+  }
+  return null;
+}

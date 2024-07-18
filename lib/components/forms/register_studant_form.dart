@@ -16,6 +16,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
   final _ctrlName = TextEditingController();
   final _ctrlPhone = TextEditingController();
   final _ctrlEmail = TextEditingController();
+  String? _selectedModality;
 
   _clickButton() async {
     bool formOk = _formKey.currentState!.validate();
@@ -85,13 +86,24 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                   label: "E-mail:",
                                   size: MediaQuery.of(context).size.width * 1,
                                 ),
-                                textFormField(
-                                  controller: _ctrlName,
-                                  validator: validInputNome,
-                                  hint: "Selecione",
-                                  label: "Modalidade:",
-                                  size: MediaQuery.of(context).size.width * 1,
-                                ),
+                                dropDownField(
+                                    label: 'Modalidade',
+                                    select: _selectedModality,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedModality = value;
+                                      });
+                                    },
+                                    hintText: 'Selecione a Modalidade',
+                                    items:
+                                        <String>['Noturno'].map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    validator: (value) =>
+                                        validatorDropdown(value)),
                                 textFormField(
                                   controller: _ctrlName,
                                   validator: validInputNome,
@@ -133,14 +145,28 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                             MediaQuery.of(context).size.width *
                                                 0.2),
                                     const SizedBox(height: 25),
-                                    textFormField(
-                                        controller: _ctrlName,
-                                        validator: validInputNome,
-                                        hint: "Selecione",
-                                        label: "Modalidade:",
-                                        size:
-                                            MediaQuery.of(context).size.width *
-                                                0.2),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.2,
+                                      child: dropDownField(
+                                          label: 'Modalidade',
+                                          select: _selectedModality,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _selectedModality = value;
+                                            });
+                                          },
+                                          hintText: 'Selecione a Modalidade',
+                                          items: <String>['Noturno']
+                                              .map((String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          validator: (value) =>
+                                              validatorDropdown(value)),
+                                    ),
                                   ],
                                 ),
                                 Column(

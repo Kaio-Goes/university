@@ -22,7 +22,7 @@ class TypeCourses extends StatelessWidget {
     return Card(
       elevation: 3,
       child: Container(
-        height: 312,
+        height: 325,
         width: 250,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(15)),

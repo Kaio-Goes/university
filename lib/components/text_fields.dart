@@ -90,3 +90,38 @@ dropDownField(
     ],
   );
 }
+
+buttonTransparent({required String label}) {
+  return ElevatedButton(
+    onPressed: () {},
+    style: ButtonStyle(
+      backgroundColor:
+          WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+        if (states.contains(WidgetState.hovered)) {
+          return Colors.white; // Cor quando o mouse passa sobre o botão
+        }
+        return Colors.transparent; // Cor padrão do botão
+      }),
+      foregroundColor:
+          WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
+        if (states.contains(WidgetState.hovered)) {
+          return Colors
+              .black; // Cor do texto quando o mouse passa sobre o botão
+        }
+        return Colors.white; // Cor padrão do texto
+      }),
+      elevation: WidgetStateProperty.all<double>(0), // Remove a elevação
+      side: WidgetStateProperty.resolveWith<BorderSide>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.hovered)) {
+            return const BorderSide(
+                color:
+                    Colors.white); // Borda quando o mouse passa sobre o botão
+          }
+          return BorderSide.none; // Sem borda no estado padrão
+        },
+      ),
+    ),
+    child: Text(label),
+  );
+}

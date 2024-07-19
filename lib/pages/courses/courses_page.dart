@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:university/components/app_bar_component.dart';
+import 'package:university/components/text_fields.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 
 class CoursesPage extends StatefulWidget {
@@ -125,6 +126,14 @@ class _CoursesPageState extends State<CoursesPage> {
                                   Text(widget.typeFormatCourse,
                                       style: const TextStyle(
                                           fontSize: 14, color: Colors.white)),
+                                ],
+                              ),
+                              const SizedBox(height: 80),
+                              Row(
+                                children: [
+                                  buttonTransparent(label: 'Sobre o Curso'),
+                                  const SizedBox(width: 5),
+                                  buttonTransparent(label: 'Grade Curricular')
                                 ],
                               ),
                             ],

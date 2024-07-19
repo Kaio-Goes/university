@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/pages/dashboard/dashboard_page.dart';
 
 appBarComponent() {
   return PreferredSize(
@@ -59,7 +60,10 @@ appBarComponent() {
                       const SizedBox(width: 120),
                       TextButton(
                         onPressed: () {
-                          // Navegação para Home
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => const DashboardPage()),
+                          );
                         },
                         child: const Text(
                           'Início',

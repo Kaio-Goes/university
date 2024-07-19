@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/pages/courses/courses_page.dart';
 
 class TypeCourses extends StatelessWidget {
   final String image;
   final String presencialOrHibrid;
   final String isEad;
   final String titleCourse;
+  final String msgCourse;
   final String semesters;
   final String typeFormatCourse;
   const TypeCourses(
@@ -14,6 +16,7 @@ class TypeCourses extends StatelessWidget {
       required this.presencialOrHibrid,
       required this.isEad,
       required this.titleCourse,
+      required this.msgCourse,
       required this.semesters,
       required this.typeFormatCourse});
 
@@ -90,7 +93,18 @@ class TypeCourses extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => CoursesPage(
+                                  titleCourse: titleCourse,
+                                  msgCourse: msgCourse,
+                                  urlImage: image,
+                                  semesters: semesters,
+                                  typeFormatCourse: typeFormatCourse,
+                                )),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 29, 25, 51),
                       foregroundColor: Colors.white,

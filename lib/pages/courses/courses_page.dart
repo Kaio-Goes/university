@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:university/components/app_bar_component.dart';
 import 'package:university/components/text_fields.dart';
+import 'package:university/components/validation/validation.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 
 class CoursesPage extends StatefulWidget {
@@ -9,13 +10,15 @@ class CoursesPage extends StatefulWidget {
   final String urlImage;
   final String semesters;
   final String typeFormatCourse;
+  final String? aboutTheCourse;
   const CoursesPage(
       {super.key,
       required this.titleCourse,
       required this.msgCourse,
       required this.urlImage,
       required this.semesters,
-      required this.typeFormatCourse});
+      required this.typeFormatCourse,
+      this.aboutTheCourse});
 
   @override
   State<CoursesPage> createState() => _CoursesPageState();
@@ -23,6 +26,12 @@ class CoursesPage extends StatefulWidget {
 
 class _CoursesPageState extends State<CoursesPage> {
   final ScrollController _scrollController = ScrollController();
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  String? _selectedModality;
+  String? _selectedUnit;
 
   @override
   Widget build(BuildContext context) {
@@ -142,6 +151,146 @@ class _CoursesPageState extends State<CoursesPage> {
                   ),
                 ],
               ),
+              Padding(
+                padding: EdgeInsets.only(
+                  top: 60,
+                  left: isSmallScreen
+                      ? 10
+                      : MediaQuery.of(context).size.height * 0.25,
+                  right: isSmallScreen
+                      ? 10
+                      : MediaQuery.of(context).size.height * 0.25,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Sobre Curso',
+                            style: TextStyle(
+                                fontSize: 28, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 35),
+                        SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.40,
+                            child: Text(widget.aboutTheCourse ?? ''))
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.30,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.black12,
+                              width: 1,
+                            ),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(12)),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 40),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Receba uma consultoria gratuita sobre o curso, valores e mais detalhes',
+                                  style: TextStyle(
+                                      fontSize: 21,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Form(
+                                    key: _formKey,
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(height: 30),
+                                        textFormField(
+                                            controller: _nameController,
+                                            validator: (value) =>
+                                                validInputNome(value),
+                                            hint: 'Digite seu nome completo',
+                                            label: 'Nome Completo:',
+                                            size: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                1),
+                                        const SizedBox(height: 25),
+                                        textFormField(
+                                            controller: _emailController,
+                                            validator: (value) =>
+                                                validInputNome(value),
+                                            hint: 'Digite seu e-mail',
+                                            label: 'E-mail:',
+                                            size: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                1),
+                                        const SizedBox(height: 25),
+                                        textFormField(
+                                          controller: _phoneController,
+                                          validator: validInputPhone,
+                                          textInputType: TextInputType.phone,
+                                          inputFormatters: [phoneMask],
+                                          label: "Celular",
+                                          hint: "(61) 99999-9999",
+                                          size: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              1,
+                                        ),
+                                        const SizedBox(height: 25),
+                                        dropDownField(
+                                          label: 'Modalidade',
+                                          select: _selectedModality,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _selectedModality = value;
+                                            });
+                                          },
+                                          hintText: 'Selecione a Modalidade',
+                                          items: <String>['Noturno']
+                                              .map((String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          validator: (value) =>
+                                              validatorDropdown(value),
+                                        ),
+                                        const SizedBox(height: 25),
+                                        dropDownField(
+                                          label: 'Unidade de Interesse',
+                                          select: _selectedUnit,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _selectedUnit = value;
+                                            });
+                                          },
+                                          items: <String>['Planaltina']
+                                              .map((String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                          hintText: 'Selecione a unidade',
+                                          validator: (value) =>
+                                              validatorDropdown(value),
+                                        )
+                                      ],
+                                    )),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 30)
             ],
           );
         }),

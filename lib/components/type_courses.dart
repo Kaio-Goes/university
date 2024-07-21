@@ -10,6 +10,7 @@ class TypeCourses extends StatelessWidget {
   final String msgCourse;
   final String semesters;
   final String typeFormatCourse;
+  final String aboutTheCourse;
   const TypeCourses(
       {super.key,
       required this.image,
@@ -18,7 +19,8 @@ class TypeCourses extends StatelessWidget {
       required this.titleCourse,
       required this.msgCourse,
       required this.semesters,
-      required this.typeFormatCourse});
+      required this.typeFormatCourse,
+      required this.aboutTheCourse});
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +104,7 @@ class TypeCourses extends StatelessWidget {
                                   urlImage: image,
                                   semesters: semesters,
                                   typeFormatCourse: typeFormatCourse,
+                                  aboutTheCourse: aboutTheCourse,
                                 )),
                       );
                     },

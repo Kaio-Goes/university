@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:university/pages/dashboard/dashboard_page.dart';
 
 class DrawerComponent extends StatelessWidget {
   const DrawerComponent({super.key});
@@ -9,11 +10,11 @@ class DrawerComponent extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          const DrawerHeader(
+          DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Colors.blue[300],
             ),
-            child: Text(
+            child: const Text(
               'Menu',
               style: TextStyle(
                 color: Colors.white,
@@ -25,8 +26,8 @@ class DrawerComponent extends StatelessWidget {
             leading: const Icon(Icons.home),
             title: const Text('Início'),
             onTap: () {
-              // Navegação para Home
-              Navigator.pop(context); // Fecha o drawer
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const DashboardPage()));
             },
           ),
           ListTile(

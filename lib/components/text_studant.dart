@@ -3,7 +3,9 @@ import 'package:university/core/utilities/styles.constants.dart';
 
 class TextStudant extends StatelessWidget {
   final Function()? function;
-  const TextStudant({super.key, required this.function});
+  final Function()? functionTwo;
+  const TextStudant(
+      {super.key, required this.function, required this.functionTwo});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +54,7 @@ class TextStudant extends StatelessWidget {
             ),
             const SizedBox(width: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: functionTwo,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(0, 255, 255, 255),
                 foregroundColor: Colors.white,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:university/components/app_bar_component.dart';
+import 'package:university/components/drawer_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
@@ -42,10 +43,19 @@ class _CoursesPageState extends State<CoursesPage> {
     }
   }
 
+  void _scrollCourse() {
+    _scrollController.animateTo(
+      450.0,
+      duration: const Duration(seconds: 1),
+      curve: Curves.easeInOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarComponent(),
+      drawer: const DrawerComponent(),
       body: SingleChildScrollView(
         controller: _scrollController,
         child: LayoutBuilder(
@@ -149,7 +159,9 @@ class _CoursesPageState extends State<CoursesPage> {
                             const SizedBox(height: 80),
                             Row(
                               children: [
-                                buttonTransparent(label: 'Sobre o Curso'),
+                                buttonTransparent(
+                                    label: 'Sobre o Curso',
+                                    function: _scrollCourse),
                                 const SizedBox(width: 5),
                                 // buttonTransparent(label: 'Grade Curricular')
                               ],

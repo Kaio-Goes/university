@@ -18,7 +18,15 @@ class _DashboardPageState extends State<DashboardPage> {
 
   void _scrollToRegisterForm() {
     _scrollController.animateTo(
-      600.0,
+      450.0,
+      duration: const Duration(seconds: 1),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _scrollToCourses() {
+    _scrollController.animateTo(
+      800.0,
       duration: const Duration(seconds: 1),
       curve: Curves.easeInOut,
     );
@@ -59,6 +67,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           padding: const EdgeInsets.all(8.0),
                           child: TextStudant(
                             function: _scrollToRegisterForm,
+                            functionTwo: _scrollToCourses,
                           ),
                         ),
                       ),

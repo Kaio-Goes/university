@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:university/components/app_bar_component.dart';
 import 'package:university/components/drawer_component.dart';
+import 'package:university/components/footer.dart';
 import 'package:university/components/forms/register_studant_form.dart';
 import 'package:university/components/my_courses.dart';
 import 'package:university/components/text_studant.dart';
@@ -82,6 +83,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     ],
                   ),
                 ),
+                const Footer()
               ],
             );
           },

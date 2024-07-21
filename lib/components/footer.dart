@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class Footer extends StatelessWidget {
   const Footer({super.key});
@@ -32,20 +33,33 @@ class Footer extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.facebook, color: Colors.white),
                 onPressed: () {
-                  // Add your code here
+                  // Adicione seu código aqui
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.wb_twilight, color: Colors.white),
+                icon: SvgPicture.asset(
+                  'assets/images/twitter.svg',
+                  height: 30,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
                 onPressed: () {
-                  // Add your code here
+                  // Adicione seu código aqui
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.linked_camera_outlined,
-                    color: Colors.white),
+                icon: SvgPicture.asset(
+                  'assets/images/instagram.svg',
+                  height: 30,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
                 onPressed: () {
-                  // Add your code here
+                  // Adicione seu código aqui
                 },
               ),
             ],

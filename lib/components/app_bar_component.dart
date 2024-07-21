@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/dashboard/dashboard_page.dart';
+import 'package:university/pages/units/units_page.dart';
 
 appBarComponent() {
   return PreferredSize(
@@ -73,7 +74,10 @@ appBarComponent() {
                       const SizedBox(width: 10),
                       TextButton(
                         onPressed: () {
-                          // Navegação para Sobre
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => const UnitsPage()),
+                          );
                         },
                         child: const Text(
                           'Unidades',

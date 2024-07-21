@@ -76,7 +76,7 @@ appBarComponent() {
                           // Navegação para Sobre
                         },
                         child: const Text(
-                          'Sobre',
+                          'Unidades',
                           style: textTitle,
                         ),
                       ),

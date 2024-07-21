@@ -32,7 +32,7 @@ class DrawerComponent extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.info),
-            title: const Text('Sobre'),
+            title: const Text('Unidades'),
             onTap: () {
               // Navegação para Sobre
               Navigator.pop(context); // Fecha o drawer

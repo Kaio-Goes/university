@@ -175,7 +175,7 @@ class PoleUnitPage extends StatelessWidget {
                                         'assets/images/whatsapp.svg',
                                         height: 25,
                                         colorFilter: const ColorFilter.mode(
-                                          Colors.white,
+                                          Colors.black,
                                           BlendMode.srcIn,
                                         ),
                                       ),
@@ -184,6 +184,19 @@ class PoleUnitPage extends StatelessWidget {
                                         child: Text(
                                           phone,
                                           style: const TextStyle(fontSize: 16),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const Row(
+                                    children: [
+                                      Icon(Icons.access_time_sharp, size: 25),
+                                      SizedBox(width: 5),
+                                      Expanded(
+                                        child: Text(
+                                          'Noturno',
+                                          style: TextStyle(fontSize: 16),
                                         ),
                                       ),
                                     ],

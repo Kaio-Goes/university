@@ -78,9 +78,9 @@ class _UnitsPageState extends State<UnitsPage> {
                   ),
                 ],
               ),
-              Column(
+              const Column(
                 children: [
-                  const SizedBox(height: 45),
+                  SizedBox(height: 45),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -89,11 +89,10 @@ class _UnitsPageState extends State<UnitsPage> {
                         pole: 'Polo Planaltina',
                         address:
                             'Conj. A, Lote 22, Residencial Sandray, Arapoangas',
-                        onPressed: () {},
                       )
                     ],
                   ),
-                  const SizedBox(height: 180)
+                  SizedBox(height: 180)
                 ],
               ),
               const Footer()

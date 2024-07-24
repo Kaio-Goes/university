@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:university/pages/units/pole_unit_page.dart';
 
 class UnitsCard extends StatelessWidget {
   final String local;
   final String pole;
   final String address;
-  final Function()? onPressed;
   const UnitsCard({
     super.key,
     required this.local,
     required this.pole,
     required this.address,
-    required this.onPressed,
   });
 
   @override
@@ -50,7 +49,12 @@ class UnitsCard extends StatelessWidget {
               const SizedBox(height: 25),
               Center(
                 child: ElevatedButton(
-                  onPressed: onPressed,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => PoleUnitPage(pole: pole)),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                   child: const SizedBox(
                     width: 160,

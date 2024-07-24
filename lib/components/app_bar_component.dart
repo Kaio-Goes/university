@@ -85,28 +85,28 @@ appBarComponent() {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      TextButton(
-                        onPressed: () {
-                          // Navegação para Contato
-                        },
-                        child: const Text(
-                          'Contato',
-                          style: textTitle,
-                        ),
-                      ),
+                      // TextButton(
+                      //   onPressed: () {
+                      //     // Navegação para Contato
+                      //   },
+                      //   child: const Text(
+                      //     'Contato',
+                      //     style: textTitle,
+                      //   ),
+                      // ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.account_circle,
-                            color: Colors.black),
-                        onPressed: () {
-                          // Ação de perfil
-                        },
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     IconButton(
+                  //       icon: const Icon(Icons.account_circle,
+                  //           color: Colors.black),
+                  //       onPressed: () {
+                  //         // Ação de perfil
+                  //       },
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
             ),

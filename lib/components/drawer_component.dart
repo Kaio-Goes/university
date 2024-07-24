@@ -40,14 +40,14 @@ class DrawerComponent extends StatelessWidget {
               );
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.contact_mail),
-            title: const Text('Contato'),
-            onTap: () {
-              // Navegação para Contato
-              Navigator.pop(context); // Fecha o drawer
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.contact_mail),
+          //   title: const Text('Contato'),
+          //   onTap: () {
+          //     // Navegação para Contato
+          //     Navigator.pop(context); // Fecha o drawer
+          //   },
+          // ),
         ],
       ),
     );

@@ -89,6 +89,7 @@ class _UnitsPageState extends State<UnitsPage> {
                         pole: 'Polo Planaltina',
                         address:
                             'Conj. A, Lote 22, Residencial Sandray, Arapoangas',
+                        phone: '(61) 99501-3912',
                       )
                     ],
                   ),

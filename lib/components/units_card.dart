@@ -5,12 +5,13 @@ class UnitsCard extends StatelessWidget {
   final String local;
   final String pole;
   final String address;
-  const UnitsCard({
-    super.key,
-    required this.local,
-    required this.pole,
-    required this.address,
-  });
+  final String phone;
+  const UnitsCard(
+      {super.key,
+      required this.local,
+      required this.pole,
+      required this.address,
+      required this.phone});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,11 @@ class UnitsCard extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                          builder: (context) => PoleUnitPage(pole: pole)),
+                          builder: (context) => PoleUnitPage(
+                                pole: pole,
+                                address: address,
+                                phone: phone,
+                              )),
                     );
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),

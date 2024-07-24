@@ -190,7 +190,7 @@ class _CoursesPageState extends State<CoursesPage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Sobre Curso',
+                              const Text('Sobre o Curso',
                                   style: TextStyle(
                                       fontSize: 28,
                                       fontWeight: FontWeight.bold)),

@@ -25,7 +25,7 @@ class MyCourses extends StatelessWidget {
                   TypeCourses(
                     image: 'assets/images/tecEnfemagem.jpg',
                     presencialOrHibrid: 'Presencial',
-                    isEad: 'EAD',
+                    isEad: '',
                     titleCourse: 'Técnico de Enfermagem',
                     msgCourse:
                         'Torne-se um profissional que trabalha com o objetivo de prestar cuidados de saúde fundamentais e assistir na recuperação de pacientes, potencializando a qualidade dos serviços de saúde.',
@@ -37,7 +37,7 @@ class MyCourses extends StatelessWidget {
                   TypeCourses(
                     image: 'assets/images/heart.jpg',
                     presencialOrHibrid: 'Presencial',
-                    isEad: 'EAD',
+                    isEad: '',
                     titleCourse: 'Especialização em Sala Vermelha',
                     msgCourse:
                         'Torne-se um profissional especializado em Sala Vermelha, capacitado para atuar em situações de emergência e alta complexidade, garantindo atendimento rápido e eficiente para salvar vidas.',
@@ -49,7 +49,7 @@ class MyCourses extends StatelessWidget {
                   TypeCourses(
                     image: 'assets/images/oconlogia.jpg',
                     presencialOrHibrid: 'Presencial',
-                    isEad: 'EAD',
+                    isEad: '',
                     titleCourse: 'Especialização em Oncologia',
                     msgCourse:
                         'Torne-se um profissional especializado em Oncologia, capacitado para oferecer cuidados integrados e avançados no tratamento e na recuperação de pacientes com câncer, promovendo qualidade de vida e suporte contínuo.',
@@ -61,7 +61,7 @@ class MyCourses extends StatelessWidget {
                   TypeCourses(
                     image: 'assets/images/hemodialise.jpg',
                     presencialOrHibrid: 'Presencial',
-                    isEad: 'EAD',
+                    isEad: '',
                     titleCourse: 'Especialização em Hemodiálise',
                     msgCourse:
                         'Torne-se um profissional especializado em Hemodiálise, capacitado para realizar tratamentos de diálise com precisão e cuidado, contribuindo para a saúde e bem-estar de pacientes com insuficiência renal.',

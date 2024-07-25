@@ -15,7 +15,7 @@ class SendEmail {
 
     Map params = {
       "fields": {
-        "to": {"stringValue": "kaiogoes1999@gmail.com"},
+        "to": {"stringValue": "annanerybsb@gmail.com"},
         "message": {
           "mapValue": {
             "fields": {

@@ -38,6 +38,7 @@ dependencies:
   mask_text_input_formatter: ^2.9.0
   http: ^1.2.1
   flutter_svg: ^2.0.10+1
+  icons_launcher: ^2.1.7
 
 dev_dependencies:
   flutter_test:
@@ -49,6 +50,16 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+
+icons_launcher:
+  image_path: "assets/images/annamery.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
+    web:
+      enable: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

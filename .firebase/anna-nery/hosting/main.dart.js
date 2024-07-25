@@ -90650,7 +90650,7 @@ a4=A.jr(a4,m,q,"E-mail:",b,B.Ar,A.aH8())
 a=r.x
 a=A.cp(A.mb(f,A.Y(new A.a2(A.a([j,i,h,g],a0),new A.apG(),a5),!0,a6),k,new A.apH(r),a,new A.apI()),q,b)
 c=r.y
-c=A.eM(A.a([a3,A.cg(A.a([a4,B.aE,a,B.aE,A.cp(A.mb(d,A.Y(new A.a2(A.a(["Planaltina"],a0),new A.apJ(),a5),!0,a6),e,new A.apK(r),c,new A.apL()),q,b)],a1),B.af,B.w,B.x)],a1),B.J,B.dL,B.x)}return A.avx(new A.bX(B.IR,A.cg(A.a([B.ZY,B.TL,B.a__,B.iw,new A.bX(B.J6,A.aw6(A.cg(A.a([c,B.iw,A.cp(A.kM(B.RG,new A.apM(r),A.tq(q,q,B.cy,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q)),40,q),B.by,B.ZP],a1),B.J,B.w,B.x),r.d),q)],a1),B.J,B.w,B.cx),q),B.i,8)}}
+c=A.eM(A.a([a3,A.cg(A.a([a4,B.aE,a,B.aE,A.cp(A.mb(d,A.Y(new A.a2(A.a(["Planaltina"],a0),new A.apJ(),a5),!0,a6),e,new A.apK(r),c,new A.apL()),q,b)],a1),B.af,B.w,B.x)],a1),B.J,B.dL,B.x)}return A.avx(new A.bX(B.IR,A.cg(A.a([B.ZY,B.TL,B.ZZ,B.iw,new A.bX(B.J6,A.aw6(A.cg(A.a([c,B.iw,A.cp(A.kM(B.RG,new A.apM(r),A.tq(q,q,B.cy,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q,q)),40,q),B.by,B.ZP],a1),B.J,B.w,B.x),r.d),q)],a1),B.J,B.w,B.cx),q),B.i,8)}}
 A.apv.prototype={
 $1(a){return A.azk(A.a([A.kM(B.AK,new A.apu(this.a,a),null)],t.p),B.AG,B.AI)},
 $S:193}
@@ -90771,10 +90771,10 @@ return B.o},
 $S:90}
 A.Q6.prototype={
 N(a){var s=null,r=t.p
-return A.cg(A.a([A.cT(s,B.Eu,B.q,s,s,B.CH,s,45,s,s,s,s,200),B.TN,B.ZO,B.ZZ,B.A7,A.eM(A.a([A.kM(B.a_0,this.c,A.tq(s,s,B.nq,s,s,s,s,s,s,B.i,s,s,s,s,new A.ci(A.IN(20),B.o),s,s,s,s)),B.TH,A.kM(B.a_8,this.d,A.tq(s,s,B.jn,s,s,s,s,s,s,B.i,s,s,s,s,new A.ci(A.IN(20),B.o),s,s,s,s))],r),B.J,B.w,B.x)],r),B.af,B.w,B.x)}}
+return A.cg(A.a([A.cT(s,B.Eu,B.q,s,s,B.CH,s,45,s,s,s,s,200),B.TN,B.ZO,B.a__,B.A7,A.eM(A.a([A.kM(B.a_0,this.c,A.tq(s,s,B.nq,s,s,s,s,s,s,B.i,s,s,s,s,new A.ci(A.IN(20),B.o),s,s,s,s)),B.TH,A.kM(B.a_8,this.d,A.tq(s,s,B.jn,s,s,s,s,s,s,B.i,s,s,s,s,new A.ci(A.IN(20),B.o),s,s,s,s))],r),B.J,B.w,B.x)],r),B.af,B.w,B.x)}}
 A.qR.prototype={
 N(a){var s=null,r=t.p
-return A.avx(A.cT(s,A.cg(A.a([A.azK(B.Ck,A.cp(A.tH(this.c,B.X,B.cM),130,250),B.c6),B.iw,new A.bX(B.IZ,A.cg(A.a([A.eM(A.a([A.cT(s,A.bH("Presencial",s,s,s,B.iB,s,s),B.q,s,s,B.mO,s,s,s,B.o9,s,s,s),B.da,A.cT(s,A.bH("EAD",s,s,s,B.iB,s,s),B.q,s,s,B.mO,s,s,s,B.o9,s,s,s)],r),B.J,B.w,B.x),B.A7,A.bH(this.f,s,s,s,B.VI,s,s),B.TK,A.eM(A.a([B.K9,B.da,A.bH("8 Semestres",s,s,s,B.iB,s,s),B.A6,B.JW,B.da,A.bH("Tecn\xf3logico",s,s,s,B.iB,s,s)],r),B.J,B.w,B.x),B.by,A.kM(B.TI,new A.aiY(this,a),A.tq(s,s,B.nq,s,s,s,s,s,s,B.i,s,s,s,s,new A.ci(A.IN(20),B.o),s,s,s,s))],r),B.af,B.w,B.x),s)],r),B.af,B.w,B.x),B.q,s,s,B.CG,s,325,s,s,s,s,250),s,3)}}
+return A.avx(A.cT(s,A.cg(A.a([A.azK(B.Ck,A.cp(A.tH(this.c,B.X,B.cM),130,250),B.c6),B.iw,new A.bX(B.IZ,A.cg(A.a([A.eM(A.a([A.cT(s,A.bH("Presencial",s,s,s,B.iB,s,s),B.q,s,s,B.mO,s,s,s,B.o9,s,s,s),B.da,A.cT(s,A.bH("",s,s,s,B.iB,s,s),B.q,s,s,B.mO,s,s,s,B.o9,s,s,s)],r),B.J,B.w,B.x),B.A7,A.bH(this.f,s,s,s,B.VI,s,s),B.TK,A.eM(A.a([B.K9,B.da,A.bH("8 Semestres",s,s,s,B.iB,s,s),B.A6,B.JW,B.da,A.bH("Tecn\xf3logico",s,s,s,B.iB,s,s)],r),B.J,B.w,B.x),B.by,A.kM(B.TI,new A.aiY(this,a),A.tq(s,s,B.nq,s,s,s,s,s,s,B.i,s,s,s,s,new A.ci(A.IN(20),B.o),s,s,s,s))],r),B.af,B.w,B.x),s)],r),B.af,B.w,B.x),B.q,s,s,B.CG,s,325,s,s,s,s,250),s,3)}}
 A.aiY.prototype={
 $0(){A.fN(this.b,!1).ip(A.u2(new A.aiX(this.a),null,t.z))},
 $S:0}
@@ -90997,7 +90997,7 @@ var $async$rJ=A.T(function(g,h){if(g===1)return A.P(h,r)
 while(true)switch(s){case 0:p=$.aKF
 o=t.N
 n=t.z
-m=B.dq.mD(A.ax(["fields",A.ax(["to",A.ax(["stringValue","kaiogoes1999@gmail.com"],o,o),"message",A.ax(["mapValue",A.ax(["fields",A.ax(["subject",A.ax(["stringValue","Interesse do aluno "+d],o,o),"html",A.ax(["stringValue","Interesse do poss\xedvel aluno <strong>"+d+"</strong> <br> <strong>Email</strong>: "+b+" <br> <strong>Celular</strong>: "+e+" <br> <strong>Modalidade</strong>: "+c+" <br> <strong>Curso</strong>: "+a+" <br> <strong>Unidade</strong>: "+f],o,o)],o,t.GU)],o,t.hB)],o,t.wB)],o,t.nf)],n,n))
+m=B.dq.mD(A.ax(["fields",A.ax(["to",A.ax(["stringValue","annanerybsb@gmail.com"],o,o),"message",A.ax(["mapValue",A.ax(["fields",A.ax(["subject",A.ax(["stringValue","Interesse do aluno "+d],o,o),"html",A.ax(["stringValue","Interesse do poss\xedvel aluno <strong>"+d+"</strong> <br> <strong>Email</strong>: "+b+" <br> <strong>Celular</strong>: "+e+" <br> <strong>Modalidade</strong>: "+c+" <br> <strong>Curso</strong>: "+a+" <br> <strong>Unidade</strong>: "+f],o,o)],o,t.GU)],o,t.hB)],o,t.wB)],o,t.nf)],n,n))
 s=3
 return A.a0(A.aWX(A.id(p+"/mail"),m,A.ax(["Content-Type","application/json"],o,o)),$async$rJ)
 case 3:q=h
@@ -99874,9 +99874,9 @@ B.AC=new A.l(!0,B.l,null,null,null,null,18,null,null,null,null,null,null,null,nu
 B.ZX=new A.bY("Unidades",null,B.AC,null,null,null,null,null,null)
 B.Xz=new A.l(!0,null,null,null,null,null,24,B.aX,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.ZY=new A.bY("Comece sua inscri\xe7\xe3o no nosso vestibular",null,B.Xz,B.cf,null,null,null,null,null)
-B.ZZ=new A.bY("Inscreva-se no nosso vestibular. S\xe3o mais de 30 op\xe7\xf5es de cursos, nas modalidades Presencial, H\xedbrido e EaD. S\xf3 no UniProje\xe7\xe3o voc\xea tem acesso a bolsas de at\xe9 100%!",null,B.Au,null,null,null,null,null,null)
-B.a__=new A.bY("Nosso time de consultores entrar\xe1 em contato para tirar suas d\xfavidas",null,B.lV,B.cf,null,null,null,null,null)
+B.ZZ=new A.bY("Nosso time de consultores entrar\xe1 em contato para tirar suas d\xfavidas",null,B.lV,B.cf,null,null,null,null,null)
 B.AH=new A.bY("Receba uma consultoria gratuita sobre o curso, valores e mais detalhes",null,B.AA,null,null,null,null,null,null)
+B.a__=new A.bY("Inscreva-se no nosso vestibular. S\xe3o mais de 30 op\xe7\xf5es de cursos, nas modalidades Presencial, H\xedbrido. S\xf3 no UniProje\xe7\xe3o voc\xea tem acesso a bolsas de at\xe9 100%!",null,B.Au,null,null,null,null,null,null)
 B.a_0=new A.bY("Iniciar Inscri\xe7\xe3o",null,null,null,null,null,null,null,null)
 B.AB=new A.l(!0,null,null,null,null,null,28,B.aX,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.a_1=new A.bY("Sobre Curso",null,B.AB,null,null,null,null,null,null)

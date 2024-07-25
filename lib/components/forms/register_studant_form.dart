@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/services/send_email.dart';
 
 class RegisterStudantForm extends StatefulWidget {
   final bool isSmallScreen;
@@ -25,6 +26,47 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
 
     if (!formOk) {
       return;
+    }
+
+    var responseSendEmail = await SendEmail().sendEmail(
+        name: _ctrlName.text,
+        email: _ctrlEmail.text,
+        phone: _ctrlPhone.text,
+        modality: _selectedModality!,
+        course: _selectedCourse!,
+        unit: _selectedUnit!);
+
+    if (responseSendEmail.statusCode == 200) {
+      showDialog(
+        // ignore: use_build_context_synchronously
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Sucesso'),
+            content: const Text(
+                'Um de nossos consultores entrará em contato com você.'),
+            actions: <Widget>[
+              ElevatedButton(
+                onPressed: () {
+                  // Limpar o formulário
+                  _formKey.currentState?.reset();
+                  _ctrlName.clear();
+                  _ctrlPhone.clear();
+                  _ctrlEmail.clear();
+                  setState(() {
+                    _selectedModality = null;
+                    _selectedCourse = null;
+                    _selectedUnit = null;
+                  });
+
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Combinado!'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 

@@ -5,6 +5,7 @@ import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/services/send_email.dart';
 
 class CoursesPage extends StatefulWidget {
   final String titleCourse;
@@ -40,6 +41,46 @@ class _CoursesPageState extends State<CoursesPage> {
 
     if (!formOk) {
       return;
+    }
+
+    var responseSendEmail = await SendEmail().sendEmail(
+        name: _nameController.text,
+        email: _emailController.text,
+        phone: _phoneController.text,
+        modality: _selectedUnit!,
+        course: widget.titleCourse,
+        unit: _selectedUnit!);
+
+    if (responseSendEmail.statusCode == 200) {
+      showDialog(
+        // ignore: use_build_context_synchronously
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Sucesso'),
+            content: const Text(
+                'Um de nossos consultores entrará em contato com você.'),
+            actions: <Widget>[
+              ElevatedButton(
+                onPressed: () {
+                  // Limpar o formulário
+                  _formKey.currentState?.reset();
+                  _nameController.clear();
+                  _emailController.clear();
+                  _phoneController.clear();
+                  setState(() {
+                    _selectedModality = null;
+                    _selectedUnit = null;
+                  });
+
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Combinado!'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 

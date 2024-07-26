@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:university/core/utilities/styles.constants.dart';
-import 'package:university/pages/courses/courses_page.dart';
+import 'package:university/pages/landingPage/courses/courses_page.dart';
 
 class TypeCourses extends StatelessWidget {
   final String image;

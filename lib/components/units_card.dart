@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university/pages/units/pole_unit_page.dart';
+import 'package:university/pages/landingPage/units/pole_unit_page.dart';
 
 class UnitsCard extends StatelessWidget {
   final String local;

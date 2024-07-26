@@ -40,14 +40,23 @@ class DrawerComponent extends StatelessWidget {
               );
             },
           ),
-          // ListTile(
-          //   leading: const Icon(Icons.contact_mail),
-          //   title: const Text('Contato'),
-          //   onTap: () {
-          //     // Navegação para Contato
-          //     Navigator.pop(context); // Fecha o drawer
-          //   },
-          // ),
+          const SizedBox(height: 320),
+          ListTile(
+            leading: const Icon(Icons.account_circle_rounded),
+            title: const Text('Área do Aluno'),
+            onTap: () {
+              // Navegação para Contato
+              Navigator.pop(context); // Fecha o drawer
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.store_mall_directory_outlined),
+            title: const Text('Área da Secretaria'),
+            onTap: () {
+              // Navegação para Contato
+              Navigator.pop(context); // Fecha o drawer
+            },
+          ),
         ],
       ),
     );

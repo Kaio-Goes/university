@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 
-textFormField(
-    {bool password = false,
-    required TextEditingController controller,
-    required FormFieldValidator<String> validator,
-    required String hint,
-    required String label,
-    required double size,
-    Key? key,
-    TextInputType? textInputType,
-    onSaved,
-    inputFormatters}) {
+textFormField({
+  required TextEditingController controller,
+  required FormFieldValidator<String> validator,
+  required String hint,
+  required String label,
+  required double size,
+  bool password = false,
+  Key? key,
+  TextInputType? textInputType,
+  void Function(String)? onSaved,
+  List<TextInputFormatter>? inputFormatters,
+  bool passwordVisible = false,
+  void Function()? togglePasswordVisibility,
+}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -29,7 +33,7 @@ textFormField(
           onChanged: onSaved,
           controller: controller,
           validator: validator,
-          obscureText: password,
+          obscureText: password ? !passwordVisible : false,
           style: const TextStyle(fontSize: 13),
           inputFormatters: inputFormatters,
           keyboardType: textInputType,
@@ -44,6 +48,14 @@ textFormField(
             contentPadding: const EdgeInsets.only(top: 14.0, left: 14.0),
             hintText: hint,
             hintStyle: textStylePlaceholder,
+            suffixIcon: password
+                ? IconButton(
+                    icon: Icon(
+                      passwordVisible ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: togglePasswordVisibility,
+                  )
+                : null,
           ),
         ),
       ),

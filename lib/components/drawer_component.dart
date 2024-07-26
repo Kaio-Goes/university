@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
 import 'package:university/pages/landingPage/units/units_page.dart';
+import 'package:university/pages/secretary/login_page.dart';
 
 class DrawerComponent extends StatelessWidget {
   const DrawerComponent({super.key});
@@ -53,8 +54,8 @@ class DrawerComponent extends StatelessWidget {
             leading: const Icon(Icons.store_mall_directory_outlined),
             title: const Text('Área da Secretaria'),
             onTap: () {
-              // Navegação para Contato
-              Navigator.pop(context); // Fecha o drawer
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const LoginPage()));
             },
           ),
         ],

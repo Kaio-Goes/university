@@ -37,3 +37,15 @@ validatorDropdown(value) {
   }
   return null;
 }
+
+validatorPassword(value) {
+  final password = value ?? '';
+  if (password.length < 6) {
+    return 'Senha deve ter no mínimo 6 caracteres.';
+  }
+
+  // if (loginValid != null && !loginValid) {
+  //   return 'CPF/Senha inválido';
+  // }
+  return null;
+}

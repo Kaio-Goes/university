@@ -13,6 +13,7 @@ void main() async {
       projectId: "anna-nery",
       authDomain: "anna-nery.firebaseapp.com",
       storageBucket: "anna-nery.appspot.com",
+      databaseURL: "https://anna-nery-default-rtdb.firebaseio.com/",
     ),
   );
   runApp(const MyApp());

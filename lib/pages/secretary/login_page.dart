@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
+import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,11 +27,42 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      // Autenticar o usuário
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
-      // Navegue para a próxima tela ou mostre uma mensagem de sucesso
+      String uid = userCredential.user!.uid;
+
+      try {
+        DatabaseReference ref =
+            FirebaseDatabase.instance.ref().child('users').child(uid);
+        DataSnapshot snapshot = await ref.get();
+
+        if (snapshot.exists) {
+          String role = snapshot.child('role').value as String;
+
+          if (role == 'admin') {
+            // Navegar para a próxima tela ou mostrar uma mensagem de sucesso
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const DashboardPage()));
+          } else {
+            setState(() {
+              _errorMessage = 'Acesso negado. Você não é um administrador.';
+            });
+          }
+        } else {
+          setState(() {
+            _errorMessage = 'Usuário não encontrado no banco de dados.';
+          });
+        }
+      } catch (e) {
+        setState(() {
+          _errorMessage =
+              'Erro ao acessar o banco de dados. Por favor, tente novamente.';
+        });
+      }
     } on FirebaseAuthException catch (e) {
       setState(() {
         if (e.code == 'invalid-credential') {

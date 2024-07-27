@@ -3,7 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
-import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
+import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -47,8 +47,10 @@ class _LoginPageState extends State<LoginPage> {
           if (role == 'admin') {
             // Navegar para a próxima tela ou mostrar uma mensagem de sucesso
             // ignore: use_build_context_synchronously
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const DashboardPage()));
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const DashboardSecretaryPage()));
           } else {
             setState(() {
               _errorMessage = 'Acesso negado. Você não é um administrador.';

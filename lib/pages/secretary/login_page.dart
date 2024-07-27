@@ -16,6 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _resetEmailController = TextEditingController();
   bool _passwordVisible = false;
   String _errorMessage = '';
 
@@ -45,6 +46,7 @@ class _LoginPageState extends State<LoginPage> {
 
           if (role == 'admin') {
             // Navegar para a próxima tela ou mostrar uma mensagem de sucesso
+            // ignore: use_build_context_synchronously
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => const DashboardPage()));
           } else {
@@ -79,6 +81,54 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<void> _resetPassword() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Recuperação de Senha'),
+          content: TextField(
+            controller: _resetEmailController,
+            decoration: const InputDecoration(
+              hintText: 'Digite seu e-mail',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                final String email = _resetEmailController.text.trim();
+                if (email.isNotEmpty) {
+                  try {
+                    await FirebaseAuth.instance
+                        .sendPasswordResetEmail(email: email);
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                    // ignore: use_build_context_synchronously
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('E-mail de recuperação enviado!'),
+                      ),
+                    );
+                  } on FirebaseAuthException catch (e) {
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                    // ignore: use_build_context_synchronously
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Erro: ${e.message}'),
+                      ),
+                    );
+                  }
+                }
+              },
+              child: const Text('Enviar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
           elevation: 3,
           color: Colors.white,
           child: SizedBox(
-            height: 400,
+            height: 450,
             width: 400,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -150,6 +200,11 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               child: const Text('LOGIN'),
                             ),
+                            const SizedBox(height: 20),
+                            TextButton(
+                              onPressed: _resetPassword,
+                              child: const Text('Esqueceu sua senha?'),
+                            )
                           ],
                         ),
                       ],

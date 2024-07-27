@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
@@ -14,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _passwordVisible = false;
+  String _errorMessage = '';
 
   Future<void> _login() async {
     bool formOk = _formKey.currentState!.validate();
@@ -22,16 +24,26 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    // try {
-    //   await FirebaseAuth.instance.signInWithEmailAndPassword(
-    //     email: _emailController.text,
-    //     password: _passwordController.text,
-    //   );
-    //   // Navegue para a próxima tela ou mostre uma mensagem de sucesso
-    // } catch (e) {
-    //   print(e);
-    //   // Mostre uma mensagem de erro
-    // }
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      // Navegue para a próxima tela ou mostre uma mensagem de sucesso
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        if (e.code == 'invalid-credential') {
+          _errorMessage =
+              'E-mail ou senha inválido. Verifique e digite novamente.';
+        } else {
+          _errorMessage = 'Erro desconhecido: ${e.message}';
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Erro ao realizar login. Por favor, tente novamente.';
+      });
+    }
   }
 
   @override
@@ -43,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
           elevation: 3,
           color: Colors.white,
           child: SizedBox(
-            height: 380,
+            height: 400,
             width: 400,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -86,6 +98,12 @@ class _LoginPageState extends State<LoginPage> {
                                 });
                               },
                             ),
+                            const SizedBox(height: 20),
+                            if (_errorMessage.isNotEmpty)
+                              Text(
+                                _errorMessage,
+                                style: const TextStyle(color: Colors.red),
+                              ),
                             const SizedBox(height: 20),
                             ElevatedButton(
                               onPressed: _login,

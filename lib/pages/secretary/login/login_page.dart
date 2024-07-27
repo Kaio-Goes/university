@@ -46,8 +46,8 @@ class _LoginPageState extends State<LoginPage> {
 
           if (role == 'admin') {
             // Navegar para a próxima tela ou mostrar uma mensagem de sucesso
-            // ignore: use_build_context_synchronously
             Navigator.pushReplacement(
+                // ignore: use_build_context_synchronously
                 context,
                 MaterialPageRoute(
                     builder: (context) => const DashboardSecretaryPage()));

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:university/components/drawer_component.dart';
 import 'package:university/components/footer.dart';
 
 class DashboardSecretaryPage extends StatefulWidget {

@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
-import 'package:university/pages/secretary/login/login_page.dart';
+import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +29,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const LoginPage(),
+      home: const DashboardSecretaryPage(),
     );
   }
 }

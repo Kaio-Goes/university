@@ -7,13 +7,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: "AIzaSyBfSLtX70brczNL-G8KYvAJ62iw_fyc3CM",
-      appId: "1:630386930561:web:2529c7f0b58008dcccee80",
-      messagingSenderId: "630386930561",
-      projectId: "anna-nery",
-      authDomain: "anna-nery.firebaseapp.com",
-      storageBucket: "anna-nery.appspot.com",
-      databaseURL: "https://anna-nery-default-rtdb.firebaseio.com/",
+      apiKey: String.fromEnvironment('API_KEY'),
+      appId: String.fromEnvironment('APP_ID'),
+      messagingSenderId: String.fromEnvironment('MESSAGING_SENDER_ID'),
+      projectId: String.fromEnvironment('PROJECT_ID'),
+      authDomain: String.fromEnvironment('AUTH_DOMAIN'),
+      storageBucket: String.fromEnvironment('STORAGE_BUCKET'),
+      databaseURL: String.fromEnvironment('DATABASE_URL'),
     ),
   );
   runApp(const MyApp());

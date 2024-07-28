@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:university/components/app_bar_secretary_component.dart';
 import 'package:university/components/card_count.dart';
 import 'package:university/components/drawer_component.dart';
+import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/services/auth_service.dart';
 
@@ -17,7 +18,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarSecretaryComponent(name: AuthService().currentUser?.name),
-      drawer: const DrawerComponent(),
+      drawer: const DrawerSecretaryComponent(),
       body: SingleChildScrollView(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {

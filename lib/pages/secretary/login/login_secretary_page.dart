@@ -3,7 +3,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
+import 'package:university/core/models/user_secretary.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
+import 'package:university/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -34,15 +36,25 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text,
         password: _passwordController.text,
       );
+
       String uid = userCredential.user!.uid;
 
       try {
         DatabaseReference ref =
             FirebaseDatabase.instance.ref().child('users').child(uid);
+
         DataSnapshot snapshot = await ref.get();
 
         if (snapshot.exists) {
           String role = snapshot.child('role').value as String;
+          String name = snapshot.child('name').value as String;
+          String email = snapshot.child('email').value as String;
+          String uid = snapshot.child('uid').value as String;
+
+          var user =
+              UserSecretary(uid: uid, name: name, email: email, role: role);
+
+          AuthService().addUserSecretaryModel(user: user);
 
           if (role == 'admin') {
             // Navegar para a próxima tela ou mostrar uma mensagem de sucesso
@@ -53,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                     builder: (context) => const DashboardSecretaryPage()));
           } else {
             setState(() {
-              _errorMessage = 'Acesso negado. Você não é um administrador.';
+              _errorMessage = 'Acesso negado. Você não é um(a) secretário(a).';
             });
           }
         } else {

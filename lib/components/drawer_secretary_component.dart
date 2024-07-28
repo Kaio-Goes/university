@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/pages/secretary/login/login_secretary_page.dart';
 

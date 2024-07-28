@@ -54,8 +54,8 @@ class DrawerComponent extends StatelessWidget {
             leading: const Icon(Icons.store_mall_directory_outlined),
             title: const Text('Área da Secretaria'),
             onTap: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const LoginPage()));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const LoginSecretaryPage()));
             },
           ),
         ],

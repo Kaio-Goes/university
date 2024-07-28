@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:university/pages/secretary/login/login_secretary_page.dart';
+import 'package:university/services/auth_service.dart';
 
-appBarSecretaryComponent() {
+appBarSecretaryComponent({String? name}) {
   return PreferredSize(
     preferredSize: const Size.fromHeight(80.0), // Altura da AppBar
     child: LayoutBuilder(
@@ -28,11 +30,39 @@ appBarSecretaryComponent() {
               ),
             ),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.account_circle, color: Colors.black),
-                onPressed: () {
-                  // Ação de perfil
-                },
+              Row(
+                children: [
+                  Text(
+                    'Admin ${name ?? 'Sem Nome'} ',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  PopupMenuButton<int>(
+                    icon: const Icon(Icons.account_circle, color: Colors.black),
+                    onSelected: (int result) {
+                      if (result == 0) {
+                        AuthService().logout();
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const LoginSecretaryPage()),
+                            (Route<dynamic> route) => false);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<int>>[
+                      const PopupMenuItem<int>(
+                        value: 0,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.exit_to_app,
+                            color: Colors.red,
+                          ),
+                          title: Text('Sair'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           );
@@ -58,17 +88,38 @@ appBarSecretaryComponent() {
                     ],
                   ),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Admin fulano ',
-                        style: TextStyle(fontSize: 16),
+                      Text(
+                        'Admin ${name ?? 'Sem Nome'} ',
+                        style: const TextStyle(fontSize: 16),
                       ),
-                      IconButton(
+                      PopupMenuButton<int>(
                         icon: const Icon(Icons.account_circle,
                             size: 34, color: Colors.black),
-                        onPressed: () {
-                          // Ação de perfil
+                        onSelected: (int result) {
+                          if (result == 0) {
+                            AuthService().logout();
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const LoginSecretaryPage()),
+                                (Route<dynamic> route) => false);
+                          }
                         },
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<int>>[
+                          const PopupMenuItem<int>(
+                            value: 0,
+                            child: ListTile(
+                              leading: Icon(
+                                Icons.exit_to_app,
+                                color: Colors.red,
+                              ),
+                              title: Text('Sair'),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

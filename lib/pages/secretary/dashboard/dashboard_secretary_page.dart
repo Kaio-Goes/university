@@ -3,6 +3,7 @@ import 'package:university/components/app_bar_secretary_component.dart';
 import 'package:university/components/card_count.dart';
 import 'package:university/components/drawer_component.dart';
 import 'package:university/components/footer.dart';
+import 'package:university/services/auth_service.dart';
 
 class DashboardSecretaryPage extends StatefulWidget {
   const DashboardSecretaryPage({super.key});
@@ -15,7 +16,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarSecretaryComponent(),
+      appBar: appBarSecretaryComponent(name: AuthService().currentUser?.name),
       drawer: const DrawerComponent(),
       body: SingleChildScrollView(
         child: LayoutBuilder(

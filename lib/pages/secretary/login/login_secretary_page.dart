@@ -7,14 +7,14 @@ import 'package:university/core/models/user_secretary.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/services/auth_service.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class LoginSecretaryPage extends StatefulWidget {
+  const LoginSecretaryPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginSecretaryPage> createState() => _LoginSecretaryPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginSecretaryPageState extends State<LoginSecretaryPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
-import 'package:university/pages/secretary/login/login_secretary_page.dart';
 
 class DrawerSecretaryComponent extends StatelessWidget {
   const DrawerSecretaryComponent({super.key});
@@ -41,7 +41,7 @@ class DrawerSecretaryComponent extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
-                      builder: (context) => const LoginSecretaryPage()),
+                      builder: (context) => const DashboardPage()),
                   (Route<dynamic> route) => false);
             },
           ),

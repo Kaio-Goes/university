@@ -31,6 +31,20 @@ String? validInputEmail(String? value) {
   return null;
 }
 
+validatorCpf(value) {
+  if (value!.isEmpty) {
+    return 'Por favor, digite seu CPF';
+  }
+  const pattern = r'^\d{3}\.\d{3}\.\d{3}\-\d{2}$';
+  final regExp = RegExp(pattern);
+
+  if (!regExp.hasMatch(value)) {
+    return 'Por favor, digite um CPF válido';
+  }
+
+  return null;
+}
+
 validatorDropdown(value) {
   if (value == null) {
     return 'Selecione uma das opções';

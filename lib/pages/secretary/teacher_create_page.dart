@@ -16,12 +16,20 @@ class TeacherCreatePage extends StatefulWidget {
 class _TeacherCreatePageState extends State<TeacherCreatePage> {
   final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
+  final surnameController = TextEditingController();
   final cpfController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
-
   bool _passwordVisible = false;
+
+  _clickButton() async {
+    bool formOk = _formKey.currentState!.validate();
+
+    if (!formOk) {
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,67 +69,112 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                           ),
                           const SizedBox(height: 20),
                           Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: isSmallScreen ? 15 : 40),
-                              child: isSmallScreen
-                                  ? Form(
-                                      key: _formKey,
-                                      child: Wrap(
-                                        spacing: 20,
-                                        runSpacing: 20,
-                                        children: [
-                                          builFormCreateTeacherPartOne(
-                                            context: context,
-                                            isSmallScreen: isSmallScreen,
-                                            nameController: nameController,
-                                            cpfController: cpfController,
-                                            passwordController:
-                                                passwordController,
-                                            passwordVisible: _passwordVisible,
-                                            togglePasswordVisibility: () {
-                                              setState(() {
-                                                _passwordVisible =
-                                                    !_passwordVisible;
-                                              });
-                                            },
-                                          ),
-                                          builFormCreateTeacherPartTwo(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: isSmallScreen ? 15 : 40),
+                            child: Column(
+                              children: [
+                                isSmallScreen
+                                    ? Form(
+                                        key: _formKey,
+                                        child: Wrap(
+                                          spacing: 20,
+                                          runSpacing: 20,
+                                          children: [
+                                            builFormCreateTeacherPartOne(
                                               context: context,
                                               isSmallScreen: isSmallScreen,
                                               emailController: emailController,
-                                              phoneController: phoneController)
-                                        ],
-                                      ),
-                                    )
-                                  : Form(
-                                      key: _formKey,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          builFormCreateTeacherPartOne(
-                                            context: context,
-                                            isSmallScreen: isSmallScreen,
-                                            nameController: nameController,
-                                            cpfController: cpfController,
-                                            passwordController:
-                                                passwordController,
-                                            passwordVisible: _passwordVisible,
-                                            togglePasswordVisibility: () {
-                                              setState(() {
-                                                _passwordVisible =
-                                                    !_passwordVisible;
-                                              });
-                                            },
-                                          ),
-                                          builFormCreateTeacherPartTwo(
+                                              nameController: nameController,
+                                              phoneController: phoneController,
+                                            ),
+                                            builFormCreateTeacherPartTwo(
                                               context: context,
                                               isSmallScreen: isSmallScreen,
-                                              emailController: emailController,
-                                              phoneController: phoneController)
-                                        ],
+                                              surnameController:
+                                                  surnameController,
+                                              cpfController: cpfController,
+                                              passwordController:
+                                                  passwordController,
+                                              passwordVisible: _passwordVisible,
+                                              togglePasswordVisibility: () {
+                                                setState(() {
+                                                  _passwordVisible =
+                                                      !_passwordVisible;
+                                                });
+                                              },
+                                            )
+                                          ],
+                                        ),
+                                      )
+                                    : Form(
+                                        key: _formKey,
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                builFormCreateTeacherPartOne(
+                                                  context: context,
+                                                  isSmallScreen: isSmallScreen,
+                                                  nameController:
+                                                      nameController,
+                                                  emailController:
+                                                      emailController,
+                                                  phoneController:
+                                                      phoneController,
+                                                ),
+                                                builFormCreateTeacherPartTwo(
+                                                  context: context,
+                                                  isSmallScreen: isSmallScreen,
+                                                  surnameController:
+                                                      surnameController,
+                                                  cpfController: cpfController,
+                                                  passwordController:
+                                                      passwordController,
+                                                  passwordVisible:
+                                                      _passwordVisible,
+                                                  togglePasswordVisibility: () {
+                                                    setState(() {
+                                                      _passwordVisible =
+                                                          !_passwordVisible;
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    )),
+                                const SizedBox(height: 20),
+                                SizedBox(
+                                  height: 40,
+                                  width: 200,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      _clickButton();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue),
+                                    child: const Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Adicionar',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -138,14 +191,13 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
   }
 }
 
-Widget builFormCreateTeacherPartOne(
-    {required BuildContext context,
-    required bool isSmallScreen,
-    required TextEditingController nameController,
-    required TextEditingController cpfController,
-    required TextEditingController passwordController,
-    required bool passwordVisible,
-    required Function() togglePasswordVisibility}) {
+Widget builFormCreateTeacherPartOne({
+  required BuildContext context,
+  required bool isSmallScreen,
+  required TextEditingController nameController,
+  required TextEditingController emailController,
+  required TextEditingController phoneController,
+}) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
       : MediaQuery.of(context).size.width * 0.35;
@@ -154,15 +206,55 @@ Widget builFormCreateTeacherPartOne(
       textFormField(
           controller: nameController,
           validator: (value) => validInputNome(value),
-          hint: 'Digite o nome do Professor',
+          hint: 'Digite o primeiro nome',
           label: 'Nome',
+          size: widthInput),
+      const SizedBox(height: 25),
+      textFormField(
+          controller: emailController,
+          validator: (value) => validInputEmail(value),
+          hint: 'Digite seu e-mail',
+          label: 'E-mail',
+          size: widthInput),
+      const SizedBox(height: 25),
+      textFormField(
+          controller: phoneController,
+          validator: (value) => validInputPhone(value),
+          hint: 'Digite o Telefone',
+          inputFormatters: [phoneMask],
+          label: 'Telefone',
+          size: widthInput),
+    ],
+  );
+}
+
+Widget builFormCreateTeacherPartTwo({
+  required BuildContext context,
+  required bool isSmallScreen,
+  required TextEditingController surnameController,
+  required TextEditingController cpfController,
+  required TextEditingController passwordController,
+  required bool passwordVisible,
+  required Function() togglePasswordVisibility,
+}) {
+  var widthInput = isSmallScreen
+      ? MediaQuery.of(context).size.width * 1
+      : MediaQuery.of(context).size.width * 0.38;
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      textFormField(
+          controller: surnameController,
+          validator: (value) => validInputNome(value),
+          hint: 'Digite o sobrenome',
+          label: 'Sobrenome',
           size: widthInput),
       const SizedBox(height: 25),
       textFormField(
           controller: cpfController,
           validator: (value) => validatorCpf(value),
-          hint: 'Digite o CPF',
           inputFormatters: [formatterCpf],
+          hint: 'Digite o CPF',
           label: 'CPF',
           size: widthInput),
       const SizedBox(height: 25),
@@ -175,37 +267,6 @@ Widget builFormCreateTeacherPartOne(
           label: 'Senha',
           togglePasswordVisibility: togglePasswordVisibility,
           size: widthInput),
-    ],
-  );
-}
-
-Widget builFormCreateTeacherPartTwo({
-  required BuildContext context,
-  required bool isSmallScreen,
-  required TextEditingController emailController,
-  required TextEditingController phoneController,
-}) {
-  var widthInput = isSmallScreen
-      ? MediaQuery.of(context).size.width * 1
-      : MediaQuery.of(context).size.width * 0.38;
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      textFormField(
-          controller: emailController,
-          validator: (value) => validInputEmail(value),
-          hint: 'Digite o seu e-mail',
-          label: 'E-mail',
-          size: widthInput),
-      const SizedBox(height: 25),
-      textFormField(
-          controller: phoneController,
-          validator: (value) => validInputPhone(value),
-          inputFormatters: [phoneMask],
-          hint: 'Digite o seu telefone',
-          label: 'Telefone',
-          size: widthInput),
-      const SizedBox(height: 100),
     ],
   );
 }

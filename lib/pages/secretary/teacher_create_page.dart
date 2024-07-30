@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:university/components/app_bar_secretary_component.dart';
 import 'package:university/components/drawer_secretary_component.dart';
@@ -23,11 +25,42 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
   final passwordController = TextEditingController();
   bool _passwordVisible = false;
 
-  _clickButton() async {
+  _clickButton({
+    required String email,
+    required String password,
+    required String name,
+    required String surname,
+    required String cpf,
+    required String phone,
+  }) async {
     bool formOk = _formKey.currentState!.validate();
 
     if (!formOk) {
       return;
+    }
+
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      String uid = userCredential.user!.uid;
+
+      // Adicionando usuário ao Realtime Database
+      DatabaseReference usersRef =
+          FirebaseDatabase.instance.ref().child('users');
+      usersRef.child(uid).set({
+        'email': email,
+        'name': name,
+        'surname': surname,
+        'cpf': cpf,
+        'phone': phone,
+        'role': 'teacher',
+      });
+    } catch (e) {
+      print('Erro ao criar usuário: $e');
     }
   }
 
@@ -153,7 +186,13 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                                   width: 200,
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      _clickButton();
+                                      _clickButton(
+                                          cpf: cpfController.text,
+                                          name: nameController.text,
+                                          surname: surnameController.text,
+                                          email: emailController.text,
+                                          phone: phoneController.text,
+                                          password: passwordController.text);
                                     },
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.blue),

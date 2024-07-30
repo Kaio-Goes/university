@@ -20,11 +20,25 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   @override
   void initState() {
     super.initState();
-    TeacherService().getAllTeacher().then((_) {
+    _loadTeachers();
+  }
+
+  Future<void> _loadTeachers() async {
+    try {
+      List<UserTeacher> fetchedTeachers =
+          await TeacherService().getAllTeacher();
       setState(() {
-        teachers = TeacherService.teachers;
+        teachers = fetchedTeachers;
       });
-    });
+    } catch (e) {
+      // print('Erro ao carregar professores: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    teachers.clear(); // Limpar a lista ao sair da página
   }
 
   @override
@@ -51,7 +65,8 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                               countTeacher: teachers.length.toString()),
                         ),
                 ),
-                Text(teachers.length.toString()),
+                Text(teachers.length
+                    .toString()), // Exibe o número de professores
                 const Footer()
               ],
             );

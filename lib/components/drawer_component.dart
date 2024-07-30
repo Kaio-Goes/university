@@ -41,7 +41,7 @@ class DrawerComponent extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(height: 320),
+          const SizedBox(height: 250),
           ListTile(
             leading: const Icon(Icons.account_circle_rounded),
             title: const Text('Área do Aluno'),

@@ -55,12 +55,14 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
           FirebaseDatabase.instance.ref().child('users');
       usersRef.child(uid).set(
         {
+          'uid': uid,
           'email': email,
           'name': name,
           'surname': surname,
           'cpf': cpf,
           'phone': phone,
           'role': 'teacher',
+          'isActive': true
         },
       ).then((_) {
         showDialog(

@@ -3,7 +3,9 @@ import 'package:university/components/app_bar_secretary_component.dart';
 import 'package:university/components/card_count.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
+import 'package:university/core/models/user_teacher.dart';
 import 'package:university/services/auth_service.dart';
+import 'package:university/services/teacher_service.dart';
 
 class DashboardSecretaryPage extends StatefulWidget {
   const DashboardSecretaryPage({super.key});
@@ -13,6 +15,18 @@ class DashboardSecretaryPage extends StatefulWidget {
 }
 
 class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
+  List<UserTeacher> teachers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    TeacherService().getAllTeacher().then((_) {
+      setState(() {
+        teachers = TeacherService.teachers;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,13 +42,16 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                   padding: const EdgeInsets.all(32.0),
                   child: isSmallScreen
                       ? Column(
-                          children: cardBuild(),
+                          children: cardBuild(
+                              countTeacher: teachers.length.toString()),
                         )
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: cardBuild(),
+                          children: cardBuild(
+                              countTeacher: teachers.length.toString()),
                         ),
                 ),
+                Text(teachers.length.toString()),
                 const Footer()
               ],
             );
@@ -45,21 +62,21 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   }
 }
 
-List<Widget> cardBuild() {
-  return const [
-    CardCount(
+List<Widget> cardBuild({required String countTeacher}) {
+  return [
+    const CardCount(
       count: '16',
       typeCount: 'Alunos Ativos',
       color: Colors.blue,
     ),
-    SizedBox(width: 15, height: 15), // Ajuste de espaçamento
+    const SizedBox(width: 15, height: 15), // Ajuste de espaçamento
     CardCount(
-      count: '16',
+      count: countTeacher,
       typeCount: 'Professores Ativos',
       color: Colors.purple,
     ),
-    SizedBox(width: 15, height: 15), // Ajuste de espaçamento
-    CardCount(
+    const SizedBox(width: 15, height: 15), // Ajuste de espaçamento
+    const CardCount(
       count: '16',
       typeCount: 'Turmas Ativas',
       color: Colors.pinkAccent,

@@ -7,6 +7,7 @@ import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 
 class TeacherCreatePage extends StatefulWidget {
   const TeacherCreatePage({super.key});
@@ -24,6 +25,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
   bool _passwordVisible = false;
+  String _errorMessage = '';
 
   _clickButton({
     required String email,
@@ -51,16 +53,49 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
       // Adicionando usuário ao Realtime Database
       DatabaseReference usersRef =
           FirebaseDatabase.instance.ref().child('users');
-      usersRef.child(uid).set({
-        'email': email,
-        'name': name,
-        'surname': surname,
-        'cpf': cpf,
-        'phone': phone,
-        'role': 'teacher',
+      usersRef.child(uid).set(
+        {
+          'email': email,
+          'name': name,
+          'surname': surname,
+          'cpf': cpf,
+          'phone': phone,
+          'role': 'teacher',
+        },
+      ).then((_) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Sucesso"),
+              content: const Text("Professor criado com sucesso!"),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const DashboardSecretaryPage()),
+                        (Route<dynamic> route) => false);
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  child: const Text(
+                    "Ir para o ínicio",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
       });
     } catch (e) {
-      print('Erro ao criar usuário: $e');
+      setState(() {
+        _errorMessage = "E-mail já utilizado, exclua a conta com esse e-mail";
+      });
     }
   }
 
@@ -180,6 +215,12 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                                           ],
                                         ),
                                       ),
+                                const SizedBox(height: 20),
+                                if (_errorMessage.isNotEmpty)
+                                  Text(
+                                    _errorMessage,
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
                                 const SizedBox(height: 20),
                                 SizedBox(
                                   height: 40,

@@ -17,6 +17,11 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
   final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
   final cpfController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  bool _passwordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +31,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
       body: SingleChildScrollView(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            bool isSmallScreen = constraints.maxWidth < 600;
+            bool isSmallScreen = constraints.maxWidth < 800;
             return Column(
               children: [
                 const SizedBox(height: 25),
@@ -57,32 +62,65 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                           const SizedBox(height: 20),
                           Padding(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: isSmallScreen ? 15 : 10),
+                                  horizontal: isSmallScreen ? 15 : 40),
                               child: isSmallScreen
-                                  ? Wrap(
-                                      spacing: 20, // Espaçamento entre os itens
-                                      runSpacing:
-                                          20, // Espaçamento entre as linhas
-                                      children: [
-                                        builFormCreateTeacher(
+                                  ? Form(
+                                      key: _formKey,
+                                      child: Wrap(
+                                        spacing: 20,
+                                        runSpacing: 20,
+                                        children: [
+                                          builFormCreateTeacherPartOne(
                                             context: context,
                                             isSmallScreen: isSmallScreen,
-                                            formKey: _formKey,
                                             nameController: nameController,
-                                            cpfController: cpfController)
-                                      ],
+                                            cpfController: cpfController,
+                                            passwordController:
+                                                passwordController,
+                                            passwordVisible: _passwordVisible,
+                                            togglePasswordVisibility: () {
+                                              setState(() {
+                                                _passwordVisible =
+                                                    !_passwordVisible;
+                                              });
+                                            },
+                                          ),
+                                          builFormCreateTeacherPartTwo(
+                                              context: context,
+                                              isSmallScreen: isSmallScreen,
+                                              emailController: emailController,
+                                              phoneController: phoneController)
+                                        ],
+                                      ),
                                     )
-                                  : Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        builFormCreateTeacher(
+                                  : Form(
+                                      key: _formKey,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          builFormCreateTeacherPartOne(
                                             context: context,
                                             isSmallScreen: isSmallScreen,
-                                            formKey: _formKey,
                                             nameController: nameController,
-                                            cpfController: cpfController)
-                                      ],
+                                            cpfController: cpfController,
+                                            passwordController:
+                                                passwordController,
+                                            passwordVisible: _passwordVisible,
+                                            togglePasswordVisibility: () {
+                                              setState(() {
+                                                _passwordVisible =
+                                                    !_passwordVisible;
+                                              });
+                                            },
+                                          ),
+                                          builFormCreateTeacherPartTwo(
+                                              context: context,
+                                              isSmallScreen: isSmallScreen,
+                                              emailController: emailController,
+                                              phoneController: phoneController)
+                                        ],
+                                      ),
                                     )),
                         ],
                       ),
@@ -100,34 +138,74 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
   }
 }
 
-Widget builFormCreateTeacher({
+Widget builFormCreateTeacherPartOne(
+    {required BuildContext context,
+    required bool isSmallScreen,
+    required TextEditingController nameController,
+    required TextEditingController cpfController,
+    required TextEditingController passwordController,
+    required bool passwordVisible,
+    required Function() togglePasswordVisibility}) {
+  var widthInput = isSmallScreen
+      ? MediaQuery.of(context).size.width * 1
+      : MediaQuery.of(context).size.width * 0.35;
+  return Column(
+    children: [
+      textFormField(
+          controller: nameController,
+          validator: (value) => validInputNome(value),
+          hint: 'Digite o nome do Professor',
+          label: 'Nome',
+          size: widthInput),
+      const SizedBox(height: 25),
+      textFormField(
+          controller: cpfController,
+          validator: (value) => validatorCpf(value),
+          hint: 'Digite o CPF',
+          inputFormatters: [formatterCpf],
+          label: 'CPF',
+          size: widthInput),
+      const SizedBox(height: 25),
+      textFormField(
+          controller: passwordController,
+          validator: (value) => validatorPassword(value),
+          hint: 'Digite a senha',
+          password: true,
+          passwordVisible: passwordVisible,
+          label: 'Senha',
+          togglePasswordVisibility: togglePasswordVisibility,
+          size: widthInput),
+    ],
+  );
+}
+
+Widget builFormCreateTeacherPartTwo({
   required BuildContext context,
   required bool isSmallScreen,
-  required Key formKey,
-  required TextEditingController nameController,
-  required TextEditingController cpfController,
+  required TextEditingController emailController,
+  required TextEditingController phoneController,
 }) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
-      : MediaQuery.of(context).size.width * 0.30;
-  return Form(
-    key: formKey,
-    child: Column(
-      children: [
-        textFormField(
-            controller: nameController,
-            validator: (value) => validInputNome(value),
-            hint: 'Digite o nome do Professor',
-            label: 'Nome',
-            size: widthInput),
-        textFormField(
-            controller: cpfController,
-            validator: (value) => validatorCpf(value),
-            hint: 'Digite o CPF',
-            inputFormatters: [formatterCpf],
-            label: 'CPF',
-            size: widthInput)
-      ],
-    ),
+      : MediaQuery.of(context).size.width * 0.38;
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      textFormField(
+          controller: emailController,
+          validator: (value) => validInputEmail(value),
+          hint: 'Digite o seu e-mail',
+          label: 'E-mail',
+          size: widthInput),
+      const SizedBox(height: 25),
+      textFormField(
+          controller: phoneController,
+          validator: (value) => validInputPhone(value),
+          inputFormatters: [phoneMask],
+          hint: 'Digite o seu telefone',
+          label: 'Telefone',
+          size: widthInput),
+      const SizedBox(height: 100),
+    ],
   );
 }

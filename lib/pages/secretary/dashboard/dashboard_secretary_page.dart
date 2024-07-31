@@ -4,6 +4,7 @@ import 'package:university/components/card_count.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/core/models/user_teacher.dart';
+import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/services/auth_service.dart';
 import 'package:university/services/teacher_service.dart';
 
@@ -16,29 +17,54 @@ class DashboardSecretaryPage extends StatefulWidget {
 
 class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   List<UserTeacher> teachers = [];
+  List<UserTeacher> activeTeachers = [];
+  List<UserTeacher> filteredTeachers = [];
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _loadTeachers();
+
+    // Adiciona um listener para o TextEditingController
+    searchController.addListener(() {
+      filterTeachers();
+    });
   }
 
   Future<void> _loadTeachers() async {
     try {
       List<UserTeacher> fetchedTeachers =
           await TeacherService().getAllTeacher();
+      activeTeachers =
+          fetchedTeachers.where((teacher) => teacher.isActive).toList();
       setState(() {
         teachers = fetchedTeachers;
+        filteredTeachers = teachers; // Inicialmente mostra todos
       });
     } catch (e) {
       // print('Erro ao carregar professores: $e');
     }
   }
 
+  void filterTeachers() {
+    setState(() {
+      filteredTeachers = teachers.where((teacher) {
+        return teacher.name
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase()) ||
+            teacher.email
+                .toLowerCase()
+                .contains(searchController.text.toLowerCase());
+      }).toList();
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
-    teachers.clear(); // Limpar a lista ao sair da página
+    teachers.clear();
+    searchController.dispose();
   }
 
   @override
@@ -57,16 +83,153 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                   child: isSmallScreen
                       ? Column(
                           children: cardBuild(
-                              countTeacher: teachers.length.toString()),
+                              countTeacher: activeTeachers.length.toString()),
                         )
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: cardBuild(
-                              countTeacher: teachers.length.toString()),
+                              countTeacher: activeTeachers.length.toString()),
                         ),
                 ),
-                Text(teachers.length
-                    .toString()), // Exibe o número de professores
+                Card(
+                  elevation: 8,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Lista de Professores',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(width: 45),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.30,
+                                child: TextField(
+                                  controller: searchController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Pesquisar por nome ou email',
+                                    prefixIcon: Icon(Icons.search),
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Table(
+                            columnWidths: const {
+                              0: FlexColumnWidth(2),
+                              1: FlexColumnWidth(3),
+                              2: FlexColumnWidth(2),
+                              3: FlexColumnWidth(2),
+                              4: FlexColumnWidth(1),
+                              5: FixedColumnWidth(50),
+                            },
+                            children: [
+                              const TableRow(
+                                children: [
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Text('Nome', style: textFontBold),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Text('Email', style: textFontBold),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Text('CPF', style: textFontBold),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 8.0),
+                                    child:
+                                        Text('Telefone', style: textFontBold),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Text('Status', style: textFontBold),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Text('Editar',
+                                        style: textFontBold,
+                                        textAlign: TextAlign.center),
+                                  ),
+                                ],
+                              ),
+                              for (var teacher in filteredTeachers) ...[
+                                TableRow(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Text(
+                                          '${teacher.name} ${teacher.surname}'),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Text(teacher.email),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Text(teacher.cpf),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Text(teacher.phone),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Text(teacher.isActive
+                                          ? "Ativo"
+                                          : "Desativado"),
+                                    ),
+                                    Center(
+                                      child: IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(Icons.more_vert),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                TableRow(
+                                  children: List.generate(
+                                    6,
+                                    (_) => const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 8.0),
+                                      child: Divider(),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Text(filteredTeachers.length.toString()),
                 const Footer()
               ],
             );
@@ -84,13 +247,13 @@ List<Widget> cardBuild({required String countTeacher}) {
       typeCount: 'Alunos Ativos',
       color: Colors.blue,
     ),
-    const SizedBox(width: 15, height: 15), // Ajuste de espaçamento
+    const SizedBox(width: 15, height: 15),
     CardCount(
       count: countTeacher,
       typeCount: 'Professores Ativos',
       color: Colors.purple,
     ),
-    const SizedBox(width: 15, height: 15), // Ajuste de espaçamento
+    const SizedBox(width: 15, height: 15),
     const CardCount(
       count: '16',
       typeCount: 'Turmas Ativas',

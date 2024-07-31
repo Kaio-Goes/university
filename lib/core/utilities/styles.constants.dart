@@ -17,6 +17,8 @@ var phoneMask = MaskTextInputFormatter(
 
 const textTitle = TextStyle(fontSize: 18.0, color: Colors.black);
 
+const textFontBold = TextStyle(fontWeight: FontWeight.bold);
+
 const textBold = TextStyle(
     fontSize: 18.0,
     color: Color.fromARGB(255, 180, 49, 49),

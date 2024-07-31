@@ -115,7 +115,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
       body: SingleChildScrollView(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            bool isSmallScreen = constraints.maxWidth < 600;
+            bool isSmallScreen = constraints.maxWidth < 800;
             return Column(
               children: [
                 Padding(
@@ -125,10 +125,13 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                           children: cardBuild(
                               countTeacher: activeTeachers.length.toString()),
                         )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: cardBuild(
-                              countTeacher: activeTeachers.length.toString()),
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: cardBuild(
+                                countTeacher: activeTeachers.length.toString()),
+                          ),
                         ),
                 ),
                 Card(
@@ -150,9 +153,10 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(width: 45),
                               SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.30,
+                                width: isSmallScreen
+                                    ? MediaQuery.of(context).size.width * 0.4
+                                    : MediaQuery.of(context).size.width * 0.3,
                                 child: TextField(
                                   controller: searchController,
                                   decoration: const InputDecoration(
@@ -165,119 +169,159 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                             ],
                           ),
                           const SizedBox(height: 10),
-                          Table(
-                            columnWidths: const {
-                              0: FlexColumnWidth(2),
-                              1: FlexColumnWidth(3),
-                              2: FlexColumnWidth(2),
-                              3: FlexColumnWidth(2),
-                              4: FlexColumnWidth(1),
-                              5: FixedColumnWidth(50),
-                            },
-                            children: [
-                              TableRow(
-                                children: [
-                                  GestureDetector(
-                                    onTap: _sortTeachersByName,
-                                    child: Row(
+                          isSmallScreen
+                              ? Column(
+                                  children: paginatedTeachers.map((teacher) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                '${teacher.name} ${teacher.surname}',
+                                                style: textFontBold,
+                                              ),
+                                              IconButton(
+                                                onPressed: () {},
+                                                icon:
+                                                    const Icon(Icons.more_vert),
+                                              ),
+                                            ],
+                                          ),
+                                          Text('Email: ${teacher.email}'),
+                                          Text('CPF: ${teacher.cpf}'),
+                                          Text('Telefone: ${teacher.phone}'),
+                                          Text(
+                                            'Status: ${teacher.isActive ? "Ativo" : "Desativado"}',
+                                          ),
+                                          const Divider(),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                )
+                              : Table(
+                                  columnWidths: const {
+                                    0: FlexColumnWidth(2),
+                                    1: FlexColumnWidth(3),
+                                    2: FlexColumnWidth(2),
+                                    3: FlexColumnWidth(2),
+                                    4: FlexColumnWidth(1),
+                                    5: FixedColumnWidth(50),
+                                  },
+                                  children: [
+                                    TableRow(
                                       children: [
+                                        GestureDetector(
+                                          onTap: _sortTeachersByName,
+                                          child: Row(
+                                            children: [
+                                              const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 8.0),
+                                                child: Text('Nome',
+                                                    style: textFontBold),
+                                              ),
+                                              Icon(
+                                                isAscending
+                                                    ? Icons.arrow_upward
+                                                    : Icons.arrow_downward,
+                                                size: 16,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: Text('Email',
+                                              style: textFontBold),
+                                        ),
                                         const Padding(
                                           padding: EdgeInsets.symmetric(
                                               vertical: 8.0),
                                           child:
-                                              Text('Nome', style: textFontBold),
+                                              Text('CPF', style: textFontBold),
                                         ),
-                                        Icon(
-                                          isAscending
-                                              ? Icons.arrow_upward
-                                              : Icons.arrow_downward,
-                                          size: 16,
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: Text('Telefone',
+                                              style: textFontBold),
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: Text('Status',
+                                              style: textFontBold),
+                                        ),
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: Text('Editar',
+                                              style: textFontBold,
+                                              textAlign: TextAlign.center),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Text('Email', style: textFontBold),
-                                  ),
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Text('CPF', style: textFontBold),
-                                  ),
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    child:
-                                        Text('Telefone', style: textFontBold),
-                                  ),
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Text('Status', style: textFontBold),
-                                  ),
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Text('Editar',
-                                        style: textFontBold,
-                                        textAlign: TextAlign.center),
-                                  ),
-                                ],
-                              ),
-                              for (var teacher in paginatedTeachers) ...[
-                                TableRow(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: Text(
-                                          '${teacher.name} ${teacher.surname}'),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: Text(teacher.email),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: Text(teacher.cpf),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: Text(teacher.phone),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: Text(teacher.isActive
-                                          ? "Ativo"
-                                          : "Desativado"),
-                                    ),
-                                    Center(
-                                      child: IconButton(
-                                        onPressed: () {},
-                                        icon: const Icon(Icons.more_vert),
+                                    for (var teacher in paginatedTeachers) ...[
+                                      TableRow(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Text(
+                                                '${teacher.name} ${teacher.surname}'),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Text(teacher.email),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Text(teacher.cpf),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Text(teacher.phone),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Text(teacher.isActive
+                                                ? "Ativo"
+                                                : "Desativado"),
+                                          ),
+                                          Center(
+                                            child: IconButton(
+                                              onPressed: () {},
+                                              icon: const Icon(Icons.more_vert),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
+                                      TableRow(
+                                        children: List.generate(
+                                          6,
+                                          (_) => const Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Divider(),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ],
                                 ),
-                                TableRow(
-                                  children: List.generate(
-                                    6,
-                                    (_) => const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8.0),
-                                      child: Divider(),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [

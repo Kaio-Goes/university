@@ -3,8 +3,8 @@ import 'package:university/components/app_bar_secretary_component.dart';
 import 'package:university/components/card_count.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
+import 'package:university/components/list_teacher_card.dart';
 import 'package:university/core/models/user_teacher.dart';
-import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/services/auth_service.dart';
 import 'package:university/services/teacher_service.dart';
 
@@ -134,220 +134,17 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                           ),
                         ),
                 ),
-                Card(
-                  elevation: 8,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Lista de Professores',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(
-                                width: isSmallScreen
-                                    ? MediaQuery.of(context).size.width * 0.4
-                                    : MediaQuery.of(context).size.width * 0.3,
-                                child: TextField(
-                                  controller: searchController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Pesquisar por nome ou email',
-                                    prefixIcon: Icon(Icons.search),
-                                    border: OutlineInputBorder(),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          isSmallScreen
-                              ? Column(
-                                  children: paginatedTeachers.map((teacher) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                '${teacher.name} ${teacher.surname}',
-                                                style: textFontBold,
-                                              ),
-                                              IconButton(
-                                                onPressed: () {},
-                                                icon:
-                                                    const Icon(Icons.more_vert),
-                                              ),
-                                            ],
-                                          ),
-                                          Text('Email: ${teacher.email}'),
-                                          Text('CPF: ${teacher.cpf}'),
-                                          Text('Telefone: ${teacher.phone}'),
-                                          Text(
-                                            'Status: ${teacher.isActive ? "Ativo" : "Desativado"}',
-                                          ),
-                                          const Divider(),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
-                                )
-                              : Table(
-                                  columnWidths: const {
-                                    0: FlexColumnWidth(2),
-                                    1: FlexColumnWidth(3),
-                                    2: FlexColumnWidth(2),
-                                    3: FlexColumnWidth(2),
-                                    4: FlexColumnWidth(1),
-                                    5: FixedColumnWidth(50),
-                                  },
-                                  children: [
-                                    TableRow(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: _sortTeachersByName,
-                                          child: Row(
-                                            children: [
-                                              const Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 8.0),
-                                                child: Text('Nome',
-                                                    style: textFontBold),
-                                              ),
-                                              Icon(
-                                                isAscending
-                                                    ? Icons.arrow_upward
-                                                    : Icons.arrow_downward,
-                                                size: 16,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: Text('Email',
-                                              style: textFontBold),
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child:
-                                              Text('CPF', style: textFontBold),
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: Text('Telefone',
-                                              style: textFontBold),
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: Text('Status',
-                                              style: textFontBold),
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: Text('Editar',
-                                              style: textFontBold,
-                                              textAlign: TextAlign.center),
-                                        ),
-                                      ],
-                                    ),
-                                    for (var teacher in paginatedTeachers) ...[
-                                      TableRow(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8.0),
-                                            child: Text(
-                                                '${teacher.name} ${teacher.surname}'),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8.0),
-                                            child: Text(teacher.email),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8.0),
-                                            child: Text(teacher.cpf),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8.0),
-                                            child: Text(teacher.phone),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8.0),
-                                            child: Text(teacher.isActive
-                                                ? "Ativo"
-                                                : "Desativado"),
-                                          ),
-                                          Center(
-                                            child: IconButton(
-                                              onPressed: () {},
-                                              icon: const Icon(Icons.more_vert),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      TableRow(
-                                        children: List.generate(
-                                          6,
-                                          (_) => const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 8.0),
-                                            child: Divider(),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              IconButton(
-                                onPressed: _previousPage,
-                                icon: const Icon(Icons.arrow_back),
-                                color: currentPage > 1
-                                    ? Colors.black
-                                    : Colors.grey,
-                              ),
-                              Text(
-                                  '$currentPage/${(filteredTeachers.length / itemsPerPage).ceil()}'),
-                              IconButton(
-                                onPressed: _nextPage,
-                                icon: const Icon(Icons.arrow_forward),
-                                color: currentPage * itemsPerPage <
-                                        filteredTeachers.length
-                                    ? Colors.black
-                                    : Colors.grey,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                ListTeacherCard(
+                  isSmallScreen: isSmallScreen,
+                  searchController: searchController,
+                  paginatedTeachers: paginatedTeachers,
+                  sortTeachersByName: _sortTeachersByName,
+                  isAscending: isAscending,
+                  previousPage: _previousPage,
+                  currentPage: currentPage,
+                  filteredTeachers: filteredTeachers,
+                  itemsPerPage: itemsPerPage,
+                  nextPage: _nextPage,
                 ),
                 const SizedBox(height: 15),
                 const Footer()

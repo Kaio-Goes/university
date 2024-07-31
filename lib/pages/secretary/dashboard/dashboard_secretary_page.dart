@@ -20,6 +20,10 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   List<UserTeacher> activeTeachers = [];
   List<UserTeacher> filteredTeachers = [];
   TextEditingController searchController = TextEditingController();
+  bool isAscending = true; // Para controle de ordenação
+
+  int currentPage = 1;
+  int itemsPerPage = 5;
 
   @override
   void initState() {
@@ -60,6 +64,35 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
     });
   }
 
+  void _sortTeachersByName() {
+    setState(() {
+      filteredTeachers.sort((a, b) {
+        if (isAscending) {
+          return a.name.compareTo(b.name);
+        } else {
+          return b.name.compareTo(a.name);
+        }
+      });
+      isAscending = !isAscending; // Alterna a direção da ordenação
+    });
+  }
+
+  void _nextPage() {
+    setState(() {
+      if (currentPage * itemsPerPage < filteredTeachers.length) {
+        currentPage++;
+      }
+    });
+  }
+
+  void _previousPage() {
+    setState(() {
+      if (currentPage > 1) {
+        currentPage--;
+      }
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -69,6 +102,13 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
 
   @override
   Widget build(BuildContext context) {
+    int startIndex = (currentPage - 1) * itemsPerPage;
+    int endIndex = startIndex + itemsPerPage;
+    List<UserTeacher> paginatedTeachers = filteredTeachers.sublist(
+      startIndex,
+      endIndex > filteredTeachers.length ? filteredTeachers.length : endIndex,
+    );
+
     return Scaffold(
       appBar: appBarSecretaryComponent(name: AuthService().currentUser?.name),
       drawer: const DrawerSecretaryComponent(),
@@ -135,35 +175,49 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                               5: FixedColumnWidth(50),
                             },
                             children: [
-                              const TableRow(
+                              TableRow(
                                 children: [
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Text('Nome', style: textFontBold),
+                                  GestureDetector(
+                                    onTap: _sortTeachersByName,
+                                    child: Row(
+                                      children: [
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child:
+                                              Text('Nome', style: textFontBold),
+                                        ),
+                                        Icon(
+                                          isAscending
+                                              ? Icons.arrow_upward
+                                              : Icons.arrow_downward,
+                                          size: 16,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  Padding(
+                                  const Padding(
                                     padding:
                                         EdgeInsets.symmetric(vertical: 8.0),
                                     child: Text('Email', style: textFontBold),
                                   ),
-                                  Padding(
+                                  const Padding(
                                     padding:
                                         EdgeInsets.symmetric(vertical: 8.0),
                                     child: Text('CPF', style: textFontBold),
                                   ),
-                                  Padding(
+                                  const Padding(
                                     padding:
                                         EdgeInsets.symmetric(vertical: 8.0),
                                     child:
                                         Text('Telefone', style: textFontBold),
                                   ),
-                                  Padding(
+                                  const Padding(
                                     padding:
                                         EdgeInsets.symmetric(vertical: 8.0),
                                     child: Text('Status', style: textFontBold),
                                   ),
-                                  Padding(
+                                  const Padding(
                                     padding:
                                         EdgeInsets.symmetric(vertical: 8.0),
                                     child: Text('Editar',
@@ -172,7 +226,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                                   ),
                                 ],
                               ),
-                              for (var teacher in filteredTeachers) ...[
+                              for (var teacher in paginatedTeachers) ...[
                                 TableRow(
                                   children: [
                                     Padding(
@@ -224,12 +278,34 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                               ],
                             ],
                           ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                onPressed: _previousPage,
+                                icon: const Icon(Icons.arrow_back),
+                                color: currentPage > 1
+                                    ? Colors.black
+                                    : Colors.grey,
+                              ),
+                              Text(
+                                  '$currentPage/${(filteredTeachers.length / itemsPerPage).ceil()}'),
+                              IconButton(
+                                onPressed: _nextPage,
+                                icon: const Icon(Icons.arrow_forward),
+                                color: currentPage * itemsPerPage <
+                                        filteredTeachers.length
+                                    ? Colors.black
+                                    : Colors.grey,
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
                   ),
                 ),
-                Text(filteredTeachers.length.toString()),
+                const SizedBox(height: 15),
                 const Footer()
               ],
             );

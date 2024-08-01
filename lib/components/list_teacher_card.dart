@@ -89,7 +89,7 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
                                   PopupMenuButton<String>(
                                     icon: const Icon(Icons.more_vert),
                                     onSelected: (String result) {
-                                      if (result == 'Editar') {
+                                      if (result == 'Edit') {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (context) =>
@@ -108,25 +108,6 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
                                           children: [
                                             Text('Editar'),
                                             Icon(Icons.edit, size: 16)
-                                          ],
-                                        ),
-                                      ),
-                                      const PopupMenuItem<String>(
-                                        value: 'delete',
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Excluir',
-                                              style:
-                                                  TextStyle(color: Colors.red),
-                                            ),
-                                            Icon(
-                                              Icons.delete,
-                                              size: 16,
-                                              color: Colors.red,
-                                            )
                                           ],
                                         ),
                                       ),
@@ -253,24 +234,6 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
                                         children: [
                                           Text('Editar'),
                                           Icon(Icons.edit, size: 16)
-                                        ],
-                                      ),
-                                    ),
-                                    const PopupMenuItem<String>(
-                                      value: 'delete',
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Excluir',
-                                            style: TextStyle(color: Colors.red),
-                                          ),
-                                          Icon(
-                                            Icons.delete,
-                                            size: 16,
-                                            color: Colors.red,
-                                          )
                                         ],
                                       ),
                                     ),

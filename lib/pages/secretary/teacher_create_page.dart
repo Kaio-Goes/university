@@ -9,6 +9,7 @@ import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/user_teacher.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
+import 'package:university/services/send_email.dart';
 
 class TeacherCreatePage extends StatefulWidget {
   final UserTeacher? userTeacher;
@@ -73,6 +74,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
         // Adicionando usuário ao Realtime Database
         DatabaseReference usersRef =
             FirebaseDatabase.instance.ref().child('users');
+
         usersRef.child(uid).set(
           {
             'uid': uid,
@@ -84,7 +86,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
             'role': 'teacher',
             'isActive': true
           },
-        ).then((_) {
+        ).then((_) async {
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -113,6 +115,15 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                 ],
               );
             },
+          );
+
+          await SendEmail().sendEmailCreateTeacher(
+            email: email,
+            password: password,
+            name: name,
+            surname: surname,
+            cpf: cpf,
+            phone: phone,
           );
         });
       } catch (e) {

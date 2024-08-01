@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:university/core/models/user_teacher.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/pages/secretary/teacher_create_page.dart';
 
 class ListTeacherCard extends StatefulWidget {
   final bool isSmallScreen;
@@ -85,9 +86,25 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
                                     '${teacher.name} ${teacher.surname}',
                                     style: textFontBold,
                                   ),
-                                  IconButton(
-                                    onPressed: () {},
+                                  PopupMenuButton<String>(
                                     icon: const Icon(Icons.more_vert),
+                                    onSelected: (String result) {
+                                      if (result == 'Editar') {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TeacherCreatePage(
+                                                      userTeacher: teacher)),
+                                        );
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) =>
+                                        <PopupMenuEntry<String>>[
+                                      const PopupMenuItem<String>(
+                                        value: 'Editar',
+                                        child: Text('Editar'),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -188,11 +205,27 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
                                     teacher.isActive ? "Ativo" : "Desativado"),
                               ),
                               Center(
-                                child: IconButton(
-                                  onPressed: () {},
+                                child: PopupMenuButton<String>(
                                   icon: const Icon(Icons.more_vert),
+                                  onSelected: (String result) {
+                                    if (result == 'Editar') {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                TeacherCreatePage(
+                                                    userTeacher: teacher)),
+                                      );
+                                    }
+                                  },
+                                  itemBuilder: (BuildContext context) =>
+                                      <PopupMenuEntry<String>>[
+                                    const PopupMenuItem<String>(
+                                      value: 'Editar',
+                                      child: Text('Editar'),
+                                    ),
+                                  ],
                                 ),
-                              ),
+                              )
                             ],
                           ),
                           TableRow(

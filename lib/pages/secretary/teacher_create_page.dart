@@ -6,11 +6,13 @@ import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
+import 'package:university/core/models/user_teacher.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 
 class TeacherCreatePage extends StatefulWidget {
-  const TeacherCreatePage({super.key});
+  final UserTeacher? userTeacher;
+  const TeacherCreatePage({super.key, this.userTeacher});
 
   @override
   State<TeacherCreatePage> createState() => _TeacherCreatePageState();
@@ -26,6 +28,23 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
   final passwordController = TextEditingController();
   bool _passwordVisible = false;
   String _errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.userTeacher != null) {
+      editResquest();
+    }
+  }
+
+  void editResquest() {
+    nameController.text = widget.userTeacher!.name;
+    surnameController.text = widget.userTeacher!.surname;
+    emailController.text = widget.userTeacher!.email;
+    cpfController.text = widget.userTeacher!.cpf;
+    phoneController.text = widget.userTeacher!.phone;
+  }
 
   _clickButton({
     required String email,
@@ -151,12 +170,15 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                                           runSpacing: 20,
                                           children: [
                                             builFormCreateTeacherPartOne(
-                                              context: context,
-                                              isSmallScreen: isSmallScreen,
-                                              emailController: emailController,
-                                              nameController: nameController,
-                                              phoneController: phoneController,
-                                            ),
+                                                context: context,
+                                                isSmallScreen: isSmallScreen,
+                                                emailController:
+                                                    emailController,
+                                                nameController: nameController,
+                                                phoneController:
+                                                    phoneController,
+                                                userTeacher:
+                                                    widget.userTeacher),
                                             builFormCreateTeacherPartTwo(
                                               context: context,
                                               isSmallScreen: isSmallScreen,
@@ -170,6 +192,15 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                                                 setState(() {
                                                   _passwordVisible =
                                                       !_passwordVisible;
+                                                });
+                                              },
+                                              userTeacher: widget.userTeacher,
+                                              isActive:
+                                                  widget.userTeacher?.isActive,
+                                              onChangedIsActive: (value) {
+                                                setState(() {
+                                                  widget.userTeacher?.isActive =
+                                                      value;
                                                 });
                                               },
                                             )
@@ -186,15 +217,17 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                                                       .spaceBetween,
                                               children: [
                                                 builFormCreateTeacherPartOne(
-                                                  context: context,
-                                                  isSmallScreen: isSmallScreen,
-                                                  nameController:
-                                                      nameController,
-                                                  emailController:
-                                                      emailController,
-                                                  phoneController:
-                                                      phoneController,
-                                                ),
+                                                    context: context,
+                                                    isSmallScreen:
+                                                        isSmallScreen,
+                                                    nameController:
+                                                        nameController,
+                                                    emailController:
+                                                        emailController,
+                                                    phoneController:
+                                                        phoneController,
+                                                    userTeacher:
+                                                        widget.userTeacher),
                                                 builFormCreateTeacherPartTwo(
                                                   context: context,
                                                   isSmallScreen: isSmallScreen,
@@ -209,6 +242,16 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                                                     setState(() {
                                                       _passwordVisible =
                                                           !_passwordVisible;
+                                                    });
+                                                  },
+                                                  userTeacher:
+                                                      widget.userTeacher,
+                                                  isActive: widget
+                                                      .userTeacher?.isActive,
+                                                  onChangedIsActive: (value) {
+                                                    setState(() {
+                                                      widget.userTeacher
+                                                          ?.isActive = value;
                                                     });
                                                   },
                                                 ),
@@ -239,13 +282,15 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                                     },
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.blue),
-                                    child: const Row(
+                                    child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          'Adicionar',
-                                          style: TextStyle(
+                                          widget.userTeacher != null
+                                              ? 'Salvar'
+                                              : 'Adicionar',
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
                                           ),
@@ -279,6 +324,7 @@ Widget builFormCreateTeacherPartOne({
   required TextEditingController nameController,
   required TextEditingController emailController,
   required TextEditingController phoneController,
+  required UserTeacher? userTeacher,
 }) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
@@ -297,6 +343,7 @@ Widget builFormCreateTeacherPartOne({
           validator: (value) => validInputEmail(value),
           hint: 'Digite seu e-mail',
           label: 'E-mail',
+          readOnly: userTeacher != null ? true : false,
           size: widthInput),
       const SizedBox(height: 25),
       textFormField(
@@ -310,15 +357,17 @@ Widget builFormCreateTeacherPartOne({
   );
 }
 
-Widget builFormCreateTeacherPartTwo({
-  required BuildContext context,
-  required bool isSmallScreen,
-  required TextEditingController surnameController,
-  required TextEditingController cpfController,
-  required TextEditingController passwordController,
-  required bool passwordVisible,
-  required Function() togglePasswordVisibility,
-}) {
+Widget builFormCreateTeacherPartTwo(
+    {required BuildContext context,
+    required bool isSmallScreen,
+    required TextEditingController surnameController,
+    required TextEditingController cpfController,
+    required TextEditingController passwordController,
+    required bool passwordVisible,
+    required Function() togglePasswordVisibility,
+    required UserTeacher? userTeacher,
+    bool? isActive,
+    Function(bool)? onChangedIsActive}) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
       : MediaQuery.of(context).size.width * 0.38;
@@ -340,15 +389,30 @@ Widget builFormCreateTeacherPartTwo({
           label: 'CPF',
           size: widthInput),
       const SizedBox(height: 25),
-      textFormField(
-          controller: passwordController,
-          validator: (value) => validatorPassword(value),
-          hint: 'Digite a senha',
-          password: true,
-          passwordVisible: passwordVisible,
-          label: 'Senha',
-          togglePasswordVisibility: togglePasswordVisibility,
-          size: widthInput),
+      userTeacher != null
+          ? const Text('')
+          : textFormField(
+              controller: passwordController,
+              validator: (value) => validatorPassword(value),
+              hint: 'Digite a senha',
+              password: true,
+              passwordVisible: passwordVisible,
+              label: 'Senha',
+              togglePasswordVisibility: togglePasswordVisibility,
+              size: widthInput),
+      userTeacher != null
+          ? const SizedBox(height: 5)
+          : const SizedBox(height: 0),
+      userTeacher != null
+          ? SizedBox(
+              width: widthInput,
+              child: SwitchListTile(
+                title: const Text('Ativo'),
+                value: isActive ?? true,
+                onChanged: onChangedIsActive,
+              ),
+            )
+          : const Text('')
     ],
   );
 }

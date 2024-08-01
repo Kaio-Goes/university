@@ -9,6 +9,7 @@ textFormField({
   required String label,
   required double size,
   bool password = false,
+  bool? readOnly,
   Key? key,
   TextInputType? textInputType,
   void Function(String)? onSaved,
@@ -34,6 +35,7 @@ textFormField({
           controller: controller,
           validator: validator,
           obscureText: password ? !passwordVisible : false,
+          readOnly: readOnly ?? false,
           style: const TextStyle(fontSize: 13),
           inputFormatters: inputFormatters,
           keyboardType: textInputType,
@@ -43,8 +45,9 @@ textFormField({
             ),
             border: const OutlineInputBorder(),
             filled: true,
-            fillColor: Colors.white,
-            counterText: '',
+            fillColor: readOnly != null && readOnly
+                ? Colors.grey.withOpacity(0.5)
+                : Colors.white,
             contentPadding: const EdgeInsets.only(top: 14.0, left: 14.0),
             hintText: hint,
             hintStyle: textStylePlaceholder,

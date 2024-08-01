@@ -133,7 +133,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
             'surname': surname,
             'cpf': cpf,
             'phone': phone,
-            'isActive': widget.userTeacher!.isActive ?? true,
+            'isActive': widget.userTeacher!.isActive,
           },
         ).then((_) {
           _showSuccessDialog();

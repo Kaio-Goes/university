@@ -9,20 +9,19 @@ import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/user_teacher.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
-import 'package:university/services/send_email.dart';
 
-class TeacherCreatePage extends StatefulWidget {
+class StudantCreatePage extends StatefulWidget {
   final UserTeacher? userTeacher;
-  const TeacherCreatePage({super.key, this.userTeacher});
+  const StudantCreatePage({super.key, this.userTeacher});
 
   @override
-  State<TeacherCreatePage> createState() => _TeacherCreatePageState();
+  State<StudantCreatePage> createState() => _StudantCreatePageState();
 }
 
-class _TeacherCreatePageState extends State<TeacherCreatePage> {
+class _StudantCreatePageState extends State<StudantCreatePage> {
   final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController();
-  final surnameController = TextEditingController();
+  final rgController = TextEditingController();
   final cpfController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
@@ -41,7 +40,6 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
 
   void editResquest() {
     nameController.text = widget.userTeacher!.name;
-    surnameController.text = widget.userTeacher!.surname;
     emailController.text = widget.userTeacher!.email;
     cpfController.text = widget.userTeacher!.cpf;
     phoneController.text = widget.userTeacher!.phone;
@@ -51,7 +49,6 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
     required String email,
     required String password,
     required String name,
-    required String surname,
     required String cpf,
     required String phone,
   }) async {
@@ -80,10 +77,9 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
             'uid': uid,
             'email': email,
             'name': name,
-            'surname': surname,
             'cpf': cpf,
             'phone': phone,
-            'role': 'teacher',
+            'role': 'studant',
             'isActive': true
           },
         ).then((_) async {
@@ -92,7 +88,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
             builder: (BuildContext context) {
               return AlertDialog(
                 title: const Text("Sucesso"),
-                content: const Text("Professor criado com sucesso!"),
+                content: const Text("Aluno criado com sucesso!"),
                 actions: [
                   ElevatedButton(
                     onPressed: () {
@@ -116,15 +112,6 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
               );
             },
           );
-
-          await SendEmail().sendEmailCreateTeacher(
-            email: email,
-            password: password,
-            name: name,
-            surname: surname,
-            cpf: cpf,
-            phone: phone,
-          );
         });
       } catch (e) {
         setState(() {
@@ -141,7 +128,6 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
         usersRef.child(uid).update(
           {
             'name': name,
-            'surname': surname,
             'cpf': cpf,
             'phone': phone,
             'isActive': widget.userTeacher!.isActive,
@@ -210,7 +196,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'Criar um novo Professor',
+                            'Criar um novo Aluno',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 24,
@@ -219,7 +205,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                           ),
                           const SizedBox(height: 6),
                           const Text(
-                            'Assim que criado é enviado no e-mail do Professor sua conta.',
+                            'Assim que criado é enviado no e-mail do Aluno a sua conta.',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 13),
                           ),
@@ -249,8 +235,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                                             builFormCreateTeacherPartTwo(
                                               context: context,
                                               isSmallScreen: isSmallScreen,
-                                              surnameController:
-                                                  surnameController,
+                                              rgController: rgController,
                                               cpfController: cpfController,
                                               passwordController:
                                                   passwordController,
@@ -298,8 +283,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                                                 builFormCreateTeacherPartTwo(
                                                   context: context,
                                                   isSmallScreen: isSmallScreen,
-                                                  surnameController:
-                                                      surnameController,
+                                                  rgController: rgController,
                                                   cpfController: cpfController,
                                                   passwordController:
                                                       passwordController,
@@ -342,7 +326,6 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
                                       _clickButton(
                                           cpf: cpfController.text,
                                           name: nameController.text,
-                                          surname: surnameController.text,
                                           email: emailController.text,
                                           phone: phoneController.text,
                                           password: passwordController.text);
@@ -402,7 +385,7 @@ Widget builFormCreateTeacherPartOne({
           controller: nameController,
           validator: (value) => validInputNome(value),
           hint: 'Digite o primeiro nome',
-          label: 'Nome',
+          label: 'Nome Completo',
           size: widthInput),
       const SizedBox(height: 25),
       textFormField(
@@ -427,7 +410,7 @@ Widget builFormCreateTeacherPartOne({
 Widget builFormCreateTeacherPartTwo(
     {required BuildContext context,
     required bool isSmallScreen,
-    required TextEditingController surnameController,
+    required TextEditingController rgController,
     required TextEditingController cpfController,
     required TextEditingController passwordController,
     required bool passwordVisible,
@@ -445,10 +428,11 @@ Widget builFormCreateTeacherPartTwo(
           ? const SizedBox(height: 1)
           : const SizedBox(height: 19),
       textFormField(
-          controller: surnameController,
-          validator: (value) => validInputNome(value),
-          hint: 'Digite o sobrenome',
-          label: 'Sobrenome',
+          controller: rgController,
+          validator: (value) => validatorRg(value),
+          inputFormatters: [formatterRg],
+          hint: 'Digite o RG',
+          label: 'RG',
           size: widthInput),
       const SizedBox(height: 25),
       textFormField(

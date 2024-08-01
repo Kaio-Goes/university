@@ -63,3 +63,16 @@ validatorPassword(value) {
   // }
   return null;
 }
+
+String? validatorRg(String? value) {
+  if (value == null || value.isEmpty) {
+    return "Este campo é obrigatório";
+  }
+  if (value.length != 9) {
+    return 'O RG deve ter 9 caracteres, incluindo pontos';
+  }
+  if (!RegExp(r'^\d{1}\.\d{3}\.\d{3}$').hasMatch(value)) {
+    return 'O RG deve estar no formato X.XXX.XXX';
+  }
+  return null;
+}

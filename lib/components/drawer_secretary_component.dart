@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
+import 'package:university/pages/secretary/studant_create_page.dart';
 import 'package:university/pages/secretary/teacher_create_page.dart';
 
 class DrawerSecretaryComponent extends StatelessWidget {
@@ -38,6 +39,14 @@ class DrawerSecretaryComponent extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const TeacherCreatePage()));
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.person_add_alt),
+            title: const Text('Cadastrar Aluno'),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const StudantCreatePage()));
             },
           ),
           const SizedBox(height: 230),

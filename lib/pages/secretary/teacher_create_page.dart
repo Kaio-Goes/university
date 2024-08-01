@@ -60,64 +60,120 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
       return;
     }
 
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+    if (widget.userTeacher == null) {
+      try {
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
 
-      String uid = userCredential.user!.uid;
+        String uid = userCredential.user!.uid;
 
-      // Adicionando usuário ao Realtime Database
-      DatabaseReference usersRef =
-          FirebaseDatabase.instance.ref().child('users');
-      usersRef.child(uid).set(
-        {
-          'uid': uid,
-          'email': email,
-          'name': name,
-          'surname': surname,
-          'cpf': cpf,
-          'phone': phone,
-          'role': 'teacher',
-          'isActive': true
-        },
-      ).then((_) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Sucesso"),
-              content: const Text("Professor criado com sucesso!"),
-              actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const DashboardSecretaryPage()),
-                        (Route<dynamic> route) => false);
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                  child: const Text(
-                    "Ir para o ínicio",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+        // Adicionando usuário ao Realtime Database
+        DatabaseReference usersRef =
+            FirebaseDatabase.instance.ref().child('users');
+        usersRef.child(uid).set(
+          {
+            'uid': uid,
+            'email': email,
+            'name': name,
+            'surname': surname,
+            'cpf': cpf,
+            'phone': phone,
+            'role': 'teacher',
+            'isActive': true
+          },
+        ).then((_) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text("Sucesso"),
+                content: const Text("Professor criado com sucesso!"),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const DashboardSecretaryPage()),
+                          (Route<dynamic> route) => false);
+                    },
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                    child: const Text(
+                      "Ir para o ínicio",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            );
+                ],
+              );
+            },
+          );
+        });
+      } catch (e) {
+        setState(() {
+          _errorMessage = "E-mail já utilizado, exclua a conta com esse e-mail";
+        });
+      }
+    } else {
+      try {
+        String uid = widget.userTeacher!.uid;
+
+        // Atualizando usuário no Realtime Database (sem o campo e-mail)
+        DatabaseReference usersRef =
+            FirebaseDatabase.instance.ref().child('users');
+        usersRef.child(uid).update(
+          {
+            'name': name,
+            'surname': surname,
+            'cpf': cpf,
+            'phone': phone,
+            'isActive': widget.userTeacher!.isActive ?? true,
           },
-        );
-      });
-    } catch (e) {
-      setState(() {
-        _errorMessage = "E-mail já utilizado, exclua a conta com esse e-mail";
-      });
+        ).then((_) {
+          _showSuccessDialog();
+        });
+      } catch (e) {
+        setState(() {
+          _errorMessage = "Erro ao atualizar o usuário";
+        });
+      }
     }
+  }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Sucesso"),
+          content: const Text("Operação realizada com sucesso!"),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => const DashboardSecretaryPage()),
+                    (Route<dynamic> route) => false);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+              child: const Text(
+                "Ir para o início",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -407,7 +463,7 @@ Widget builFormCreateTeacherPartTwo(
           ? SizedBox(
               width: widthInput,
               child: SwitchListTile(
-                title: const Text('Ativo'),
+                title: const Text('Ativar?'),
                 value: isActive ?? true,
                 onChanged: onChangedIsActive,
               ),

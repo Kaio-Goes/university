@@ -18,6 +18,8 @@ class DashboardSecretaryPage extends StatefulWidget {
 class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   List<UserFirebase> teachers = [];
   List<UserFirebase> activeTeachers = [];
+  List<UserFirebase> activeStudent = [];
+
   List<UserFirebase> filteredTeachers = [];
   TextEditingController searchController = TextEditingController();
   bool isAscending = true; // Para controle de ordenação
@@ -41,9 +43,13 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
       Map<String, List<UserFirebase>> fetchedUsers =
           await UsersService().getAllUsers();
       List<UserFirebase> fetchedTeachers = fetchedUsers['teachers'] ?? [];
+      List<UserFirebase> fetchedStudents =
+          fetchedUsers['students']?.cast<UserFirebase>() ?? [];
 
       activeTeachers =
           fetchedTeachers.where((teacher) => teacher.isActive).toList();
+      activeStudent =
+          fetchedStudents.where((student) => student.isActive).toList();
       setState(() {
         teachers = fetchedTeachers;
         filteredTeachers = teachers; // Inicialmente mostra todos
@@ -125,6 +131,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                   child: isSmallScreen
                       ? Column(
                           children: cardBuild(
+                              countStudent: activeStudent.length.toString(),
                               countTeacher: activeTeachers.length.toString()),
                         )
                       : SingleChildScrollView(
@@ -132,6 +139,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: cardBuild(
+                                countStudent: activeStudent.length.toString(),
                                 countTeacher: activeTeachers.length.toString()),
                           ),
                         ),
@@ -159,10 +167,11 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   }
 }
 
-List<Widget> cardBuild({required String countTeacher}) {
+List<Widget> cardBuild(
+    {required String countStudent, required String countTeacher}) {
   return [
-    const CardCount(
-      count: '16',
+    CardCount(
+      count: countStudent,
       typeCount: 'Alunos Ativos',
       color: Colors.blue,
     ),

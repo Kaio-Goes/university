@@ -1,0 +1,212 @@
+import 'package:flutter/material.dart';
+import 'package:university/components/text_fields.dart';
+import 'package:university/components/validation/validation.dart';
+import 'package:university/core/models/user_firebase.dart';
+import 'package:university/core/utilities/styles.constants.dart';
+
+class CardModuleComponent extends StatefulWidget {
+  final bool isSmallScreen;
+  final String title;
+  final List<UserFirebase> userTeacher;
+  const CardModuleComponent(
+      {super.key,
+      required this.isSmallScreen,
+      required this.title,
+      required this.userTeacher});
+
+  @override
+  State<CardModuleComponent> createState() => _CardModuleComponentState();
+}
+
+class _CardModuleComponentState extends State<CardModuleComponent> {
+  final _formKey = GlobalKey<FormState>();
+  final titleController = TextEditingController();
+  final hourController = TextEditingController();
+  final moduleController = TextEditingController();
+  String? _selectedModule;
+  String? _selectedTeacher;
+
+  final List<DropdownMenuItem<String>> dropdownItemsModule = [
+    const DropdownMenuItem(value: '1', child: Text('Módulo 1')),
+    const DropdownMenuItem(value: '2', child: Text('Módulo 2')),
+    const DropdownMenuItem(value: '3', child: Text('Module 3')),
+  ];
+
+  List<DropdownMenuItem<String>>? enumTeachers = [];
+
+  _clickButton() {
+    bool formOk = _formKey.currentState!.validate();
+
+    if (!formOk) {
+      return;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: const Color.fromARGB(255, 208, 223, 224),
+      elevation: 8,
+      child: SizedBox(
+        height: 300,
+        width: 400,
+        child: Column(
+          children: [
+            const SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(width: 160),
+                Text(
+                  widget.title,
+                  style: const TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 100),
+                IconButton(
+                    onPressed: () {
+                      enumTeachers = widget.userTeacher
+                          .map((e) => DropdownMenuItem<String>(
+                              value: e.uid.toString(),
+                              child: Text('Professor(a) ${e.name.toString()}')))
+                          .toList();
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text("Criar uma Matéria"),
+                                const SizedBox(width: 60),
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    icon: const Icon(Icons.close))
+                              ],
+                            ),
+                            content: const Text(
+                                "Crie uma matéria para o módulo selecionado e adiocione o Professor responsável."),
+                            actions: [
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    textFormField(
+                                      controller: titleController,
+                                      validator: validInputNome,
+                                      label: 'Título',
+                                      hint: 'Digite o título da matéria',
+                                      size: 600,
+                                    ),
+                                    const SizedBox(height: 25),
+                                    Row(
+                                      children: [
+                                        textFormField(
+                                          controller: hourController,
+                                          validator: validInputNome,
+                                          label: 'Hora',
+                                          hint: 'Ex: 20hr',
+                                          inputFormatters: [formatterHour],
+                                          textInputType: TextInputType.phone,
+                                          size: widget.isSmallScreen
+                                              ? MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.32
+                                              : 286,
+                                        ),
+                                        const SizedBox(width: 25),
+                                        SizedBox(
+                                          width: widget.isSmallScreen
+                                              ? MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.32
+                                              : 286,
+                                          child: dropDownField(
+                                            label: 'Módulo',
+                                            select: _selectedModule,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _selectedModule = value;
+                                              });
+                                            },
+                                            hintText: widget.isSmallScreen
+                                                ? 'Selecione o Mó...'
+                                                : 'Selecione o Módulo',
+                                            items: dropdownItemsModule,
+                                            validator: (value) =>
+                                                validatorDropdown(value),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 25),
+                                    SizedBox(
+                                      width: 600,
+                                      child: dropDownField(
+                                        label: 'Professor',
+                                        select: _selectedTeacher,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedTeacher = value;
+                                          });
+                                        },
+                                        hintText:
+                                            'Selecione o professor responsável',
+                                        items: enumTeachers,
+                                        validator: (value) =>
+                                            validatorDropdown(value),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 25),
+                                    SizedBox(
+                                      height: 40,
+                                      width: 200,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          _clickButton();
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blue),
+                                        child: const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Adicionar',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.add))
+              ],
+            ),
+            const SizedBox(height: 5),
+            Container(
+              height: 1,
+              width: 300,
+              color: Colors.grey,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

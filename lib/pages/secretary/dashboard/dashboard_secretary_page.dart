@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:university/components/app_bar_secretary_component.dart';
 import 'package:university/components/card_count.dart';
+import 'package:university/components/card_module_component.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/list_users_card.dart';
@@ -194,6 +195,34 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                                 countTeacher: activeTeachers.length.toString()),
                           ),
                         ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CardModuleComponent(
+                          isSmallScreen: isSmallScreen,
+                          userTeacher: activeTeachers,
+                          title: 'Módulo 1',
+                        ),
+                        const SizedBox(width: 10),
+                        CardModuleComponent(
+                          isSmallScreen: isSmallScreen,
+                          userTeacher: activeTeachers,
+                          title: 'Módulo 2',
+                        ),
+                        const SizedBox(width: 10),
+                        CardModuleComponent(
+                          isSmallScreen: isSmallScreen,
+                          userTeacher: activeTeachers,
+                          title: 'Módulo 3',
+                        )
+                      ],
+                    ),
+                  ),
                 ),
                 ListUsersCard(
                   isSmallScreen: isSmallScreen,

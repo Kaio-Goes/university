@@ -3,7 +3,7 @@ import 'package:university/components/app_bar_secretary_component.dart';
 import 'package:university/components/card_count.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
-import 'package:university/components/list_teacher_card.dart';
+import 'package:university/components/list_users_card.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/services/auth_service.dart';
 import 'package:university/services/users_service.dart';
@@ -17,11 +17,16 @@ class DashboardSecretaryPage extends StatefulWidget {
 
 class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   List<UserFirebase> teachers = [];
+  List<UserFirebase> students = [];
   List<UserFirebase> activeTeachers = [];
   List<UserFirebase> activeStudent = [];
 
   List<UserFirebase> filteredTeachers = [];
-  TextEditingController searchController = TextEditingController();
+  List<UserFirebase> filteredStudents = [];
+
+  TextEditingController searchTeachersController = TextEditingController();
+  TextEditingController searchStudentsSController = TextEditingController();
+
   bool isAscending = true; // Para controle de ordenação
 
   int currentPage = 1;
@@ -33,8 +38,12 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
     _loadTeachers();
 
     // Adiciona um listener para o TextEditingController
-    searchController.addListener(() {
+    searchTeachersController.addListener(() {
       filterTeachers();
+    });
+
+    searchStudentsSController.addListener(() {
+      filterStudent();
     });
   }
 
@@ -53,6 +62,8 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
       setState(() {
         teachers = fetchedTeachers;
         filteredTeachers = teachers; // Inicialmente mostra todos
+        students = fetchedStudents;
+        filteredStudents = students;
       });
     } catch (e) {
       // print('Erro ao carregar professores: $e');
@@ -64,10 +75,23 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
       filteredTeachers = teachers.where((teacher) {
         return teacher.name
                 .toLowerCase()
-                .contains(searchController.text.toLowerCase()) ||
+                .contains(searchTeachersController.text.toLowerCase()) ||
             teacher.email
                 .toLowerCase()
-                .contains(searchController.text.toLowerCase());
+                .contains(searchTeachersController.text.toLowerCase());
+      }).toList();
+    });
+  }
+
+  void filterStudent() {
+    setState(() {
+      filteredStudents = students.where((student) {
+        return student.name
+                .toLowerCase()
+                .contains(searchStudentsSController.text.toLowerCase()) ||
+            student.email
+                .toLowerCase()
+                .contains(searchStudentsSController.text.toLowerCase());
       }).toList();
     });
   }
@@ -75,6 +99,19 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   void _sortTeachersByName() {
     setState(() {
       filteredTeachers.sort((a, b) {
+        if (isAscending) {
+          return a.name.compareTo(b.name);
+        } else {
+          return b.name.compareTo(a.name);
+        }
+      });
+      isAscending = !isAscending; // Alterna a direção da ordenação
+    });
+  }
+
+  void _sortStudentsByName() {
+    setState(() {
+      filteredStudents.sort((a, b) {
         if (isAscending) {
           return a.name.compareTo(b.name);
         } else {
@@ -93,6 +130,14 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
     });
   }
 
+  void _nextPageStudent() {
+    setState(() {
+      if (currentPage * itemsPerPage < filteredStudents.length) {
+        currentPage++;
+      }
+    });
+  }
+
   void _previousPage() {
     setState(() {
       if (currentPage > 1) {
@@ -105,7 +150,8 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   void dispose() {
     super.dispose();
     teachers.clear();
-    searchController.dispose();
+    searchTeachersController.dispose();
+    searchStudentsSController.dispose();
   }
 
   @override
@@ -115,6 +161,11 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
     List<UserFirebase> paginatedTeachers = filteredTeachers.sublist(
       startIndex,
       endIndex > filteredTeachers.length ? filteredTeachers.length : endIndex,
+    );
+
+    List<UserFirebase> paginatedStudants = filteredStudents.sublist(
+      startIndex,
+      endIndex > filteredStudents.length ? filteredStudents.length : endIndex,
     );
 
     return Scaffold(
@@ -144,17 +195,32 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                           ),
                         ),
                 ),
-                ListTeacherCard(
+                ListUsersCard(
                   isSmallScreen: isSmallScreen,
-                  searchController: searchController,
-                  paginatedTeachers: paginatedTeachers,
+                  title: 'Lista de Professores',
+                  searchController: searchTeachersController,
+                  paginetedUsers: paginatedTeachers,
                   sortTeachersByName: _sortTeachersByName,
                   isAscending: isAscending,
                   previousPage: _previousPage,
                   currentPage: currentPage,
-                  filteredTeachers: filteredTeachers,
+                  filteredUsers: filteredTeachers,
                   itemsPerPage: itemsPerPage,
                   nextPage: _nextPage,
+                ),
+                const SizedBox(height: 40),
+                ListUsersCard(
+                  isSmallScreen: isSmallScreen,
+                  title: 'Lista de Alunos',
+                  searchController: searchStudentsSController,
+                  paginetedUsers: paginatedStudants,
+                  sortTeachersByName: _sortStudentsByName,
+                  isAscending: isAscending,
+                  previousPage: _previousPage,
+                  currentPage: currentPage,
+                  filteredUsers: filteredStudents,
+                  itemsPerPage: itemsPerPage,
+                  nextPage: _nextPageStudent,
                 ),
                 const SizedBox(height: 15),
                 const Footer()

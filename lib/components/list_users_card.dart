@@ -1,38 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/pages/secretary/student_create_page.dart';
 import 'package:university/pages/secretary/teacher_create_page.dart';
 
-class ListTeacherCard extends StatefulWidget {
+class ListUsersCard extends StatefulWidget {
   final bool isSmallScreen;
+  final String title;
   final TextEditingController searchController;
-  final List<UserFirebase> paginatedTeachers;
+  final List<UserFirebase> paginetedUsers;
   final Function() sortTeachersByName;
   final bool isAscending;
   final Function() previousPage;
   final int currentPage;
-  final List<UserFirebase> filteredTeachers;
+  final List<UserFirebase> filteredUsers;
   final int itemsPerPage;
   final Function() nextPage;
 
-  const ListTeacherCard(
+  const ListUsersCard(
       {super.key,
       required this.isSmallScreen,
+      required this.title,
       required this.searchController,
-      required this.paginatedTeachers,
+      required this.paginetedUsers,
       required this.sortTeachersByName,
       required this.isAscending,
       required this.previousPage,
       required this.currentPage,
-      required this.filteredTeachers,
+      required this.filteredUsers,
       required this.itemsPerPage,
       required this.nextPage});
 
   @override
-  State<ListTeacherCard> createState() => _ListTeacherCardState();
+  State<ListUsersCard> createState() => _ListUsersCardState();
 }
 
-class _ListTeacherCardState extends State<ListTeacherCard> {
+class _ListUsersCardState extends State<ListUsersCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -47,9 +50,9 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Lista de Professores',
-                    style: TextStyle(
+                  Text(
+                    widget.title,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
@@ -72,7 +75,7 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
               const SizedBox(height: 10),
               widget.isSmallScreen
                   ? Column(
-                      children: widget.paginatedTeachers.map((teacher) {
+                      children: widget.paginetedUsers.map((user) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Column(
@@ -83,7 +86,7 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '${teacher.name} ${teacher.surname}',
+                                    '${user.name} ${user.surname ?? ''}',
                                     style: textFontBold,
                                   ),
                                   PopupMenuButton<String>(
@@ -92,9 +95,13 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
                                       if (result == 'Edit') {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TeacherCreatePage(
-                                                      userTeacher: teacher)),
+                                            builder: (context) =>
+                                                user.role == 'teacher'
+                                                    ? TeacherCreatePage(
+                                                        userTeacher: user)
+                                                    : StudantCreatePage(
+                                                        userTeacher: user),
+                                          ),
                                         );
                                       }
                                     },
@@ -115,11 +122,11 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
                                   ),
                                 ],
                               ),
-                              Text('Email: ${teacher.email}'),
-                              Text('CPF: ${teacher.cpf}'),
-                              Text('Telefone: ${teacher.phone}'),
+                              Text('Email: ${user.email}'),
+                              Text('CPF: ${user.cpf}'),
+                              Text('Telefone: ${user.phone}'),
                               Text(
-                                'Status: ${teacher.isActive ? "Ativo" : "Desativado"}',
+                                'Status: ${user.isActive ? "Ativo" : "Desativado"}',
                               ),
                               const Divider(),
                             ],
@@ -181,35 +188,35 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
                             ),
                           ],
                         ),
-                        for (var teacher in widget.paginatedTeachers) ...[
+                        for (var user in widget.paginetedUsers) ...[
                           TableRow(
                             children: [
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
                                 child:
-                                    Text('${teacher.name} ${teacher.surname}'),
+                                    Text('${user.name} ${user.surname ?? ''}'),
                               ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(teacher.email),
+                                child: Text(user.email),
                               ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(teacher.cpf),
+                                child: Text(user.cpf),
                               ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(teacher.phone),
+                                child: Text(user.phone),
                               ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
                                 child: Text(
-                                    teacher.isActive ? "Ativo" : "Desativado"),
+                                    user.isActive ? "Ativo" : "Desativado"),
                               ),
                               Center(
                                 child: PopupMenuButton<String>(
@@ -218,9 +225,13 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
                                     if (result == 'Edit') {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                TeacherCreatePage(
-                                                    userTeacher: teacher)),
+                                          builder: (context) =>
+                                              user.role == 'teacher'
+                                                  ? TeacherCreatePage(
+                                                      userTeacher: user)
+                                                  : StudantCreatePage(
+                                                      userTeacher: user),
+                                        ),
                                       );
                                     }
                                   },
@@ -263,12 +274,12 @@ class _ListTeacherCardState extends State<ListTeacherCard> {
                     color: widget.currentPage > 1 ? Colors.black : Colors.grey,
                   ),
                   Text(
-                      '${widget.currentPage}/${(widget.filteredTeachers.length / widget.itemsPerPage).ceil()}'),
+                      '${widget.currentPage}/${(widget.filteredUsers.length / widget.itemsPerPage).ceil()}'),
                   IconButton(
                     onPressed: widget.nextPage,
                     icon: const Icon(Icons.arrow_forward),
                     color: widget.currentPage * widget.itemsPerPage <
-                            widget.filteredTeachers.length
+                            widget.filteredUsers.length
                         ? Colors.black
                         : Colors.grey,
                   ),

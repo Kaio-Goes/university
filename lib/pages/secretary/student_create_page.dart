@@ -9,6 +9,7 @@ import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
+import 'package:university/services/send_email.dart';
 
 class StudantCreatePage extends StatefulWidget {
   final UserFirebase? userTeacher;
@@ -41,6 +42,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
   void editResquest() {
     nameController.text = widget.userTeacher!.name;
     emailController.text = widget.userTeacher!.email;
+    rgController.text = widget.userTeacher!.rg!;
     cpfController.text = widget.userTeacher!.cpf;
     phoneController.text = widget.userTeacher!.phone;
   }
@@ -50,6 +52,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
     required String password,
     required String name,
     required String cpf,
+    required String rg,
     required String phone,
   }) async {
     bool formOk = _formKey.currentState!.validate();
@@ -78,6 +81,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
             'email': email,
             'name': name,
             'cpf': cpf,
+            'rg': rg,
             'phone': phone,
             'role': 'student',
             'isActive': true
@@ -112,6 +116,13 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
               );
             },
           );
+          await SendEmail().sendEmailCreateStudent(
+              email: email,
+              password: password,
+              name: name,
+              rg: rg,
+              cpf: cpf,
+              phone: phone);
         });
       } catch (e) {
         setState(() {
@@ -324,11 +335,13 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                   child: ElevatedButton(
                                     onPressed: () {
                                       _clickButton(
-                                          cpf: cpfController.text,
-                                          name: nameController.text,
-                                          email: emailController.text,
-                                          phone: phoneController.text,
-                                          password: passwordController.text);
+                                        cpf: cpfController.text,
+                                        name: nameController.text,
+                                        email: emailController.text,
+                                        rg: rgController.text,
+                                        phone: phoneController.text,
+                                        password: passwordController.text,
+                                      );
                                     },
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.blue),

@@ -96,4 +96,59 @@ class SendEmail {
 
     return response;
   }
+
+  Future sendEmailCreateStudent({
+    required String email,
+    required String password,
+    required String name,
+    required String rg,
+    required String cpf,
+    required String phone,
+  }) async {
+    var url = "${ApiConstants.baseUrl}/mail";
+
+    Map params = {
+      "fields": {
+        "to": {"stringValue": email},
+        "message": {
+          "mapValue": {
+            "fields": {
+              "subject": {
+                "stringValue":
+                    "Seu Perfil de Professor foi criado na AnnaNery Aluno(a) $name"
+              },
+              "html": {
+                "stringValue": """
+                    <p>Prezado(a) <strong>$name</strong>,</p>
+                    <p>Estamos felizes em informá-lo(a) que seu perfil de professor foi criado com sucesso na <strong>AnnaNery</strong>.</p>
+                    <p>Abaixo estão os detalhes da sua conta:</p>
+                    <ul>
+                      <li><strong>Email:</strong> $email</li>
+                      <li><strong>Senha:</strong> $password</li>
+                      <li><strong>CPF:</strong> $cpf</li>
+                      <li><strong>RG:</strong> $rg</li>
+                      <li><strong>Telefone:</strong> $phone</li>
+                    </ul>
+                    <p>Por favor, faça login no sistema utilizando as credenciais acima e complete seu perfil.</p>
+                    <p>Se você tiver qualquer dúvida ou precisar de assistência, não hesite em nos contatar.</p>
+                    <p>Atenciosamente,<br>Equipe AnnaNery</p>
+                    """
+              }
+            }
+          }
+        }
+      }
+    };
+    var body = json.encode(params);
+
+    var response = await http.post(
+      Uri.parse(url),
+      body: body,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    return response;
+  }
 }

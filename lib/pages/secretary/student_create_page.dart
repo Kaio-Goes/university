@@ -6,12 +6,12 @@ import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
-import 'package:university/core/models/user_teacher.dart';
+import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 
 class StudantCreatePage extends StatefulWidget {
-  final UserTeacher? userTeacher;
+  final UserFirebase? userTeacher;
   const StudantCreatePage({super.key, this.userTeacher});
 
   @override
@@ -79,7 +79,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
             'name': name,
             'cpf': cpf,
             'phone': phone,
-            'role': 'studant',
+            'role': 'student',
             'isActive': true
           },
         ).then((_) async {
@@ -374,7 +374,7 @@ Widget builFormCreateTeacherPartOne({
   required TextEditingController nameController,
   required TextEditingController emailController,
   required TextEditingController phoneController,
-  required UserTeacher? userTeacher,
+  required UserFirebase? userTeacher,
 }) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
@@ -415,7 +415,7 @@ Widget builFormCreateTeacherPartTwo(
     required TextEditingController passwordController,
     required bool passwordVisible,
     required Function() togglePasswordVisibility,
-    required UserTeacher? userTeacher,
+    required UserFirebase? userTeacher,
     bool? isActive,
     Function(bool)? onChangedIsActive}) {
   var widthInput = isSmallScreen

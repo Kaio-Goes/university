@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:university/core/models/user_teacher.dart';
+import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/teacher_create_page.dart';
 
 class ListTeacherCard extends StatefulWidget {
   final bool isSmallScreen;
   final TextEditingController searchController;
-  final List<UserTeacher> paginatedTeachers;
+  final List<UserFirebase> paginatedTeachers;
   final Function() sortTeachersByName;
   final bool isAscending;
   final Function() previousPage;
   final int currentPage;
-  final List<UserTeacher> filteredTeachers;
+  final List<UserFirebase> filteredTeachers;
   final int itemsPerPage;
   final Function() nextPage;
 

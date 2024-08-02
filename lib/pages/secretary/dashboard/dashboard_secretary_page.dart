@@ -4,9 +4,9 @@ import 'package:university/components/card_count.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/list_teacher_card.dart';
-import 'package:university/core/models/user_teacher.dart';
+import 'package:university/core/models/user_firebase.dart';
 import 'package:university/services/auth_service.dart';
-import 'package:university/services/teacher_service.dart';
+import 'package:university/services/users_service.dart';
 
 class DashboardSecretaryPage extends StatefulWidget {
   const DashboardSecretaryPage({super.key});
@@ -16,9 +16,9 @@ class DashboardSecretaryPage extends StatefulWidget {
 }
 
 class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
-  List<UserTeacher> teachers = [];
-  List<UserTeacher> activeTeachers = [];
-  List<UserTeacher> filteredTeachers = [];
+  List<UserFirebase> teachers = [];
+  List<UserFirebase> activeTeachers = [];
+  List<UserFirebase> filteredTeachers = [];
   TextEditingController searchController = TextEditingController();
   bool isAscending = true; // Para controle de ordenação
 
@@ -38,8 +38,10 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
 
   Future<void> _loadTeachers() async {
     try {
-      List<UserTeacher> fetchedTeachers =
-          await TeacherService().getAllTeacher();
+      Map<String, List<UserFirebase>> fetchedUsers =
+          await UsersService().getAllUsers();
+      List<UserFirebase> fetchedTeachers = fetchedUsers['teachers'] ?? [];
+
       activeTeachers =
           fetchedTeachers.where((teacher) => teacher.isActive).toList();
       setState(() {
@@ -104,7 +106,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   Widget build(BuildContext context) {
     int startIndex = (currentPage - 1) * itemsPerPage;
     int endIndex = startIndex + itemsPerPage;
-    List<UserTeacher> paginatedTeachers = filteredTeachers.sublist(
+    List<UserFirebase> paginatedTeachers = filteredTeachers.sublist(
       startIndex,
       endIndex > filteredTeachers.length ? filteredTeachers.length : endIndex,
     );

@@ -6,13 +6,13 @@ import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
-import 'package:university/core/models/user_teacher.dart';
+import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/services/send_email.dart';
 
 class TeacherCreatePage extends StatefulWidget {
-  final UserTeacher? userTeacher;
+  final UserFirebase? userTeacher;
   const TeacherCreatePage({super.key, this.userTeacher});
 
   @override
@@ -41,7 +41,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
 
   void editResquest() {
     nameController.text = widget.userTeacher!.name;
-    surnameController.text = widget.userTeacher!.surname;
+    surnameController.text = widget.userTeacher!.surname!;
     emailController.text = widget.userTeacher!.email;
     cpfController.text = widget.userTeacher!.cpf;
     phoneController.text = widget.userTeacher!.phone;
@@ -391,7 +391,7 @@ Widget builFormCreateTeacherPartOne({
   required TextEditingController nameController,
   required TextEditingController emailController,
   required TextEditingController phoneController,
-  required UserTeacher? userTeacher,
+  required UserFirebase? userTeacher,
 }) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
@@ -432,7 +432,7 @@ Widget builFormCreateTeacherPartTwo(
     required TextEditingController passwordController,
     required bool passwordVisible,
     required Function() togglePasswordVisibility,
-    required UserTeacher? userTeacher,
+    required UserFirebase? userTeacher,
     bool? isActive,
     Function(bool)? onChangedIsActive}) {
   var widthInput = isSmallScreen

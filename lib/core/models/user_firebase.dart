@@ -1,27 +1,30 @@
-class UserTeacher {
+class UserFirebase {
   late String uid;
   late String name;
-  late String surname;
+  String? surname;
   late String email;
+  String? rg;
   late String cpf;
   late String phone;
   late String role;
   late bool isActive;
 
-  UserTeacher(
+  UserFirebase(
       {required this.uid,
       required this.name,
-      required this.surname,
+      this.surname,
       required this.email,
+      this.rg,
       required this.cpf,
       required this.phone,
       required this.role,
       required this.isActive});
 
-  UserTeacher.fromJson(Map<String, dynamic> json) {
+  UserFirebase.fromJson(Map<String, dynamic> json) {
     uid = json["uid"];
     name = json["name"];
     surname = json['surname'];
+    rg = json['rg'];
     email = json['email'];
     cpf = json['cpf'];
     role = json['role'];

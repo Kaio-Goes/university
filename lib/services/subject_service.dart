@@ -40,12 +40,12 @@ class SubjectService {
     List<SubjectModule> subjectModules = [];
 
     if (snapshot.exists) {
-      snapshot.children.forEach((child) {
+      for (var child in snapshot.children) {
         Map<dynamic, dynamic> data = child.value as Map<dynamic, dynamic>;
         SubjectModule subjectModule =
             SubjectModule.fromJson(Map<String, dynamic>.from(data));
         subjectModules.add(subjectModule);
-      });
+      }
     }
 
     return subjectModules;

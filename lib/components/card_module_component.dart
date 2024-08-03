@@ -82,12 +82,14 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
           },
         );
       });
-    } catch (e) {}
+    } catch (e) {
+      throw Exception("$e");
+    }
   }
 
   void _populateForm(SubjectModule subject) {
-    titleController.text = subject.title ?? '';
-    hourController.text = subject.hour ?? '';
+    titleController.text = subject.title;
+    hourController.text = subject.hour;
     _selectedModule = subject.module;
     _selectedTeacher = subject.userId;
   }

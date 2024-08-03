@@ -163,7 +163,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
               width: 300,
               color: Colors.grey,
             ),
-            const SizedBox(height: 25),
+            const SizedBox(height: 10),
             SizedBox(
               height: 210,
               child: ListView.builder(
@@ -254,8 +254,36 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                 );
                               }
                             } else if (value == 'delete') {
-                              // Adicione aqui a lógica para a opção 'Excluir'
-                              print('Excluir clicado');
+                              // Adicione aqui a lógica para a opção 'Excluir'7
+                              showDialog(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: const Text("Tem certeza?"),
+                                  content:
+                                      const Text("Deseja excluir a matéria"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(ctx).pop(false);
+                                      },
+                                      child: const Text("Não"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        SubjectService().deleteSubject(
+                                            uid: widget
+                                                .subjectModule![index].uid);
+                                        Navigator.of(context).pushAndRemoveUntil(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const DashboardSecretaryPage()),
+                                            (Route<dynamic> route) => false);
+                                      },
+                                      child: const Text("Sim"),
+                                    ),
+                                  ],
+                                ),
+                              );
                             }
                           },
                           itemBuilder: (BuildContext context) {

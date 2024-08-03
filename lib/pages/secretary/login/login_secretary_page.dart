@@ -57,12 +57,11 @@ class _LoginSecretaryPageState extends State<LoginSecretaryPage> {
           AuthService().addUserSecretaryModel(user: user);
 
           if (role == 'admin') {
-            // Navegar para a próxima tela ou mostrar uma mensagem de sucesso
-            Navigator.pushReplacement(
-                // ignore: use_build_context_synchronously
-                context,
+            // ignore: use_build_context_synchronously
+            Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                    builder: (context) => const DashboardSecretaryPage()));
+                    builder: (context) => const DashboardSecretaryPage()),
+                (Route<dynamic> route) => false);
           } else {
             setState(() {
               _errorMessage = 'Acesso negado. Você não é um(a) secretário(a).';

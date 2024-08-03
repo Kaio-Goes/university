@@ -50,4 +50,11 @@ class SubjectService {
 
     return subjectModules;
   }
+
+  Future<void> deleteSubject({required String uid}) async {
+    DatabaseReference subjectRef =
+        FirebaseDatabase.instance.ref().child('subjects').child(uid);
+
+    await subjectRef.remove();
+  }
 }

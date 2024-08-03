@@ -219,7 +219,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                         ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(2),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -249,6 +249,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
                 ListUsersCard(
                   isSmallScreen: isSmallScreen,
                   title: 'Lista de Professores',

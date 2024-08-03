@@ -85,6 +85,13 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
     } catch (e) {}
   }
 
+  void _populateForm(SubjectModule subject) {
+    titleController.text = subject.title ?? '';
+    hourController.text = subject.hour ?? '';
+    _selectedModule = subject.module;
+    _selectedTeacher = subject.userId;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -107,44 +114,45 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                 ),
                 const SizedBox(width: 100),
                 IconButton(
-                    onPressed: () {
-                      enumTeachers = widget.userTeacher
-                          .map((e) => DropdownMenuItem<String>(
-                              value: e.uid.toString(),
-                              child: Text(
-                                  'Professor(a) ${e.name.toString()} ${e.surname.toString()}')))
-                          .toList();
-                      createSubjectFormComponent(
-                        context: context,
-                        formKey: _formKey,
-                        isSmallScreen: widget.isSmallScreen,
-                        titleController: titleController,
-                        hourController: hourController,
-                        selectedModule: _selectedModule,
-                        onChangedSelectedModule: (value) {
-                          setState(() {
-                            _selectedModule = value;
-                          });
-                        },
-                        dropdownItemsModule: dropdownItemsModule,
-                        selectedTeacher: _selectedTeacher,
-                        onChangedSelectedTeacher: (value) {
-                          setState(() {
-                            _selectedTeacher = value;
-                          });
-                        },
-                        enumTeachers: enumTeachers,
-                        onPressedClickButton: () {
-                          _clickButton(
-                            title: titleController.text,
-                            hour: hourController.text,
-                            module: _selectedModule ?? '',
-                            idUser: _selectedTeacher ?? '',
-                          );
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.add))
+                  onPressed: () {
+                    enumTeachers = widget.userTeacher
+                        .map((e) => DropdownMenuItem<String>(
+                            value: e.uid.toString(),
+                            child: Text(
+                                'Professor(a) ${e.name.toString()} ${e.surname.toString()}')))
+                        .toList();
+                    createSubjectFormComponent(
+                      context: context,
+                      formKey: _formKey,
+                      isSmallScreen: widget.isSmallScreen,
+                      titleController: titleController,
+                      hourController: hourController,
+                      selectedModule: _selectedModule,
+                      onChangedSelectedModule: (value) {
+                        setState(() {
+                          _selectedModule = value;
+                        });
+                      },
+                      dropdownItemsModule: dropdownItemsModule,
+                      selectedTeacher: _selectedTeacher,
+                      onChangedSelectedTeacher: (value) {
+                        setState(() {
+                          _selectedTeacher = value;
+                        });
+                      },
+                      enumTeachers: enumTeachers,
+                      onPressedClickButton: () {
+                        _clickButton(
+                          title: titleController.text,
+                          hour: hourController.text,
+                          module: _selectedModule ?? '',
+                          idUser: _selectedTeacher ?? '',
+                        );
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                )
               ],
             ),
             const SizedBox(height: 5),
@@ -201,10 +209,48 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                         trailing: PopupMenuButton<String>(
                           icon: const Icon(Icons.more_vert),
                           onSelected: (String value) {
-                            // Lógica para a seleção do item do menu
                             if (value == 'edit') {
-                              // Adicione aqui a lógica para a opção 'Editar'
-                              print('Editar clicado');
+                              var subject = widget.subjectModule?[index];
+                              if (subject != null) {
+                                _populateForm(subject);
+
+                                enumTeachers = widget.userTeacher
+                                    .map((e) => DropdownMenuItem<String>(
+                                        value: e.uid.toString(),
+                                        child: Text(
+                                            'Professor(a) ${e.name.toString()} ${e.surname.toString()}')))
+                                    .toList();
+
+                                createSubjectFormComponent(
+                                  context: context,
+                                  formKey: _formKey,
+                                  isSmallScreen: widget.isSmallScreen,
+                                  titleController: titleController,
+                                  hourController: hourController,
+                                  selectedModule: _selectedModule,
+                                  onChangedSelectedModule: (value) {
+                                    setState(() {
+                                      _selectedModule = value;
+                                    });
+                                  },
+                                  dropdownItemsModule: dropdownItemsModule,
+                                  selectedTeacher: _selectedTeacher,
+                                  onChangedSelectedTeacher: (value) {
+                                    setState(() {
+                                      _selectedTeacher = value;
+                                    });
+                                  },
+                                  enumTeachers: enumTeachers,
+                                  onPressedClickButton: () {
+                                    _clickButton(
+                                      title: titleController.text,
+                                      hour: hourController.text,
+                                      module: _selectedModule ?? '',
+                                      idUser: _selectedTeacher ?? '',
+                                    );
+                                  },
+                                );
+                              }
                             } else if (value == 'delete') {
                               // Adicione aqui a lógica para a opção 'Excluir'
                               print('Excluir clicado');

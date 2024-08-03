@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
 import 'package:university/pages/secretary/login/login_secretary_page.dart';
 import 'package:university/services/auth_service.dart';
@@ -39,7 +40,7 @@ appBarSecretaryComponent({String? name}) {
                   ),
                   PopupMenuButton<int>(
                     icon: const Icon(Icons.account_circle, color: Colors.black),
-                    onSelected: (int result) {
+                    onSelected: (int result) async {
                       if (result == 0) {
                         AuthService().logout();
                         Navigator.of(context).pushAndRemoveUntil(
@@ -98,9 +99,10 @@ appBarSecretaryComponent({String? name}) {
                       PopupMenuButton<int>(
                         icon: const Icon(Icons.account_circle,
                             size: 34, color: Colors.black),
-                        onSelected: (int result) {
+                        onSelected: (int result) async {
                           if (result == 0) {
                             AuthService().logout();
+                            // ignore: use_build_context_synchronously
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                     builder: (context) =>

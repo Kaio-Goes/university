@@ -56,6 +56,8 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
 
   Future<void> _loadUsers() async {
     try {
+      await AuthService().loadUserFromCache();
+
       Map<String, List<UserFirebase>> fetchedUsers =
           await UsersService().getAllUsers();
 

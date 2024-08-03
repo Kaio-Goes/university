@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/pages/secretary/student_create_page.dart';
 import 'package:university/pages/secretary/teacher_create_page.dart';
+import 'package:university/services/auth_service.dart';
 
 class DrawerSecretaryComponent extends StatelessWidget {
   const DrawerSecretaryComponent({super.key});
@@ -56,7 +58,9 @@ class DrawerSecretaryComponent extends StatelessWidget {
               color: Colors.red,
             ),
             title: const Text('Sair'),
-            onTap: () {
+            onTap: () async {
+              AuthService().logout();
+              // ignore: use_build_context_synchronously
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                       builder: (context) => const DashboardPage()),

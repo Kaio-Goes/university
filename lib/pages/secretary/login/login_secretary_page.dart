@@ -6,6 +6,7 @@ import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/user_secretary.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginSecretaryPage extends StatefulWidget {
   const LoginSecretaryPage({super.key});
@@ -51,10 +52,14 @@ class _LoginSecretaryPageState extends State<LoginSecretaryPage> {
           String email = snapshot.child('email').value as String;
           String uid = snapshot.child('uid').value as String;
 
-          var user =
-              UserSecretary(uid: uid, name: name, email: email, role: role);
+          var user = UserSecretary(
+            uid: uid,
+            name: name,
+            email: email,
+            role: role,
+          );
 
-          AuthService().addUserSecretaryModel(user: user);
+          await AuthService().addUserSecretaryModel(user: user);
 
           if (role == 'admin') {
             // ignore: use_build_context_synchronously

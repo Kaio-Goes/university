@@ -217,8 +217,8 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                           _clickButton(
                                             title: titleController.text,
                                             hour: hourController.text,
-                                            module: _selectedModule!,
-                                            idUser: _selectedTeacher!,
+                                            module: _selectedModule ?? '',
+                                            idUser: _selectedTeacher ?? '',
                                           );
                                         },
                                         style: ElevatedButton.styleFrom(

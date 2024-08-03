@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
+import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
+import 'package:university/services/subject_service.dart';
 
 class CardModuleComponent extends StatefulWidget {
   final bool isSmallScreen;
   final String title;
   final List<UserFirebase> userTeacher;
-  const CardModuleComponent(
-      {super.key,
-      required this.isSmallScreen,
-      required this.title,
-      required this.userTeacher});
+  final List<SubjectModule>? subjectModule;
+  const CardModuleComponent({
+    super.key,
+    required this.isSmallScreen,
+    required this.title,
+    required this.userTeacher,
+    this.subjectModule,
+  });
 
   @override
   State<CardModuleComponent> createState() => _CardModuleComponentState();
@@ -22,7 +28,6 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
   final _formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
   final hourController = TextEditingController();
-  final moduleController = TextEditingController();
   String? _selectedModule;
   String? _selectedTeacher;
 
@@ -34,12 +39,52 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
 
   List<DropdownMenuItem<String>>? enumTeachers = [];
 
-  _clickButton() {
+  _clickButton(
+      {required String title,
+      required String hour,
+      required String module,
+      required String idUser}) {
     bool formOk = _formKey.currentState!.validate();
 
     if (!formOk) {
       return;
     }
+
+    try {
+      SubjectService()
+          .createSubject(
+              title: title, hour: hour, module: module, idUser: idUser)
+          .then((_) async {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Sucesso"),
+              content: const Text("Matéria criado com sucesso!"),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const DashboardSecretaryPage()),
+                        (Route<dynamic> route) => false);
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  child: const Text(
+                    "Ir para o ínicio",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      });
+    } catch (e) {}
   }
 
   @override
@@ -168,7 +213,12 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                       width: 200,
                                       child: ElevatedButton(
                                         onPressed: () {
-                                          _clickButton();
+                                          _clickButton(
+                                            title: titleController.text,
+                                            hour: hourController.text,
+                                            module: _selectedModule!,
+                                            idUser: _selectedTeacher!,
+                                          );
                                         },
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.blue),
@@ -178,7 +228,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                           children: [
                                             Text(
                                               'Adicionar',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.white,
                                               ),
@@ -203,6 +253,47 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
               height: 1,
               width: 300,
               color: Colors.grey,
+            ),
+            const SizedBox(height: 25),
+            SizedBox(
+              height: 210,
+              child: ListView.builder(
+                itemCount: widget.subjectModule?.length ?? 0,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Card(
+                      child: ListTile(
+                        leading: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            color: widget.subjectModule?[index].module == "1"
+                                ? Colors.pink.shade300
+                                : widget.subjectModule?[index].module == "2"
+                                    ? Colors.blue.shade300
+                                    : Colors.red.shade300,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: Text(
+                              "${widget.subjectModule?[index].hour ?? ''} hr",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                        title: Text(widget.subjectModule?[index].title ?? ''),
+                        subtitle: Text(
+                            "Professor: ${widget.subjectModule?[index].userId}"),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  );
+                },
+              ),
             )
           ],
         ),

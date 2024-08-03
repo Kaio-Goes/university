@@ -5,8 +5,10 @@ import 'package:university/components/card_module_component.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/list_users_card.dart';
+import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/services/auth_service.dart';
+import 'package:university/services/subject_service.dart';
 import 'package:university/services/users_service.dart';
 
 class DashboardSecretaryPage extends StatefulWidget {
@@ -22,6 +24,10 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   List<UserFirebase> activeTeachers = [];
   List<UserFirebase> activeStudent = [];
 
+  List<SubjectModule> subjectModule1 = [];
+  List<SubjectModule> subjectModule2 = [];
+  List<SubjectModule> subjectModule3 = [];
+
   List<UserFirebase> filteredTeachers = [];
   List<UserFirebase> filteredStudents = [];
 
@@ -36,7 +42,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   @override
   void initState() {
     super.initState();
-    _loadTeachers();
+    _loadUsers();
 
     // Adiciona um listener para o TextEditingController
     searchTeachersController.addListener(() {
@@ -48,10 +54,26 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
     });
   }
 
-  Future<void> _loadTeachers() async {
+  Future<void> _loadUsers() async {
     try {
       Map<String, List<UserFirebase>> fetchedUsers =
           await UsersService().getAllUsers();
+
+      List<SubjectModule> fetchedSubjectModule =
+          await SubjectService().getAllSubjectModule();
+
+      subjectModule1 = fetchedSubjectModule
+          .where((subject) => subject.module == '1')
+          .toList();
+
+      subjectModule2 = fetchedSubjectModule
+          .where((subject) => subject.module == '2')
+          .toList();
+
+      subjectModule3 = fetchedSubjectModule
+          .where((subject) => subject.module == '3')
+          .toList();
+
       List<UserFirebase> fetchedTeachers = fetchedUsers['teachers'] ?? [];
       List<UserFirebase> fetchedStudents =
           fetchedUsers['students']?.cast<UserFirebase>() ?? [];
@@ -207,18 +229,21 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                           isSmallScreen: isSmallScreen,
                           userTeacher: activeTeachers,
                           title: 'Módulo 1',
+                          subjectModule: subjectModule1,
                         ),
                         const SizedBox(width: 10),
                         CardModuleComponent(
                           isSmallScreen: isSmallScreen,
                           userTeacher: activeTeachers,
                           title: 'Módulo 2',
+                          subjectModule: subjectModule2,
                         ),
                         const SizedBox(width: 10),
                         CardModuleComponent(
                           isSmallScreen: isSmallScreen,
                           userTeacher: activeTeachers,
                           title: 'Módulo 3',
+                          subjectModule: subjectModule3,
                         )
                       ],
                     ),

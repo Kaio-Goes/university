@@ -21,11 +21,13 @@ createSubjectFormComponent({
     context: context,
     builder: (context) {
       return AlertDialog(
+        titlePadding: const EdgeInsets.all(10), // Ajusta o padding do título
+        contentPadding: const EdgeInsets.all(10),
+        actionsPadding: const EdgeInsets.all(10), // Ajusta o padding das ações
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text("Criar uma Matéria"),
-            const SizedBox(width: 60),
             IconButton(
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -72,7 +74,7 @@ createSubjectFormComponent({
                         select: selectedModule,
                         onChanged: onChangedSelectedModule,
                         hintText: isSmallScreen
-                            ? 'Selecione o Mó...'
+                            ? 'Selecione...'
                             : 'Selecione o Módulo',
                         items: dropdownItemsModule,
                         validator: (value) => validatorDropdown(value),

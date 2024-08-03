@@ -101,7 +101,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
       elevation: 8,
       child: SizedBox(
         height: 300,
-        width: 400,
+        width: 380,
         child: Column(
           children: [
             const SizedBox(height: 15),
@@ -185,8 +185,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                     child: Card(
                       child: ListTile(
                         leading: Container(
-                          height: 60,
-                          width: 50,
+                          width: 60,
                           decoration: BoxDecoration(
                             color: widget.subjectModule?[index].module == "1"
                                 ? Colors.pink.shade300
@@ -317,7 +316,6 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                             ];
                           },
                         ),
-                        contentPadding: EdgeInsets.zero,
                       ),
                     ),
                   );

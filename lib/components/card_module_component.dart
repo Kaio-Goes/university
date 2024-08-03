@@ -34,7 +34,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
   final List<DropdownMenuItem<String>> dropdownItemsModule = [
     const DropdownMenuItem(value: '1', child: Text('Módulo 1')),
     const DropdownMenuItem(value: '2', child: Text('Módulo 2')),
-    const DropdownMenuItem(value: '3', child: Text('Module 3')),
+    const DropdownMenuItem(value: '3', child: Text('Módulo 3')),
   ];
 
   List<DropdownMenuItem<String>>? enumTeachers = [];
@@ -60,7 +60,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text("Sucesso"),
-              content: const Text("Matéria criado com sucesso!"),
+              content: const Text("Matéria criada com sucesso!"),
               actions: [
                 ElevatedButton(
                   onPressed: () {
@@ -72,7 +72,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                   child: const Text(
-                    "Ir para o ínicio",
+                    "Ir para o início",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -113,7 +113,8 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                       enumTeachers = widget.userTeacher
                           .map((e) => DropdownMenuItem<String>(
                               value: e.uid.toString(),
-                              child: Text('Professor(a) ${e.name.toString()}')))
+                              child: Text(
+                                  'Professor(a) ${e.name.toString()} ${e.surname.toString()}')))
                           .toList();
                       showDialog(
                         context: context,
@@ -260,12 +261,23 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
               child: ListView.builder(
                 itemCount: widget.subjectModule?.length ?? 0,
                 itemBuilder: (context, index) {
+                  var nameTeacher = widget.userTeacher
+                      .where((teacher) =>
+                          teacher.uid == widget.subjectModule?[index].userId)
+                      .map((teacher) => teacher.name)
+                      .join(", ");
+
+                  var surnameTeacher = widget.userTeacher
+                      .where((teacher) =>
+                          teacher.uid == widget.subjectModule?[index].userId)
+                      .map((teacher) => teacher.surname)
+                      .join(", ");
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Card(
                       child: ListTile(
                         leading: Container(
-                          height: 50,
+                          height: 60,
                           width: 50,
                           decoration: BoxDecoration(
                             color: widget.subjectModule?[index].module == "1"
@@ -286,8 +298,51 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                           ),
                         ),
                         title: Text(widget.subjectModule?[index].title ?? ''),
-                        subtitle: Text(
-                            "Professor: ${widget.subjectModule?[index].userId}"),
+                        subtitle:
+                            Text("Professor: $nameTeacher $surnameTeacher"),
+                        trailing: PopupMenuButton<String>(
+                          icon: const Icon(Icons.more_vert),
+                          onSelected: (String value) {
+                            // Lógica para a seleção do item do menu
+                            if (value == 'edit') {
+                              // Adicione aqui a lógica para a opção 'Editar'
+                              print('Editar clicado');
+                            } else if (value == 'delete') {
+                              // Adicione aqui a lógica para a opção 'Excluir'
+                              print('Excluir clicado');
+                            }
+                          },
+                          itemBuilder: (BuildContext context) {
+                            return [
+                              const PopupMenuItem<String>(
+                                value: 'edit',
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Editar'),
+                                    Icon(Icons.edit, size: 16)
+                                  ],
+                                ),
+                              ),
+                              const PopupMenuItem<String>(
+                                value: 'delete',
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Excluir'),
+                                    Icon(
+                                      Icons.delete,
+                                      size: 16,
+                                      color: Colors.red,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ];
+                          },
+                        ),
                         contentPadding: EdgeInsets.zero,
                       ),
                     ),

@@ -36,8 +36,10 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
 
   bool isAscending = true; // Para controle de ordenação
 
-  int currentPage = 1;
-  int itemsPerPage = 5;
+  int currentPageTeacher = 1;
+  int itemsPerPageTeacher = 5;
+  int currentPageStudent = 1;
+  int itemsPerPageStudent = 5;
 
   @override
   void initState() {
@@ -149,24 +151,32 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
 
   void _nextPage() {
     setState(() {
-      if (currentPage * itemsPerPage < filteredTeachers.length) {
-        currentPage++;
+      if (currentPageTeacher * itemsPerPageTeacher < filteredTeachers.length) {
+        currentPageTeacher++;
       }
     });
   }
 
   void _nextPageStudent() {
     setState(() {
-      if (currentPage * itemsPerPage < filteredStudents.length) {
-        currentPage++;
+      if (currentPageStudent * itemsPerPageStudent < filteredStudents.length) {
+        currentPageStudent++;
       }
     });
   }
 
-  void _previousPage() {
+  void _previousPageTeacher() {
     setState(() {
-      if (currentPage > 1) {
-        currentPage--;
+      if (currentPageTeacher > 1) {
+        currentPageTeacher--;
+      }
+    });
+  }
+
+  void _previousPageStudent() {
+    setState(() {
+      if (currentPageStudent > 1) {
+        currentPageStudent--;
       }
     });
   }
@@ -181,16 +191,22 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
 
   @override
   Widget build(BuildContext context) {
-    int startIndex = (currentPage - 1) * itemsPerPage;
-    int endIndex = startIndex + itemsPerPage;
+    int startIndexTeacher = (currentPageTeacher - 1) * itemsPerPageTeacher;
+    int endIndexTeacher = startIndexTeacher + itemsPerPageTeacher;
+    int startIndexStudent = (currentPageStudent - 1) * itemsPerPageStudent;
+    int endIndexStudent = startIndexStudent + itemsPerPageStudent;
     List<UserFirebase> paginatedTeachers = filteredTeachers.sublist(
-      startIndex,
-      endIndex > filteredTeachers.length ? filteredTeachers.length : endIndex,
+      startIndexTeacher,
+      endIndexTeacher > filteredTeachers.length
+          ? filteredTeachers.length
+          : endIndexTeacher,
     );
 
     List<UserFirebase> paginatedStudants = filteredStudents.sublist(
-      startIndex,
-      endIndex > filteredStudents.length ? filteredStudents.length : endIndex,
+      startIndexStudent,
+      endIndexStudent > filteredStudents.length
+          ? filteredStudents.length
+          : endIndexStudent,
     );
 
     return Scaffold(
@@ -259,10 +275,10 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                   paginetedUsers: paginatedTeachers,
                   sortTeachersByName: _sortTeachersByName,
                   isAscending: isAscending,
-                  previousPage: _previousPage,
-                  currentPage: currentPage,
+                  previousPage: _previousPageTeacher,
+                  currentPage: currentPageTeacher,
                   filteredUsers: filteredTeachers,
-                  itemsPerPage: itemsPerPage,
+                  itemsPerPage: itemsPerPageTeacher,
                   nextPage: _nextPage,
                 ),
                 const SizedBox(height: 40),
@@ -273,10 +289,10 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                   paginetedUsers: paginatedStudants,
                   sortTeachersByName: _sortStudentsByName,
                   isAscending: isAscending,
-                  previousPage: _previousPage,
-                  currentPage: currentPage,
+                  previousPage: _previousPageStudent,
+                  currentPage: currentPageStudent,
                   filteredUsers: filteredStudents,
-                  itemsPerPage: itemsPerPage,
+                  itemsPerPage: itemsPerPageStudent,
                   nextPage: _nextPageStudent,
                 ),
                 const SizedBox(height: 15),

@@ -6,7 +6,6 @@ import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/user_secretary.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/services/auth_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginSecretaryPage extends StatefulWidget {
   const LoginSecretaryPage({super.key});

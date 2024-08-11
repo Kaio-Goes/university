@@ -2,6 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 const colorPlaceholder = Color(0xFF757575);
+const colorLabel = Color(0xFF424242);
+
+const textStyleVisualizer = TextStyle(
+  color: colorPlaceholder,
+  fontSize: 14.0,
+  fontFamily: 'inter',
+);
+
+const labelStyle = TextStyle(
+  color: colorLabel,
+  fontSize: 18.0,
+  fontFamily: 'inter',
+);
 
 var formatterCpf = MaskTextInputFormatter(
   mask: '###.###.###-##',
@@ -57,3 +70,9 @@ const textPlaceholder = TextStyle(
 
 const textTitleCard =
     TextStyle(fontSize: 14.0, color: Colors.black, fontWeight: FontWeight.bold);
+
+const textStyleTopBarBody = TextStyle(
+    color: colorPlaceholder,
+    fontSize: 20.0,
+    fontFamily: 'inter',
+    fontWeight: FontWeight.bold);

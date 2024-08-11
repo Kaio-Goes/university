@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/utilities/styles.constants.dart';
@@ -12,6 +13,9 @@ createSubjectFormComponent({
   required String? selectedModule,
   required void Function(String?)? onChangedSelectedModule,
   required List<DropdownMenuItem<String>>? dropdownItemsModule,
+  required List<String> selectedDays,
+  required void Function(List<String>?) onChangedSelectedDays,
+  required List<String> daysOfWeek,
   required String? selectedTeacher,
   required void Function(String?)? onChangedSelectedTeacher,
   required List<DropdownMenuItem<String>>? enumTeachers,
@@ -21,9 +25,9 @@ createSubjectFormComponent({
     context: context,
     builder: (context) {
       return AlertDialog(
-        titlePadding: const EdgeInsets.all(10), // Ajusta o padding do título
+        titlePadding: const EdgeInsets.all(10),
         contentPadding: const EdgeInsets.all(10),
-        actionsPadding: const EdgeInsets.all(10), // Ajusta o padding das ações
+        actionsPadding: const EdgeInsets.all(10),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -36,7 +40,7 @@ createSubjectFormComponent({
           ],
         ),
         content: const Text(
-            "Crie uma matéria para o módulo selecionado e adiocione o Professor responsável."),
+            "Crie uma matéria para o módulo selecionado e adicione o Professor responsável."),
         actions: [
           Form(
             key: formKey,
@@ -56,7 +60,7 @@ createSubjectFormComponent({
                     textFormField(
                       controller: hourController,
                       validator: (value) => validInputNome(value),
-                      label: 'Hora',
+                      label: 'Hora Totais',
                       hint: 'Ex: 20hr',
                       inputFormatters: [formatterHour],
                       textInputType: TextInputType.phone,
@@ -81,6 +85,47 @@ createSubjectFormComponent({
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 25),
+                SizedBox(
+                  width: 600,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Dias da Semana',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 5),
+                      MultiSelectDialogField(
+                        items: daysOfWeek
+                            .map((day) => MultiSelectItem<String>(day, day))
+                            .toList(),
+                        title: const Text("Dias da semana com aula"),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(28, 230, 81, 0),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          border: Border.all(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                        ),
+                        buttonText: const Text(
+                          'Selecione os dias da semana',
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                        selectedItemsTextStyle:
+                            const TextStyle(color: Colors.blue),
+                        onConfirm: onChangedSelectedDays,
+                        initialValue: selectedDays,
+                        validator: (values) {
+                          if (values == null || values.isEmpty) {
+                            return "Selecione ao menos um dia da semana";
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 25),
                 SizedBox(

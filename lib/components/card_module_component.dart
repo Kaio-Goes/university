@@ -28,6 +28,17 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
   final hourController = TextEditingController();
   String? _selectedModule;
   String? _selectedTeacher;
+  List<String> _selectedDays = [];
+
+  final List<String> _daysOfWeek = [
+    'Segunda-feira',
+    'Terça-feira',
+    'Quarta-feira',
+    'Quinta-feira',
+    'Sexta-feira',
+    'Sábado',
+    'Domingo',
+  ];
 
   final List<DropdownMenuItem<String>> dropdownItemsModule = [
     const DropdownMenuItem(value: '1', child: Text('Módulo 1')),
@@ -92,6 +103,9 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
     hourController.text = subject.hour;
     _selectedModule = subject.module;
     _selectedTeacher = subject.userId;
+    // Você também pode preencher os dias selecionados aqui se necessário
+    _selectedDays =
+        []; // Aqui você pode mapear os dias selecionados se já estiverem armazenados
   }
 
   @override
@@ -151,6 +165,13 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                           idUser: _selectedTeacher ?? '',
                         );
                       },
+                      selectedDays: _selectedDays,
+                      onChangedSelectedDays: (days) {
+                        setState(() {
+                          _selectedDays = days!;
+                        });
+                      },
+                      daysOfWeek: _daysOfWeek,
                     );
                   },
                   icon: const Icon(Icons.add),
@@ -250,10 +271,17 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                       idUser: _selectedTeacher ?? '',
                                     );
                                   },
+                                  selectedDays: _selectedDays,
+                                  onChangedSelectedDays: (days) {
+                                    setState(() {
+                                      _selectedDays = days!;
+                                    });
+                                  },
+                                  daysOfWeek: _daysOfWeek,
                                 );
                               }
                             } else if (value == 'delete') {
-                              // Adicione aqui a lógica para a opção 'Excluir'7
+                              // Adicione aqui a lógica para a opção 'Excluir'
                               showDialog(
                                 context: context,
                                 builder: (ctx) => AlertDialog(
@@ -305,11 +333,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Excluir'),
-                                    Icon(
-                                      Icons.delete,
-                                      size: 16,
-                                      color: Colors.red,
-                                    )
+                                    Icon(Icons.delete, size: 16)
                                   ],
                                 ),
                               ),

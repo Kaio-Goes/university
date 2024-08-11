@@ -22,6 +22,12 @@ var formatterCpf = MaskTextInputFormatter(
   type: MaskAutoCompletionType.lazy,
 );
 
+var formattehourMask = MaskTextInputFormatter(
+  mask: '##:##',
+  filter: {"#": RegExp(r'^[0-9]*$')},
+  type: MaskAutoCompletionType.lazy,
+);
+
 var formatterHour = MaskTextInputFormatter(
   mask: '####',
   filter: {"#": RegExp(r'^[0-9]*$')},

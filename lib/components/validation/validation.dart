@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 String? validInputNome(String? value) {
   if (value!.isEmpty) {
     return "Este campo é obrigatório";
@@ -74,5 +76,31 @@ String? validatorRg(String? value) {
   if (!RegExp(r'^\d{1}\.\d{3}\.\d{3}$').hasMatch(value)) {
     return 'O RG deve estar no formato X.XXX.XXX';
   }
+  return null;
+}
+
+String? validateTime({
+  required String? startTime,
+  required String? endTime,
+}) {
+  if (startTime!.isEmpty || endTime!.isEmpty) {
+    return "Preencha as duas horas";
+  }
+
+  // Converter as horas para DateTime para facilitar a comparação
+  final start = TimeOfDay(
+    hour: int.parse(startTime.split(':')[0]),
+    minute: int.parse(startTime.split(':')[1]),
+  );
+  final end = TimeOfDay(
+    hour: int.parse(endTime.split(':')[0]),
+    minute: int.parse(endTime.split(':')[1]),
+  );
+
+  if (start.hour > end.hour ||
+      (start.hour == end.hour && start.minute > end.minute)) {
+    return "A hora inicial deve ser menor que a final";
+  }
+
   return null;
 }

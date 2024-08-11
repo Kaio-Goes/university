@@ -26,6 +26,9 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
   final _formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
   final hourController = TextEditingController();
+  final startHourController = TextEditingController();
+  final endHourController = TextEditingController();
+
   String? _selectedModule;
   String? _selectedTeacher;
   List<String> _selectedDays = [];
@@ -138,41 +141,42 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                 'Professor(a) ${e.name.toString()} ${e.surname.toString()}')))
                         .toList();
                     createSubjectFormComponent(
-                      context: context,
-                      formKey: _formKey,
-                      isSmallScreen: widget.isSmallScreen,
-                      titleController: titleController,
-                      hourController: hourController,
-                      selectedModule: _selectedModule,
-                      onChangedSelectedModule: (value) {
-                        setState(() {
-                          _selectedModule = value;
-                        });
-                      },
-                      dropdownItemsModule: dropdownItemsModule,
-                      selectedTeacher: _selectedTeacher,
-                      onChangedSelectedTeacher: (value) {
-                        setState(() {
-                          _selectedTeacher = value;
-                        });
-                      },
-                      enumTeachers: enumTeachers,
-                      onPressedClickButton: () {
-                        _clickButton(
-                          title: titleController.text,
-                          hour: hourController.text,
-                          module: _selectedModule ?? '',
-                          idUser: _selectedTeacher ?? '',
-                        );
-                      },
-                      selectedDays: _selectedDays,
-                      onChangedSelectedDays: (days) {
-                        setState(() {
-                          _selectedDays = days!;
-                        });
-                      },
-                      daysOfWeek: _daysOfWeek,
-                    );
+                        context: context,
+                        formKey: _formKey,
+                        isSmallScreen: widget.isSmallScreen,
+                        titleController: titleController,
+                        hourController: hourController,
+                        selectedModule: _selectedModule,
+                        onChangedSelectedModule: (value) {
+                          setState(() {
+                            _selectedModule = value;
+                          });
+                        },
+                        dropdownItemsModule: dropdownItemsModule,
+                        selectedTeacher: _selectedTeacher,
+                        onChangedSelectedTeacher: (value) {
+                          setState(() {
+                            _selectedTeacher = value;
+                          });
+                        },
+                        enumTeachers: enumTeachers,
+                        onPressedClickButton: () {
+                          _clickButton(
+                            title: titleController.text,
+                            hour: hourController.text,
+                            module: _selectedModule ?? '',
+                            idUser: _selectedTeacher ?? '',
+                          );
+                        },
+                        selectedDays: _selectedDays,
+                        onChangedSelectedDays: (days) {
+                          setState(() {
+                            _selectedDays = days!;
+                          });
+                        },
+                        daysOfWeek: _daysOfWeek,
+                        startTimeHour: startHourController,
+                        endTimeHour: endHourController);
                   },
                   icon: const Icon(Icons.add),
                 )
@@ -244,41 +248,42 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                     .toList();
 
                                 createSubjectFormComponent(
-                                  context: context,
-                                  formKey: _formKey,
-                                  isSmallScreen: widget.isSmallScreen,
-                                  titleController: titleController,
-                                  hourController: hourController,
-                                  selectedModule: _selectedModule,
-                                  onChangedSelectedModule: (value) {
-                                    setState(() {
-                                      _selectedModule = value;
-                                    });
-                                  },
-                                  dropdownItemsModule: dropdownItemsModule,
-                                  selectedTeacher: _selectedTeacher,
-                                  onChangedSelectedTeacher: (value) {
-                                    setState(() {
-                                      _selectedTeacher = value;
-                                    });
-                                  },
-                                  enumTeachers: enumTeachers,
-                                  onPressedClickButton: () {
-                                    _clickButton(
-                                      title: titleController.text,
-                                      hour: hourController.text,
-                                      module: _selectedModule ?? '',
-                                      idUser: _selectedTeacher ?? '',
-                                    );
-                                  },
-                                  selectedDays: _selectedDays,
-                                  onChangedSelectedDays: (days) {
-                                    setState(() {
-                                      _selectedDays = days!;
-                                    });
-                                  },
-                                  daysOfWeek: _daysOfWeek,
-                                );
+                                    context: context,
+                                    formKey: _formKey,
+                                    isSmallScreen: widget.isSmallScreen,
+                                    titleController: titleController,
+                                    hourController: hourController,
+                                    selectedModule: _selectedModule,
+                                    onChangedSelectedModule: (value) {
+                                      setState(() {
+                                        _selectedModule = value;
+                                      });
+                                    },
+                                    dropdownItemsModule: dropdownItemsModule,
+                                    selectedTeacher: _selectedTeacher,
+                                    onChangedSelectedTeacher: (value) {
+                                      setState(() {
+                                        _selectedTeacher = value;
+                                      });
+                                    },
+                                    enumTeachers: enumTeachers,
+                                    onPressedClickButton: () {
+                                      _clickButton(
+                                        title: titleController.text,
+                                        hour: hourController.text,
+                                        module: _selectedModule ?? '',
+                                        idUser: _selectedTeacher ?? '',
+                                      );
+                                    },
+                                    selectedDays: _selectedDays,
+                                    onChangedSelectedDays: (days) {
+                                      setState(() {
+                                        _selectedDays = days!;
+                                      });
+                                    },
+                                    daysOfWeek: _daysOfWeek,
+                                    startTimeHour: startHourController,
+                                    endTimeHour: endHourController);
                               }
                             } else if (value == 'delete') {
                               // Adicione aqui a lógica para a opção 'Excluir'

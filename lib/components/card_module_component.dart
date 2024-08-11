@@ -55,17 +55,26 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
       {required String title,
       required String hour,
       required String module,
+      required String daysWeeks,
+      required String startHour,
+      required String endHour,
       required String idUser}) {
     bool formOk = _formKey.currentState!.validate();
 
     if (!formOk) {
       return;
     }
-
     try {
       SubjectService()
           .createSubject(
-              title: title, hour: hour, module: module, idUser: idUser)
+        title: title,
+        hour: hour,
+        daysWeek: daysWeeks,
+        startHour: startHour,
+        endHour: endHour,
+        module: module,
+        idUser: idUser,
+      )
           .then((_) async {
         showDialog(
           context: context,
@@ -164,6 +173,9 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                           _clickButton(
                             title: titleController.text,
                             hour: hourController.text,
+                            daysWeeks: _selectedDays.toString(),
+                            startHour: startHourController.text,
+                            endHour: endHourController.text,
                             module: _selectedModule ?? '',
                             idUser: _selectedTeacher ?? '',
                           );
@@ -230,8 +242,16 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                           ),
                         ),
                         title: Text(widget.subjectModule?[index].title ?? ''),
-                        subtitle:
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Text("Professor: $nameTeacher $surnameTeacher"),
+                            Text(
+                                "Dias de aula: ${widget.subjectModule![index].daysWeek.toString().replaceAll('[', '').replaceAll(']', '')}"),
+                            Text(
+                                "Horário  : ${widget.subjectModule![index].startHour} a ${widget.subjectModule![index].endHour}"),
+                          ],
+                        ),
                         trailing: PopupMenuButton<String>(
                           icon: const Icon(Icons.more_vert),
                           onSelected: (String value) {
@@ -272,6 +292,9 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                         title: titleController.text,
                                         hour: hourController.text,
                                         module: _selectedModule ?? '',
+                                        daysWeeks: _selectedDays.toString(),
+                                        startHour: startHourController.text,
+                                        endHour: endHourController.text,
                                         idUser: _selectedTeacher ?? '',
                                       );
                                     },

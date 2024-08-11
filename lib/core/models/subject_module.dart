@@ -2,6 +2,9 @@ class SubjectModule {
   late String uid;
   late String title;
   late String hour;
+  late String daysWeek;
+  late String startHour;
+  late String endHour;
   late String module;
   late String userId;
 
@@ -9,6 +12,8 @@ class SubjectModule {
     required this.uid,
     required this.title,
     required this.hour,
+    required this.startHour,
+    required this.endHour,
     required this.module,
     required this.userId,
   });
@@ -17,6 +22,9 @@ class SubjectModule {
     uid = json["uid"];
     title = json["title"];
     hour = json["hour"];
+    daysWeek = json["daysWeeks"];
+    startHour = json["startHour"];
+    endHour = json["endHour"];
     module = json["module"];
     userId = json["user_id"];
   }

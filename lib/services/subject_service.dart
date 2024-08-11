@@ -5,6 +5,9 @@ class SubjectService {
   Future<void> createSubject({
     required String title,
     required String hour,
+    required String daysWeek,
+    required String startHour,
+    required String endHour,
     required String module,
     required String idUser,
   }) async {
@@ -25,6 +28,9 @@ class SubjectService {
       'hour': hour,
       'module': module,
       'user_id': idUser,
+      'daysWeeks': daysWeek,
+      'startHour': startHour,
+      'endHour': endHour
     };
 
     // Definir os valores no path gerado

@@ -104,3 +104,38 @@ String? validateTime({
 
   return null;
 }
+
+String? validDate(String? value, DateTime? endDate, DateTime? startDate) {
+  if (value!.isEmpty) {
+    return "Escolhe a ida";
+  } else if (startDate?.millisecondsSinceEpoch == null) {
+    return null;
+  } else if (endDate != null &&
+      startDate!.millisecondsSinceEpoch > endDate.millisecondsSinceEpoch) {
+    return "Data inicial maior";
+  } else if (DateTime.now()
+          .subtract(const Duration(days: 1))
+          .millisecondsSinceEpoch >
+      startDate!.millisecondsSinceEpoch) {
+    return "Data já extrapolada.";
+  }
+  return null;
+}
+
+String? validDateBack(String? value, DateTime? startDate, DateTime? endDate) {
+  if (value!.isEmpty) {
+    return "Escolhe a volta";
+  } else if (endDate?.millisecondsSinceEpoch == null) {
+    return null;
+  } else if (startDate != null &&
+      endDate!.millisecondsSinceEpoch < startDate.millisecondsSinceEpoch) {
+    return "Data final menor";
+  } else if (startDate!.millisecondsSinceEpoch ==
+      endDate!.millisecondsSinceEpoch) {
+    return "Mesma data";
+  } else if (DateTime.now().millisecondsSinceEpoch - 1 >
+      endDate.millisecondsSinceEpoch) {
+    return "Data já extrapolada.";
+  }
+  return null;
+}

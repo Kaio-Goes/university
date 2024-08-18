@@ -41,3 +41,12 @@ class UsersService {
     return {'teachers': teachersList, 'students': studentsList};
   }
 }
+
+Future<List<UserFirebase>> fetchStudants() async {
+  Map<String, List<UserFirebase>> fetchedUsers =
+      await UsersService().getAllUsers();
+  List<UserFirebase> fetchedStudents =
+      fetchedUsers['students']?.cast<UserFirebase>() ?? [];
+
+  return fetchedStudents.where((student) => student.isActive).toList();
+}

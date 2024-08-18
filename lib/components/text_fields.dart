@@ -14,6 +14,7 @@ textFormField({
   TextInputType? textInputType,
   void Function(String)? onSaved,
   List<TextInputFormatter>? inputFormatters,
+  void Function()? onTap,
   bool passwordVisible = false,
   void Function()? togglePasswordVisibility,
 }) {
@@ -39,6 +40,7 @@ textFormField({
           style: const TextStyle(fontSize: 13),
           inputFormatters: inputFormatters,
           keyboardType: textInputType,
+          onTap: onTap,
           decoration: InputDecoration(
             enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey, width: 0.0),

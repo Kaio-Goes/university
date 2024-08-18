@@ -35,6 +35,14 @@ class DrawerSecretaryComponent extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.school),
+            title: const Text('Cadastrar Turmas'),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const TeacherCreatePage()));
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.person_add_alt_1),
             title: const Text('Cadastrar Professor'),
             onTap: () {

@@ -4,6 +4,7 @@ import 'package:university/components/card_count.dart';
 import 'package:university/components/card_module_component.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
+import 'package:university/components/list_class.dart';
 import 'package:university/components/list_users_card.dart';
 import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
@@ -32,7 +33,8 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   List<UserFirebase> filteredStudents = [];
 
   TextEditingController searchTeachersController = TextEditingController();
-  TextEditingController searchStudentsSController = TextEditingController();
+  TextEditingController searchStudentsController = TextEditingController();
+  TextEditingController searchClassController = TextEditingController();
 
   bool isAscending = true; // Para controle de ordenação
 
@@ -51,7 +53,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
       filterTeachers();
     });
 
-    searchStudentsSController.addListener(() {
+    searchStudentsController.addListener(() {
       filterStudent();
     });
   }
@@ -115,10 +117,10 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
       filteredStudents = students.where((student) {
         return student.name
                 .toLowerCase()
-                .contains(searchStudentsSController.text.toLowerCase()) ||
+                .contains(searchStudentsController.text.toLowerCase()) ||
             student.email
                 .toLowerCase()
-                .contains(searchStudentsSController.text.toLowerCase());
+                .contains(searchStudentsController.text.toLowerCase());
       }).toList();
     });
   }
@@ -186,7 +188,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
     super.dispose();
     teachers.clear();
     searchTeachersController.dispose();
-    searchStudentsSController.dispose();
+    searchStudentsController.dispose();
   }
 
   @override
@@ -235,6 +237,10 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                                 countTeacher: activeTeachers.length.toString()),
                           ),
                         ),
+                ),
+                ListClass(
+                  isSmallScreen: isSmallScreen,
+                  searchController: searchTeachersController,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(2),
@@ -285,7 +291,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                 ListUsersCard(
                   isSmallScreen: isSmallScreen,
                   title: 'Lista de Alunos',
-                  searchController: searchStudentsSController,
+                  searchController: searchStudentsController,
                   paginetedUsers: paginatedStudants,
                   sortTeachersByName: _sortStudentsByName,
                   isAscending: isAscending,

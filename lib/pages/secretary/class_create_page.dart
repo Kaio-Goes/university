@@ -52,6 +52,9 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             bool isSmallScreen = constraints.maxWidth < 800;
+            var widthInput = isSmallScreen
+                ? MediaQuery.of(context).size.width * 1
+                : MediaQuery.of(context).size.width * 0.35;
             return Column(
               children: [
                 const SizedBox(height: 25),
@@ -101,26 +104,35 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                               onChangedSubject: (value) {
                                                 selectedSubject = value;
                                               },
-                                              dateController: dateController,
-                                              endDateController:
-                                                  endDateController,
-                                              onTapDate: () async {
-                                                FocusScope.of(context)
-                                                    .requestFocus(FocusNode());
-                                                final DateTime? pickedDate =
-                                                    await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2101),
-                                                );
-                                                if (pickedDate != null) {
-                                                  setState(() {
-                                                    dateController.text =
-                                                        "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                                                  });
-                                                }
-                                              },
+                                              dateInput: textFormField(
+                                                controller: dateController,
+                                                validator: (value) => validDate(
+                                                    value,
+                                                    dateController.text,
+                                                    endDateController.text),
+                                                hint:
+                                                    'Selecione o período da turma',
+                                                label: 'Data de Início',
+                                                size: widthInput,
+                                                onTap: () async {
+                                                  FocusScope.of(context)
+                                                      .requestFocus(
+                                                          FocusNode());
+                                                  final DateTime? pickedDate =
+                                                      await showDatePicker(
+                                                    context: context,
+                                                    initialDate: DateTime.now(),
+                                                    firstDate: DateTime(2000),
+                                                    lastDate: DateTime(2101),
+                                                  );
+                                                  if (pickedDate != null) {
+                                                    setState(() {
+                                                      dateController.text =
+                                                          "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                                                    });
+                                                  }
+                                                },
+                                              ),
                                             ),
                                             buildFormCreateClassPartTwo(
                                               context: context,
@@ -132,26 +144,36 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                   selectedTypeClass = value;
                                                 });
                                               },
-                                              dateController: dateController,
-                                              endDateController:
-                                                  endDateController,
-                                              onTapDate: () async {
-                                                FocusScope.of(context)
-                                                    .requestFocus(FocusNode());
-                                                final DateTime? pickedDate =
-                                                    await showDatePicker(
-                                                  context: context,
-                                                  initialDate: DateTime.now(),
-                                                  firstDate: DateTime(2000),
-                                                  lastDate: DateTime(2101),
-                                                );
-                                                if (pickedDate != null) {
-                                                  setState(() {
-                                                    endDateController.text =
-                                                        "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                                                  });
-                                                }
-                                              },
+                                              endDateInput: textFormField(
+                                                controller: endDateController,
+                                                validator: (value) =>
+                                                    validDateBack(
+                                                        value,
+                                                        dateController.text,
+                                                        endDateController.text),
+                                                hint:
+                                                    'Selecione o período final da turma',
+                                                label: 'Data de Encerramento',
+                                                size: widthInput,
+                                                onTap: () async {
+                                                  FocusScope.of(context)
+                                                      .requestFocus(
+                                                          FocusNode());
+                                                  final DateTime? pickedDate =
+                                                      await showDatePicker(
+                                                    context: context,
+                                                    initialDate: DateTime.now(),
+                                                    firstDate: DateTime(2000),
+                                                    lastDate: DateTime(2101),
+                                                  );
+                                                  if (pickedDate != null) {
+                                                    setState(() {
+                                                      endDateController.text =
+                                                          "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                                                    });
+                                                  }
+                                                },
+                                              ),
                                             )
                                           ],
                                         ),
@@ -164,6 +186,8 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment
                                                       .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 buildFormCreateClassPartOne(
                                                   context: context,
@@ -175,29 +199,41 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                   onChangedSubject: (value) {
                                                     selectedSubject = value;
                                                   },
-                                                  dateController:
-                                                      dateController,
-                                                  endDateController:
-                                                      endDateController,
-                                                  onTapDate: () async {
-                                                    FocusScope.of(context)
-                                                        .requestFocus(
-                                                            FocusNode());
-                                                    final DateTime? pickedDate =
-                                                        await showDatePicker(
-                                                      context: context,
-                                                      initialDate:
-                                                          DateTime.now(),
-                                                      firstDate: DateTime(2000),
-                                                      lastDate: DateTime(2101),
-                                                    );
-                                                    if (pickedDate != null) {
-                                                      setState(() {
-                                                        dateController.text =
-                                                            "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                                                      });
-                                                    }
-                                                  },
+                                                  dateInput: textFormField(
+                                                    controller: dateController,
+                                                    validator: (value) =>
+                                                        validDate(
+                                                            value,
+                                                            dateController.text,
+                                                            endDateController
+                                                                .text),
+                                                    hint:
+                                                        'Selecione o período da turma',
+                                                    label: 'Data de Início',
+                                                    size: widthInput,
+                                                    onTap: () async {
+                                                      FocusScope.of(context)
+                                                          .requestFocus(
+                                                              FocusNode());
+                                                      final DateTime?
+                                                          pickedDate =
+                                                          await showDatePicker(
+                                                        context: context,
+                                                        initialDate:
+                                                            DateTime.now(),
+                                                        firstDate:
+                                                            DateTime(2000),
+                                                        lastDate:
+                                                            DateTime(2101),
+                                                      );
+                                                      if (pickedDate != null) {
+                                                        setState(() {
+                                                          dateController.text =
+                                                              "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                                                        });
+                                                      }
+                                                    },
+                                                  ),
                                                 ),
                                                 buildFormCreateClassPartTwo(
                                                   context: context,
@@ -209,29 +245,44 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                       selectedTypeClass = value;
                                                     });
                                                   },
-                                                  dateController:
-                                                      dateController,
-                                                  endDateController:
-                                                      endDateController,
-                                                  onTapDate: () async {
-                                                    FocusScope.of(context)
-                                                        .requestFocus(
-                                                            FocusNode());
-                                                    final DateTime? pickedDate =
-                                                        await showDatePicker(
-                                                      context: context,
-                                                      initialDate:
-                                                          DateTime.now(),
-                                                      firstDate: DateTime(2000),
-                                                      lastDate: DateTime(2101),
-                                                    );
-                                                    if (pickedDate != null) {
-                                                      setState(() {
-                                                        endDateController.text =
-                                                            "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                                                      });
-                                                    }
-                                                  },
+                                                  endDateInput: textFormField(
+                                                    controller:
+                                                        endDateController,
+                                                    validator: (value) =>
+                                                        validDateBack(
+                                                            value,
+                                                            dateController.text,
+                                                            endDateController
+                                                                .text),
+                                                    hint:
+                                                        'Selecione o período final da turma',
+                                                    label:
+                                                        'Data de Encerramento',
+                                                    size: widthInput,
+                                                    onTap: () async {
+                                                      FocusScope.of(context)
+                                                          .requestFocus(
+                                                              FocusNode());
+                                                      final DateTime?
+                                                          pickedDate =
+                                                          await showDatePicker(
+                                                        context: context,
+                                                        initialDate:
+                                                            DateTime.now(),
+                                                        firstDate:
+                                                            DateTime(2000),
+                                                        lastDate:
+                                                            DateTime(2101),
+                                                      );
+                                                      if (pickedDate != null) {
+                                                        setState(() {
+                                                          endDateController
+                                                                  .text =
+                                                              "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                                                        });
+                                                      }
+                                                    },
+                                                  ),
                                                 )
                                               ],
                                             )
@@ -339,9 +390,7 @@ Widget buildFormCreateClassPartOne({
   required TextEditingController descriptionController,
   required String? selectedSubject,
   required void Function(String?)? onChangedSubject,
-  required TextEditingController dateController,
-  required TextEditingController endDateController,
-  required void Function()? onTapDate,
+  required Widget dateInput,
 }) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
@@ -363,16 +412,7 @@ Widget buildFormCreateClassPartOne({
         size: widthInput,
       ),
       const SizedBox(height: 25),
-      textFormField(
-          controller: dateController,
-          validator: (value) => validDate(
-              value,
-              DateTime.parse(endDateController.text),
-              DateTime.parse(dateController.text)),
-          hint: 'Selecione o período da turma',
-          label: 'Data de Início',
-          size: widthInput,
-          onTap: onTapDate),
+      dateInput,
       const SizedBox(height: 25),
       SizedBox(
         width: widthInput,
@@ -393,9 +433,7 @@ Widget buildFormCreateClassPartTwo({
   required BuildContext context,
   required bool isSmallScreen,
   required String? selectedTypeClass,
-  required TextEditingController dateController,
-  required TextEditingController endDateController,
-  required void Function()? onTapDate,
+  required Widget endDateInput,
   required void Function(String?)? onChangedTypeClass,
 }) {
   var widthInput = isSmallScreen
@@ -421,17 +459,8 @@ Widget buildFormCreateClassPartTwo({
         ),
       ),
       const SizedBox(height: 25),
-      textFormField(
-          controller: endDateController,
-          validator: (value) => validDateBack(
-              value,
-              DateTime.parse(dateController.text),
-              DateTime.parse(endDateController.text)),
-          hint: 'Selecione o período final da turma',
-          label: 'Data de Encerramento',
-          size: widthInput,
-          onTap: onTapDate),
-      SizedBox(height: isSmallScreen ? 15 : 100),
+      endDateInput,
+      SizedBox(height: isSmallScreen ? 15 : 0),
     ],
   );
 }

@@ -105,37 +105,47 @@ String? validateTime({
   return null;
 }
 
-String? validDate(String? value, DateTime? endDate, DateTime? startDate) {
-  if (value!.isEmpty) {
-    return "Escolhe a ida";
-  } else if (startDate?.millisecondsSinceEpoch == null) {
-    return null;
-  } else if (endDate != null &&
-      startDate!.millisecondsSinceEpoch > endDate.millisecondsSinceEpoch) {
-    return "Data inicial maior";
-  } else if (DateTime.now()
-          .subtract(const Duration(days: 1))
-          .millisecondsSinceEpoch >
-      startDate!.millisecondsSinceEpoch) {
-    return "Data já extrapolada.";
+String? validDate(String? value, String startDate, String endDate) {
+  if (startDate.isEmpty || endDate.isEmpty) {
+    return 'Por favor, selecione as duas datas.';
+  }
+
+  DateTime? start = _convertToDateTime(startDate);
+  DateTime? end = _convertToDateTime(endDate);
+
+  if (start != null && end != null) {
+    if (start.isAfter(end)) {
+      return 'A data de início não pode ser maior que a data de término.';
+    }
   }
   return null;
 }
 
-String? validDateBack(String? value, DateTime? startDate, DateTime? endDate) {
-  if (value!.isEmpty) {
-    return "Escolhe a volta";
-  } else if (endDate?.millisecondsSinceEpoch == null) {
-    return null;
-  } else if (startDate != null &&
-      endDate!.millisecondsSinceEpoch < startDate.millisecondsSinceEpoch) {
-    return "Data final menor";
-  } else if (startDate!.millisecondsSinceEpoch ==
-      endDate!.millisecondsSinceEpoch) {
-    return "Mesma data";
-  } else if (DateTime.now().millisecondsSinceEpoch - 1 >
-      endDate.millisecondsSinceEpoch) {
-    return "Data já extrapolada.";
+String? validDateBack(String? value, String startDate, String endDate) {
+  if (startDate.isEmpty || endDate.isEmpty) {
+    return 'Por favor, selecione as duas datas.';
+  }
+
+  DateTime? start = _convertToDateTime(startDate);
+  DateTime? end = _convertToDateTime(endDate);
+
+  if (start != null && end != null) {
+    if (end.isBefore(start)) {
+      return 'A data de término não pode ser menor que a data de início.';
+    }
   }
   return null;
+}
+
+DateTime? _convertToDateTime(String date) {
+  try {
+    List<String> dateParts = date.split('/');
+    return DateTime(
+      int.parse(dateParts[2]), // Ano
+      int.parse(dateParts[1]), // Mês
+      int.parse(dateParts[0]), // Dia
+    );
+  } catch (e) {
+    return null;
+  }
 }

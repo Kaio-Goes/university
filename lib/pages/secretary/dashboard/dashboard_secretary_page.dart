@@ -8,7 +8,7 @@ import 'package:university/components/list_class.dart';
 import 'package:university/components/list_users_card.dart';
 import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
-import 'package:university/services/auth_service.dart';
+import 'package:university/services/auth_secretary_service.dart';
 import 'package:university/services/subject_service.dart';
 import 'package:university/services/users_service.dart';
 
@@ -60,7 +60,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
 
   Future<void> _loadUsers() async {
     try {
-      await AuthService().loadUserFromCache();
+      await AuthSecretaryService().loadUserFromCache();
 
       Map<String, List<UserFirebase>> fetchedUsers =
           await UsersService().getAllUsers();
@@ -212,7 +212,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
     );
 
     return Scaffold(
-      appBar: appBarSecretaryComponent(name: AuthService().currentUser?.name),
+      appBar: appBarSecretaryComponent(name: AuthSecretaryService().currentUser?.name),
       drawer: const DrawerSecretaryComponent(),
       body: SingleChildScrollView(
         child: LayoutBuilder(

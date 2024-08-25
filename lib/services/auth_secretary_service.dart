@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:university/core/models/user_secretary.dart';
 
-class AuthService {
+class AuthSecretaryService {
   static UserSecretary? _currentUser;
 
   UserSecretary? get currentUser {

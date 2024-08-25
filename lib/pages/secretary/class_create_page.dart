@@ -6,7 +6,7 @@ import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/user_firebase.dart';
-import 'package:university/services/auth_service.dart';
+import 'package:university/services/auth_secretary_service.dart';
 import 'package:university/services/users_service.dart';
 
 class ClassCreatePage extends StatefulWidget {
@@ -46,7 +46,7 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarSecretaryComponent(name: AuthService().currentUser?.name),
+      appBar: appBarSecretaryComponent(name: AuthSecretaryService().currentUser?.name),
       drawer: const DrawerSecretaryComponent(),
       body: SingleChildScrollView(
         child: LayoutBuilder(

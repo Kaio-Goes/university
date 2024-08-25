@@ -3,18 +3,18 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
-import 'package:university/core/models/user_secretary.dart';
+import 'package:university/core/models/user_teacher.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
-import 'package:university/services/auth_secretary_service.dart';
+import 'package:university/services/auth_teacher_service.dart';
 
-class LoginSecretaryPage extends StatefulWidget {
-  const LoginSecretaryPage({super.key});
+class LoginTeacherPage extends StatefulWidget {
+  const LoginTeacherPage({super.key});
 
   @override
-  State<LoginSecretaryPage> createState() => _LoginSecretaryPageState();
+  State<LoginTeacherPage> createState() => _LoginTeacherPageState();
 }
 
-class _LoginSecretaryPageState extends State<LoginSecretaryPage> {
+class _LoginTeacherPageState extends State<LoginTeacherPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -50,17 +50,27 @@ class _LoginSecretaryPageState extends State<LoginSecretaryPage> {
           String name = snapshot.child('name').value as String;
           String email = snapshot.child('email').value as String;
           String uid = snapshot.child('uid').value as String;
+          String cpf = snapshot.child('cpf').value as String;
+          String phone = snapshot.child('phone').value as String;
+          String surname = snapshot.child('surname').value as String;
+          bool isActive = snapshot.child('isActive').value as bool;
 
-          var user = UserSecretary(
+          var user = UserTeacher(
             uid: uid,
             name: name,
             email: email,
             role: role,
+            phone: phone,
+            surname: surname,
+            cpf: cpf,
+            isActive: isActive,
           );
 
-          await AuthSecretaryService().addUserSecretaryModel(user: user);
+          // await AuthService().addUserSecretaryModel(user: user);
+          await AuthTeacherService().addUserTeacherModel(user: user);
 
-          if (role == 'admin') {
+
+          if (role == 'teacher') {
             // ignore: use_build_context_synchronously
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
@@ -68,7 +78,7 @@ class _LoginSecretaryPageState extends State<LoginSecretaryPage> {
                 (Route<dynamic> route) => false);
           } else {
             setState(() {
-              _errorMessage = 'Acesso negado. Você não é um(a) secretário(a).';
+              _errorMessage = 'Acesso negado. Você não é um(a) professor(a).';
             });
           }
         } else {

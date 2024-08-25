@@ -9,7 +9,7 @@ import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
-import 'package:university/services/auth_service.dart';
+import 'package:university/services/auth_secretary_service.dart';
 import 'package:university/services/send_email.dart';
 
 class TeacherCreatePage extends StatefulWidget {
@@ -89,6 +89,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
           },
         ).then((_) async {
           showDialog(
+            // ignore: use_build_context_synchronously
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
@@ -191,7 +192,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarSecretaryComponent(name: AuthService().currentUser?.name),
+      appBar: appBarSecretaryComponent(name: AuthSecretaryService().currentUser?.name),
       drawer: const DrawerSecretaryComponent(),
       body: SingleChildScrollView(
         child: LayoutBuilder(

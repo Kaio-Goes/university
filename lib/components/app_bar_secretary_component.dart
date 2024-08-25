@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
 import 'package:university/pages/secretary/login/login_secretary_page.dart';
-import 'package:university/services/auth_service.dart';
+import 'package:university/services/auth_secretary_service.dart';
 
 appBarSecretaryComponent({String? name}) {
   return PreferredSize(
@@ -41,7 +41,7 @@ appBarSecretaryComponent({String? name}) {
                     icon: const Icon(Icons.account_circle, color: Colors.black),
                     onSelected: (int result) async {
                       if (result == 0) {
-                        AuthService().logout();
+                        AuthSecretaryService().logout();
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
                                 builder: (context) =>
@@ -100,7 +100,7 @@ appBarSecretaryComponent({String? name}) {
                             size: 34, color: Colors.black),
                         onSelected: (int result) async {
                           if (result == 0) {
-                            AuthService().logout();
+                            AuthSecretaryService().logout();
                             // ignore: use_build_context_synchronously
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(

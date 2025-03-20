@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:university/core/models/class_firebase.dart';
+import 'package:university/core/utilities/alerts.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/class_create_page.dart';
+import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
+import 'package:university/services/class_service.dart';
 
 class ListClass extends StatefulWidget {
   final bool isSmallScreen;
@@ -99,6 +102,20 @@ class _ListClassState extends State<ListClass> {
                                             ),
                                           ),
                                         );
+                                      } else if (result == 'delete') {
+                                        showDeleteDialog(
+                                            context: context,
+                                            onPressed: () {
+                                              ClassService()
+                                                  .deleteClass(uid: classe.uid);
+                                              Navigator.of(context)
+                                                  .pushAndRemoveUntil(
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const DashboardSecretaryPage()),
+                                                      (Route<dynamic> route) =>
+                                                          false);
+                                            });
                                       }
                                     },
                                     itemBuilder: (BuildContext context) =>
@@ -111,6 +128,17 @@ class _ListClassState extends State<ListClass> {
                                           children: [
                                             Text('Editar'),
                                             Icon(Icons.edit, size: 16)
+                                          ],
+                                        ),
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'delete',
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text('Excluir'),
+                                            Icon(Icons.delete, size: 16)
                                           ],
                                         ),
                                       ),
@@ -227,6 +255,20 @@ class _ListClassState extends State<ListClass> {
                                           ),
                                         ),
                                       );
+                                    } else if (result == 'delete') {
+                                      showDeleteDialog(
+                                          context: context,
+                                          onPressed: () {
+                                            ClassService()
+                                                .deleteClass(uid: classe.uid);
+                                            Navigator.of(context)
+                                                .pushAndRemoveUntil(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            const DashboardSecretaryPage()),
+                                                    (Route<dynamic> route) =>
+                                                        false);
+                                          });
                                     }
                                   },
                                   itemBuilder: (BuildContext context) =>
@@ -239,6 +281,17 @@ class _ListClassState extends State<ListClass> {
                                         children: [
                                           Text('Editar'),
                                           Icon(Icons.edit, size: 16)
+                                        ],
+                                      ),
+                                    ),
+                                    const PopupMenuItem<String>(
+                                      value: 'delete',
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Excluir'),
+                                          Icon(Icons.delete, size: 16)
                                         ],
                                       ),
                                     ),

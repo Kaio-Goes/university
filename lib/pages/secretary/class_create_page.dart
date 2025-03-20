@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:university/components/app_bar_secretary_component.dart';
 import 'package:university/components/drawer_secretary_component.dart';
@@ -7,7 +8,7 @@ import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/user_firebase.dart';
-import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
+import 'package:university/core/utilities/alerts.dart';
 import 'package:university/services/auth_secretary_service.dart';
 import 'package:university/services/class_service.dart';
 import 'package:university/services/users_service.dart';
@@ -74,48 +75,38 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
       return;
     }
 
-    try {
+    if (widget.classFirebase != null) {
       ClassService()
-          .createClass(
-              name: descriptionController.text,
-              subject: selectedSubject,
-              typeClass: selectedTypeClass,
-              startDate: dateController.text,
-              endDate: endDateController.text,
-              students: confirmResults)
+          .updateClassFirebase(
+        uid: widget.classFirebase!.uid,
+        name: descriptionController.text,
+        subject: selectedSubject!,
+        typeClass: selectedTypeClass!,
+        startDate: dateController.text,
+        endDate: endDateController.text,
+        students: confirmResults,
+      )
           .then((_) {
-        showDialog(
-          // ignore: use_build_context_synchronously
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Sucesso"),
-              content: const Text("Turma criada com sucesso!"),
-              actions: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const DashboardSecretaryPage()),
-                        (Route<dynamic> route) => false);
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                  child: const Text(
-                    "Ir para o início",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
+        // ignore: use_build_context_synchronously
+        showSuccessDialog(context);
       });
-    } catch (e) {
-      throw Exception("Erro in create class $e");
+    } else {
+      try {
+        ClassService()
+            .createClass(
+                name: descriptionController.text,
+                subject: selectedSubject,
+                typeClass: selectedTypeClass,
+                startDate: dateController.text,
+                endDate: endDateController.text,
+                students: confirmResults)
+            .then((_) {
+          // ignore: use_build_context_synchronously
+          showSuccessDialog(context);
+        });
+      } catch (e) {
+        throw Exception("Erro in create class $e");
+      }
     }
   }
 
@@ -161,10 +152,12 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Criar uma nova Turma',
+                          Text(
+                            widget.classFirebase != null
+                                ? "Editar a Turma"
+                                : 'Criar uma nova Turma',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
@@ -199,6 +192,16 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                     value,
                                                     dateController.text,
                                                     endDateController.text),
+                                                inputFormatters: [
+                                                  MaskTextInputFormatter(
+                                                    mask: '##/##/####',
+                                                    filter: {
+                                                      "#": RegExp(r'^[0-9]*$')
+                                                    },
+                                                    type: MaskAutoCompletionType
+                                                        .lazy,
+                                                  )
+                                                ],
                                                 hint:
                                                     'Selecione o período da turma',
                                                 label: 'Data de Início',
@@ -217,6 +220,16 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                         value,
                                                         dateController.text,
                                                         endDateController.text),
+                                                inputFormatters: [
+                                                  MaskTextInputFormatter(
+                                                    mask: '##/##/####',
+                                                    filter: {
+                                                      "#": RegExp(r'^[0-9]*$')
+                                                    },
+                                                    type: MaskAutoCompletionType
+                                                        .lazy,
+                                                  )
+                                                ],
                                                 hint:
                                                     'Selecione o período final da turma',
                                                 label: 'Data de Encerramento',
@@ -271,6 +284,18 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                             dateController.text,
                                                             endDateController
                                                                 .text),
+                                                    inputFormatters: [
+                                                      MaskTextInputFormatter(
+                                                        mask: '##/##/####',
+                                                        filter: {
+                                                          "#": RegExp(
+                                                              r'^[0-9]*$')
+                                                        },
+                                                        type:
+                                                            MaskAutoCompletionType
+                                                                .lazy,
+                                                      )
+                                                    ],
                                                     hint:
                                                         'Selecione o período da turma',
                                                     label: 'Data de Início',
@@ -291,6 +316,18 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                             dateController.text,
                                                             endDateController
                                                                 .text),
+                                                    inputFormatters: [
+                                                      MaskTextInputFormatter(
+                                                        mask: '##/##/####',
+                                                        filter: {
+                                                          "#": RegExp(
+                                                              r'^[0-9]*$')
+                                                        },
+                                                        type:
+                                                            MaskAutoCompletionType
+                                                                .lazy,
+                                                      )
+                                                    ],
                                                     hint:
                                                         'Selecione o período final da turma',
                                                     label:

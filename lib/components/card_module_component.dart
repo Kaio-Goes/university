@@ -347,35 +347,17 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                     endTimeHour: endHourController);
                               }
                             } else if (value == 'delete') {
-                              // Adicione aqui a lógica para a opção 'Excluir'
-                              showDialog(
+                              showDeleteDialog(
                                 context: context,
-                                builder: (ctx) => AlertDialog(
-                                  title: const Text("Tem certeza?"),
-                                  content:
-                                      const Text("Deseja excluir a matéria"),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(ctx).pop(false);
-                                      },
-                                      child: const Text("Não"),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        SubjectService().deleteSubject(
-                                            uid: widget
-                                                .subjectModule![index].uid);
-                                        Navigator.of(context).pushAndRemoveUntil(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const DashboardSecretaryPage()),
-                                            (Route<dynamic> route) => false);
-                                      },
-                                      child: const Text("Sim"),
-                                    ),
-                                  ],
-                                ),
+                                onPressed: () {
+                                  SubjectService().deleteSubject(
+                                      uid: widget.subjectModule![index].uid);
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const DashboardSecretaryPage()),
+                                      (Route<dynamic> route) => false);
+                                },
                               );
                             }
                           },

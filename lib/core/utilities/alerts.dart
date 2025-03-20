@@ -30,3 +30,28 @@ void showSuccessDialog(BuildContext context) {
     },
   );
 }
+
+void showDeleteDialog({
+  required BuildContext context,
+  required void Function()? onPressed,
+}) {
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text("Tem certeza?"),
+      content: const Text("Deseja excluir a matéria"),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(ctx).pop(false);
+          },
+          child: const Text("Não"),
+        ),
+        TextButton(
+          onPressed: onPressed,
+          child: const Text("Sim"),
+        ),
+      ],
+    ),
+  );
+}

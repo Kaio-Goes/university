@@ -33,6 +33,25 @@ class ClassService {
     }
   }
 
+  Future updateClassFirebase(
+      {required String uid,
+      required String name,
+      required String subject,
+      required String typeClass,
+      required String startDate,
+      required String endDate,
+      required List<String> students}) async {
+    DatabaseReference classRef = FirebaseDatabase.instance.ref().child('class');
+    classRef.child(uid).update({
+      'name': name,
+      'subject': subject,
+      'type': typeClass,
+      'startDate': startDate,
+      'endDate': endDate,
+      'students': students,
+    });
+  }
+
   Future<List<ClassFirebase>> getAllClassFirebase() async {
     try {
       DatabaseReference subjectRef =
@@ -54,5 +73,12 @@ class ClassService {
       Exception('Erro ao buscar classes: \$e');
       return [];
     }
+  }
+
+  Future<void> deleteClass({required String uid}) async {
+    DatabaseReference classRef =
+        FirebaseDatabase.instance.ref().child('class').child(uid);
+
+    await classRef.remove();
   }
 }

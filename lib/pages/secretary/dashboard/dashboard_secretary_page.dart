@@ -6,9 +6,11 @@ import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/list_class.dart';
 import 'package:university/components/list_users_card.dart';
+import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/services/auth_secretary_service.dart';
+import 'package:university/services/class_service.dart';
 import 'package:university/services/subject_service.dart';
 import 'package:university/services/users_service.dart';
 
@@ -22,8 +24,10 @@ class DashboardSecretaryPage extends StatefulWidget {
 class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   List<UserFirebase> teachers = [];
   List<UserFirebase> students = [];
+  List<ClassFirebase> classe = [];
   List<UserFirebase> activeTeachers = [];
   List<UserFirebase> activeStudent = [];
+  List<ClassFirebase> loadClass = [];
 
   List<SubjectModule> subjectModule1 = [];
   List<SubjectModule> subjectModule2 = [];
@@ -31,23 +35,29 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
 
   List<UserFirebase> filteredTeachers = [];
   List<UserFirebase> filteredStudents = [];
+  List<ClassFirebase> filteredClass = [];
 
   TextEditingController searchTeachersController = TextEditingController();
   TextEditingController searchStudentsController = TextEditingController();
   TextEditingController searchClassController = TextEditingController();
 
-  bool isAscending = true; // Para controle de ordenação
+  bool isAscendingStudent = true; // Para controle de ordenação
+  bool isAscendingTeachers = true;
+  bool isAscendingClass = true;
 
   int currentPageTeacher = 1;
   int itemsPerPageTeacher = 5;
   int currentPageStudent = 1;
   int itemsPerPageStudent = 5;
 
+  int currentPageClass = 1;
+  int itemsPerPageClass = 5;
+
   @override
   void initState() {
     super.initState();
     _loadUsers();
-
+    _loadClass();
     // Adiciona um listener para o TextEditingController
     searchTeachersController.addListener(() {
       filterTeachers();
@@ -55,6 +65,10 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
 
     searchStudentsController.addListener(() {
       filterStudent();
+    });
+
+    searchClassController.addListener(() {
+      filterClass();
     });
   }
 
@@ -95,7 +109,21 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
         filteredStudents = students;
       });
     } catch (e) {
-      // print('Erro ao carregar professores: $e');
+      Exception('Erro ao carregar professores: $e');
+    }
+  }
+
+  Future _loadClass() async {
+    try {
+      List<ClassFirebase> loadedClass =
+          await ClassService().getAllClassFirebase();
+      setState(() {
+        loadClass = loadedClass;
+        classe = loadedClass;
+        filteredClass = classe;
+      });
+    } catch (e) {
+      Exception("Erro a buscar as classes");
     }
   }
 
@@ -125,29 +153,54 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
     });
   }
 
+  void filterClass() {
+    setState(() {
+      filteredClass = classe.where((classe) {
+        return classe.name
+            .toLowerCase()
+            .contains(searchClassController.text.toLowerCase());
+      }).toList();
+    });
+  }
+
   void _sortTeachersByName() {
     setState(() {
       filteredTeachers.sort((a, b) {
-        if (isAscending) {
+        if (isAscendingTeachers) {
           return a.name.compareTo(b.name);
         } else {
           return b.name.compareTo(a.name);
         }
       });
-      isAscending = !isAscending; // Alterna a direção da ordenação
+      isAscendingTeachers =
+          !isAscendingTeachers; // Alterna a direção da ordenação
     });
   }
 
   void _sortStudentsByName() {
     setState(() {
       filteredStudents.sort((a, b) {
-        if (isAscending) {
+        if (isAscendingStudent) {
           return a.name.compareTo(b.name);
         } else {
           return b.name.compareTo(a.name);
         }
       });
-      isAscending = !isAscending; // Alterna a direção da ordenação
+      isAscendingStudent =
+          !isAscendingStudent; // Alterna a direção da ordenação
+    });
+  }
+
+  void _sortClassByName() {
+    setState(() {
+      filteredClass.sort((a, b) {
+        if (isAscendingClass) {
+          return a.name.compareTo(b.name);
+        } else {
+          return b.name.compareTo(a.name);
+        }
+      });
+      isAscendingClass = !isAscendingClass;
     });
   }
 
@@ -163,6 +216,14 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
     setState(() {
       if (currentPageStudent * itemsPerPageStudent < filteredStudents.length) {
         currentPageStudent++;
+      }
+    });
+  }
+
+  void _nextPageClass() {
+    setState(() {
+      if (currentPageClass * itemsPerPageClass < filteredClass.length) {
+        currentPageClass++;
       }
     });
   }
@@ -183,12 +244,21 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
     });
   }
 
+  void _previousPageClass() {
+    setState(() {
+      if (currentPageClass > 1) {
+        currentPageClass--;
+      }
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
     teachers.clear();
     searchTeachersController.dispose();
     searchStudentsController.dispose();
+    searchClassController.dispose();
   }
 
   @override
@@ -197,6 +267,10 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
     int endIndexTeacher = startIndexTeacher + itemsPerPageTeacher;
     int startIndexStudent = (currentPageStudent - 1) * itemsPerPageStudent;
     int endIndexStudent = startIndexStudent + itemsPerPageStudent;
+
+    int startIndexClass = (currentPageClass - 1) * itemsPerPageClass;
+    int endIndexClass = startIndexClass + itemsPerPageClass;
+
     List<UserFirebase> paginatedTeachers = filteredTeachers.sublist(
       startIndexTeacher,
       endIndexTeacher > filteredTeachers.length
@@ -211,8 +285,15 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
           : endIndexStudent,
     );
 
+    List<ClassFirebase> paginetedClass = filteredClass.sublist(
+        startIndexClass,
+        endIndexClass > filteredClass.length
+            ? filteredClass.length
+            : endIndexClass);
+
     return Scaffold(
-      appBar: appBarSecretaryComponent(name: AuthSecretaryService().currentUser?.name),
+      appBar: appBarSecretaryComponent(
+          name: AuthSecretaryService().currentUser?.name),
       drawer: const DrawerSecretaryComponent(),
       body: SingleChildScrollView(
         child: LayoutBuilder(
@@ -225,22 +306,34 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                   child: isSmallScreen
                       ? Column(
                           children: cardBuild(
-                              countStudent: activeStudent.length.toString(),
-                              countTeacher: activeTeachers.length.toString()),
+                            countStudent: activeStudent.length.toString(),
+                            countTeacher: activeTeachers.length.toString(),
+                            countClass: loadClass.length.toString(),
+                          ),
                         )
                       : SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: cardBuild(
-                                countStudent: activeStudent.length.toString(),
-                                countTeacher: activeTeachers.length.toString()),
+                              countStudent: activeStudent.length.toString(),
+                              countTeacher: activeTeachers.length.toString(),
+                              countClass: loadClass.length.toString(),
+                            ),
                           ),
                         ),
                 ),
                 ListClass(
                   isSmallScreen: isSmallScreen,
-                  searchController: searchTeachersController,
+                  searchController: searchClassController,
+                  paginetedClass: paginetedClass,
+                  sortTeachersByName: _sortClassByName,
+                  isAscending: isAscendingClass,
+                  filteredClass: filteredClass,
+                  currentPage: currentPageClass,
+                  itemsPerPage: itemsPerPageClass,
+                  previousPage: _previousPageClass,
+                  nextPage: _nextPageClass,
                 ),
                 Padding(
                   padding: const EdgeInsets.all(2),
@@ -280,7 +373,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                   searchController: searchTeachersController,
                   paginetedUsers: paginatedTeachers,
                   sortTeachersByName: _sortTeachersByName,
-                  isAscending: isAscending,
+                  isAscending: isAscendingTeachers,
                   previousPage: _previousPageTeacher,
                   currentPage: currentPageTeacher,
                   filteredUsers: filteredTeachers,
@@ -294,7 +387,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                   searchController: searchStudentsController,
                   paginetedUsers: paginatedStudants,
                   sortTeachersByName: _sortStudentsByName,
-                  isAscending: isAscending,
+                  isAscending: isAscendingStudent,
                   previousPage: _previousPageStudent,
                   currentPage: currentPageStudent,
                   filteredUsers: filteredStudents,
@@ -312,8 +405,11 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   }
 }
 
-List<Widget> cardBuild(
-    {required String countStudent, required String countTeacher}) {
+List<Widget> cardBuild({
+  required String countStudent,
+  required String countTeacher,
+  required String countClass,
+}) {
   return [
     CardCount(
       count: countStudent,
@@ -327,8 +423,8 @@ List<Widget> cardBuild(
       color: Colors.purple,
     ),
     const SizedBox(width: 15, height: 15),
-    const CardCount(
-      count: '16',
+    CardCount(
+      count: countClass,
       typeCount: 'Turmas Ativas',
       color: Colors.pinkAccent,
     ),

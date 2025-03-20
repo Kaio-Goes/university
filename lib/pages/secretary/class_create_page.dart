@@ -5,6 +5,7 @@ import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
+import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/services/auth_secretary_service.dart';
@@ -12,7 +13,8 @@ import 'package:university/services/class_service.dart';
 import 'package:university/services/users_service.dart';
 
 class ClassCreatePage extends StatefulWidget {
-  const ClassCreatePage({super.key});
+  final ClassFirebase? classFirebase;
+  const ClassCreatePage({super.key, this.classFirebase});
 
   @override
   State<ClassCreatePage> createState() => _ClassCreatePageState();
@@ -24,7 +26,6 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
   Future<List<UserFirebase>>? futureStudants;
   String? selectedTypeClass;
   String? selectedSubject;
-  List<UserFirebase> activeStudent = [];
   List<String> confirmResults = [];
   List<UserFirebase> selectedStudents = [];
   final TextEditingController dateController = TextEditingController();
@@ -43,6 +44,27 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
   void initState() {
     super.initState();
     futureStudants = fetchStudants();
+
+    if (widget.classFirebase != null) {
+      editRequest();
+    }
+  }
+
+  editRequest() {
+    descriptionController.text = widget.classFirebase!.name;
+    dateController.text = widget.classFirebase!.startDate;
+    endDateController.text = widget.classFirebase!.endDate;
+    selectedTypeClass = widget.classFirebase!.typeClass;
+    selectedSubject = widget.classFirebase!.subject;
+    futureStudants!.then((students) {
+      setState(() {
+        selectedStudents = students
+            .where((student) =>
+                widget.classFirebase!.students.contains(student.uid))
+            .toList();
+        confirmResults = selectedStudents.map((s) => s.uid).toList();
+      });
+    });
   }
 
   _clickButton() {
@@ -345,16 +367,11 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                             ),
                                             onConfirm: (results) {
                                               setState(() {
-                                                for (var student in results) {
-                                                  if (!confirmResults
-                                                      .contains(student.uid)) {
-                                                    confirmResults
-                                                        .add(student.uid);
-                                                  }
-                                                  selectedStudents = results
-                                                      .map((student) => student)
-                                                      .toList();
-                                                }
+                                                confirmResults = results
+                                                    .map((student) =>
+                                                        student.uid)
+                                                    .toList();
+                                                selectedStudents = results;
                                               });
                                             },
                                             initialValue:
@@ -380,9 +397,11 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                     },
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.blue),
-                                    child: const Text(
-                                      'Adicionar',
-                                      style: TextStyle(
+                                    child: Text(
+                                      widget.classFirebase != null
+                                          ? 'Salvar'
+                                          : 'Adicionar',
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),

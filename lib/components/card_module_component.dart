@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:university/components/create_subject_form_component.dart';
 import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
+import 'package:university/core/utilities/alerts.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/services/subject_service.dart';
 
@@ -116,9 +117,24 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
     hourController.text = subject.hour;
     _selectedModule = subject.module;
     _selectedTeacher = subject.userId;
-    // Você também pode preencher os dias selecionados aqui se necessário
-    _selectedDays =
-        []; // Aqui você pode mapear os dias selecionados se já estiverem armazenados
+    _selectedDays = subject.daysWeek
+        .replaceAll("[", "")
+        .replaceAll("]", "")
+        .split(", ")
+        .map((day) => day.trim())
+        .toList();
+    startHourController.text = subject.startHour;
+    endHourController.text = subject.endHour;
+  }
+
+  void clearInput() {
+    titleController.clear();
+    hourController.clear();
+    _selectedModule = null;
+    _selectedTeacher = null;
+    _selectedDays = [];
+    startHourController.clear();
+    endHourController.clear();
   }
 
   @override
@@ -144,6 +160,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                 const SizedBox(width: 100),
                 IconButton(
                   onPressed: () {
+                    clearInput();
                     enumTeachers = widget.userTeacher
                         .map((e) => DropdownMenuItem<String>(
                             value: e.uid.toString(),
@@ -153,6 +170,9 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                     createSubjectFormComponent(
                         context: context,
                         formKey: _formKey,
+                        title: "Criar uma Matéria",
+                        subTitle:
+                            "Crie uma matéria para o módulo selecionado e adicione o Professor responsável.",
                         isSmallScreen: widget.isSmallScreen,
                         titleController: titleController,
                         hourController: hourController,
@@ -170,6 +190,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                           });
                         },
                         enumTeachers: enumTeachers,
+                        titleButton: 'Adicionar',
                         onPressedClickButton: () {
                           _clickButton(
                             title: titleController.text,
@@ -257,7 +278,8 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                           icon: const Icon(Icons.more_vert),
                           onSelected: (String value) {
                             if (value == 'edit') {
-                              var subject = widget.subjectModule?[index];
+                              SubjectModule? subject =
+                                  widget.subjectModule?[index];
                               if (subject != null) {
                                 _populateForm(subject);
 
@@ -271,6 +293,9 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                 createSubjectFormComponent(
                                     context: context,
                                     formKey: _formKey,
+                                    title: "Editar Matéria",
+                                    subTitle:
+                                        "Edite matéria para o módulo selecionado e adicione o Professor responsável.",
                                     isSmallScreen: widget.isSmallScreen,
                                     titleController: titleController,
                                     hourController: hourController,
@@ -288,16 +313,28 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                       });
                                     },
                                     enumTeachers: enumTeachers,
+                                    titleButton: 'Editar',
                                     onPressedClickButton: () {
-                                      _clickButton(
-                                        title: titleController.text,
-                                        hour: hourController.text,
-                                        module: _selectedModule ?? '',
-                                        daysWeeks: _selectedDays.toString(),
-                                        startHour: startHourController.text,
-                                        endHour: endHourController.text,
-                                        idUser: _selectedTeacher ?? '',
-                                      );
+                                      try {
+                                        SubjectService()
+                                            .updateSubject(
+                                          uid: subject.uid,
+                                          title: titleController.text,
+                                          hour: hourController.text,
+                                          module: _selectedModule!,
+                                          idUser: _selectedTeacher!,
+                                          daysWeek: _selectedDays.toString(),
+                                          startHour: startHourController.text,
+                                          endHour: endHourController.text,
+                                        )
+                                            .then((_) {
+                                          // ignore: use_build_context_synchronously
+                                          showSuccessDialog(context);
+                                        });
+                                      } catch (e) {
+                                        Exception(
+                                            "Erro ao tentar atualizar o modulo == $e");
+                                      }
                                     },
                                     selectedDays: _selectedDays,
                                     onChangedSelectedDays: (days) {

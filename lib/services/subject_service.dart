@@ -57,6 +57,29 @@ class SubjectService {
     return subjectModules;
   }
 
+  Future updateSubject({
+    required String uid,
+    required String title,
+    required String hour,
+    required String module,
+    required String idUser,
+    required String daysWeek,
+    required String startHour,
+    required String endHour,
+  }) async {
+    DatabaseReference subjectRef =
+        FirebaseDatabase.instance.ref().child('subjects');
+    subjectRef.child(uid).update({
+      'title': title,
+      'hour': hour,
+      'module': module,
+      'user_id': idUser,
+      'daysWeeks': daysWeek,
+      'startHour': startHour,
+      'endHour': endHour
+    });
+  }
+
   Future<void> deleteSubject({required String uid}) async {
     DatabaseReference subjectRef =
         FirebaseDatabase.instance.ref().child('subjects').child(uid);

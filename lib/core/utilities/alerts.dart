@@ -1,0 +1,32 @@
+import 'package:flutter/material.dart';
+import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
+
+void showSuccessDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("Sucesso"),
+        content: const Text("Operação realizada com sucesso!"),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => const DashboardSecretaryPage()),
+                  (Route<dynamic> route) => false);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+            child: const Text(
+              "Ir para o início",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}

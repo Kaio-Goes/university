@@ -7,6 +7,9 @@ import 'package:university/core/utilities/styles.constants.dart';
 createSubjectFormComponent({
   required BuildContext context,
   required GlobalKey<FormState> formKey,
+  required String title,
+  required String subTitle,
+  required String titleButton,
   required bool isSmallScreen,
   required TextEditingController titleController,
   required TextEditingController hourController,
@@ -34,7 +37,7 @@ createSubjectFormComponent({
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Criar uma Matéria"),
+              Text(title),
               IconButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -42,8 +45,7 @@ createSubjectFormComponent({
                   icon: const Icon(Icons.close))
             ],
           ),
-          content: const Text(
-              "Crie uma matéria para o módulo selecionado e adicione o Professor responsável."),
+          content: Text(subTitle),
           actions: [
             Form(
               key: formKey,
@@ -187,12 +189,12 @@ createSubjectFormComponent({
                       onPressed: onPressedClickButton,
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Adicionar',
-                            style: TextStyle(
+                            titleButton,
+                            style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),

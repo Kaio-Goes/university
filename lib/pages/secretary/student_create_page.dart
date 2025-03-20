@@ -7,6 +7,7 @@ import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/user_firebase.dart';
+import 'package:university/core/utilities/alerts.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/services/auth_secretary_service.dart';
@@ -146,7 +147,8 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
             'isActive': widget.userTeacher!.isActive,
           },
         ).then((_) {
-          _showSuccessDialog();
+          // ignore: use_build_context_synchronously
+          showSuccessDialog(context);
         });
       } catch (e) {
         setState(() {
@@ -156,40 +158,11 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
     }
   }
 
-  void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Sucesso"),
-          content: const Text("Operação realizada com sucesso!"),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                        builder: (context) => const DashboardSecretaryPage()),
-                    (Route<dynamic> route) => false);
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-              child: const Text(
-                "Ir para o início",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarSecretaryComponent(name: AuthSecretaryService().currentUser?.name),
+      appBar: appBarSecretaryComponent(
+          name: AuthSecretaryService().currentUser?.name),
       drawer: const DrawerSecretaryComponent(),
       body: SingleChildScrollView(
         child: LayoutBuilder(

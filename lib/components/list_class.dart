@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/pages/secretary/class_create_page.dart';
 
 class ListClass extends StatefulWidget {
   final bool isSmallScreen;
@@ -90,16 +91,14 @@ class _ListClassState extends State<ListClass> {
                                     icon: const Icon(Icons.more_vert),
                                     onSelected: (String result) {
                                       if (result == 'Edit') {
-                                        // Navigator.of(context).push(
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) =>
-                                        //         user.role == 'teacher'
-                                        //             ? TeacherCreatePage(
-                                        //                 userTeacher: user)
-                                        //             : StudantCreatePage(
-                                        //                 userTeacher: user),
-                                        //   ),
-                                        // );
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ClassCreatePage(
+                                              classFirebase: classe,
+                                            ),
+                                          ),
+                                        );
                                       }
                                     },
                                     itemBuilder: (BuildContext context) =>
@@ -221,16 +220,13 @@ class _ListClassState extends State<ListClass> {
                                   icon: const Icon(Icons.more_vert),
                                   onSelected: (String result) {
                                     if (result == 'Edit') {
-                                      // Navigator.of(context).push(
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) =>
-                                      //         user.role == 'teacher'
-                                      //             ? TeacherCreatePage(
-                                      //                 userTeacher: user)
-                                      //             : StudantCreatePage(
-                                      //                 userTeacher: user),
-                                      //   ),
-                                      // );
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => ClassCreatePage(
+                                            classFirebase: classe,
+                                          ),
+                                        ),
+                                      );
                                     }
                                   },
                                   itemBuilder: (BuildContext context) =>

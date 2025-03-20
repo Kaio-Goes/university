@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:university/components/app_bar_secretary_component.dart';
+import 'package:university/components/app_bar_user_component.dart';
 import 'package:university/components/card_count.dart';
 import 'package:university/components/card_module_component.dart';
 import 'package:university/components/drawer_secretary_component.dart';
@@ -9,10 +9,9 @@ import 'package:university/components/list_users_card.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
-import 'package:university/services/auth_secretary_service.dart';
 import 'package:university/services/class_service.dart';
 import 'package:university/services/subject_service.dart';
-import 'package:university/services/users_service.dart';
+import 'package:university/services/auth_user_service.dart';
 
 class DashboardSecretaryPage extends StatefulWidget {
   const DashboardSecretaryPage({super.key});
@@ -74,10 +73,10 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
 
   Future<void> _loadUsers() async {
     try {
-      await AuthSecretaryService().loadUserFromCache();
+      await AuthUserService().loadUserFromCache();
 
       Map<String, List<UserFirebase>> fetchedUsers =
-          await UsersService().getAllUsers();
+          await AuthUserService().getAllUsers();
 
       List<SubjectModule> fetchedSubjectModule =
           await SubjectService().getAllSubjectModule();
@@ -292,8 +291,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
             : endIndexClass);
 
     return Scaffold(
-      appBar: appBarSecretaryComponent(
-          name: AuthSecretaryService().currentUser?.name),
+      appBar: appBarUserComponent(userFirebase: AuthUserService().currentUser),
       drawer: const DrawerSecretaryComponent(),
       body: SingleChildScrollView(
         child: LayoutBuilder(

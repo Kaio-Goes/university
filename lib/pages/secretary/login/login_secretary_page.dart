@@ -3,9 +3,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
-import 'package:university/core/models/user_secretary.dart';
+import 'package:university/core/models/user_firebase.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
-import 'package:university/services/auth_secretary_service.dart';
+import 'package:university/services/auth_user_service.dart';
 
 class LoginSecretaryPage extends StatefulWidget {
   const LoginSecretaryPage({super.key});
@@ -50,15 +50,23 @@ class _LoginSecretaryPageState extends State<LoginSecretaryPage> {
           String name = snapshot.child('name').value as String;
           String email = snapshot.child('email').value as String;
           String uid = snapshot.child('uid').value as String;
+          // String cpf = snapshot.child('cpf').value as String;
+          // String phone = snapshot.child('phone').value as String;
+          // String surname = snapshot.child('surname').value as String;
+          // bool isActive = snapshot.child('isActive').value as bool;
 
-          var user = UserSecretary(
-            uid: uid,
-            name: name,
-            email: email,
-            role: role,
-          );
+          var user = UserFirebase(
+              uid: uid,
+              name: name,
+              email: email,
+              role: role,
+              cpf: "",
+              rg: "",
+              phone: "",
+              surname: "",
+              isActive: true);
 
-          await AuthSecretaryService().addUserSecretaryModel(user: user);
+          await AuthUserService().addUserModel(user: user);
 
           if (role == 'admin') {
             // ignore: use_build_context_synchronously
@@ -79,7 +87,7 @@ class _LoginSecretaryPageState extends State<LoginSecretaryPage> {
       } catch (e) {
         setState(() {
           _errorMessage =
-              'Erro ao acessar o banco de dados. Por favor, tente novamente.';
+              'Erro ao acessar o banco de dados. Por favor, tente novamente. $e';
         });
       }
     } on FirebaseAuthException catch (e) {

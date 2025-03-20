@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:university/components/app_bar_secretary_component.dart';
+import 'package:university/components/app_bar_user_component.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
@@ -9,9 +9,8 @@ import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/alerts.dart';
-import 'package:university/services/auth_secretary_service.dart';
 import 'package:university/services/class_service.dart';
-import 'package:university/services/users_service.dart';
+import 'package:university/services/auth_user_service.dart';
 
 class ClassCreatePage extends StatefulWidget {
   final ClassFirebase? classFirebase;
@@ -129,8 +128,7 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarSecretaryComponent(
-          name: AuthSecretaryService().currentUser?.name),
+      appBar: appBarUserComponent(userFirebase: AuthUserService().currentUser),
       drawer: const DrawerSecretaryComponent(),
       body: SingleChildScrollView(
         child: LayoutBuilder(

@@ -4,7 +4,7 @@ import 'package:university/pages/secretary/class_create_page.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/pages/secretary/student_create_page.dart';
 import 'package:university/pages/secretary/teacher_create_page.dart';
-import 'package:university/services/auth_secretary_service.dart';
+import 'package:university/services/auth_user_service.dart';
 
 class DrawerSecretaryComponent extends StatelessWidget {
   const DrawerSecretaryComponent({super.key});
@@ -67,7 +67,7 @@ class DrawerSecretaryComponent extends StatelessWidget {
             ),
             title: const Text('Sair'),
             onTap: () async {
-              AuthSecretaryService().logout();
+              AuthUserService().logout();
               // ignore: use_build_context_synchronously
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(

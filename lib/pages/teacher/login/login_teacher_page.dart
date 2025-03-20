@@ -3,9 +3,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
-import 'package:university/core/models/user_teacher.dart';
-import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
-import 'package:university/services/auth_teacher_service.dart';
+import 'package:university/core/models/user_firebase.dart';
+import 'package:university/pages/teacher/dashboard/dashboard_teacher_page.dart';
+import 'package:university/services/auth_user_service.dart';
 
 class LoginTeacherPage extends StatefulWidget {
   const LoginTeacherPage({super.key});
@@ -55,7 +55,7 @@ class _LoginTeacherPageState extends State<LoginTeacherPage> {
           String surname = snapshot.child('surname').value as String;
           bool isActive = snapshot.child('isActive').value as bool;
 
-          var user = UserTeacher(
+          var user = UserFirebase(
             uid: uid,
             name: name,
             email: email,
@@ -67,13 +67,13 @@ class _LoginTeacherPageState extends State<LoginTeacherPage> {
           );
 
           // await AuthService().addUserSecretaryModel(user: user);
-          await AuthTeacherService().addUserTeacherModel(user: user);
+          await AuthUserService().addUserModel(user: user);
 
           if (role == 'teacher') {
             // ignore: use_build_context_synchronously
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                    builder: (context) => const DashboardSecretaryPage()),
+                    builder: (context) => const DashboardTeacherPage()),
                 (Route<dynamic> route) => false);
           } else {
             setState(() {

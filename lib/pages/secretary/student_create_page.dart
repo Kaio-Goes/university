@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:university/components/app_bar_secretary_component.dart';
+import 'package:university/components/app_bar_user_component.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
@@ -10,7 +10,7 @@ import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/alerts.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
-import 'package:university/services/auth_secretary_service.dart';
+import 'package:university/services/auth_user_service.dart';
 import 'package:university/services/send_email.dart';
 
 class StudantCreatePage extends StatefulWidget {
@@ -161,8 +161,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarSecretaryComponent(
-          name: AuthSecretaryService().currentUser?.name),
+      appBar: appBarUserComponent(userFirebase: AuthUserService().currentUser),
       drawer: const DrawerSecretaryComponent(),
       body: SingleChildScrollView(
         child: LayoutBuilder(

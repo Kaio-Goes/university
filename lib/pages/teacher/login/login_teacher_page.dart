@@ -69,7 +69,6 @@ class _LoginTeacherPageState extends State<LoginTeacherPage> {
           // await AuthService().addUserSecretaryModel(user: user);
           await AuthTeacherService().addUserTeacherModel(user: user);
 
-
           if (role == 'teacher') {
             // ignore: use_build_context_synchronously
             Navigator.of(context).pushAndRemoveUntil(
@@ -88,8 +87,7 @@ class _LoginTeacherPageState extends State<LoginTeacherPage> {
         }
       } catch (e) {
         setState(() {
-          _errorMessage =
-              'Erro ao acessar o banco de dados. Por favor, tente novamente.';
+          _errorMessage = 'Acesso negado. Você não é um(a) professor(a).';
         });
       }
     } on FirebaseAuthException catch (e) {

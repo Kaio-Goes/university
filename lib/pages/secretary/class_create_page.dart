@@ -6,7 +6,9 @@ import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/user_firebase.dart';
+import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/services/auth_secretary_service.dart';
+import 'package:university/services/class_service.dart';
 import 'package:university/services/users_service.dart';
 
 class ClassCreatePage extends StatefulWidget {
@@ -19,10 +21,12 @@ class ClassCreatePage extends StatefulWidget {
 class _ClassCreatePageState extends State<ClassCreatePage> {
   final _formKey = GlobalKey<FormState>();
   final descriptionController = TextEditingController();
+  Future<List<UserFirebase>>? futureStudants;
   String? selectedTypeClass;
   String? selectedSubject;
   List<UserFirebase> activeStudent = [];
-  List<int>? confirmResults;
+  List<String> confirmResults = [];
+  List<UserFirebase> selectedStudents = [];
   final TextEditingController dateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
 
@@ -35,18 +39,85 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
         .toList();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    futureStudants = fetchStudants();
+  }
+
   _clickButton() {
     bool formOk = _formKey.currentState!.validate();
 
     if (!formOk) {
       return;
     }
+
+    try {
+      ClassService()
+          .createClass(
+              name: descriptionController.text,
+              subject: selectedSubject,
+              typeClass: selectedTypeClass,
+              startDate: dateController.text,
+              endDate: endDateController.text,
+              students: confirmResults)
+          .then((_) {
+        showDialog(
+          // ignore: use_build_context_synchronously
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Sucesso"),
+              content: const Text("Turma criada com sucesso!"),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const DashboardSecretaryPage()),
+                        (Route<dynamic> route) => false);
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  child: const Text(
+                    "Ir para o início",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      });
+    } catch (e) {
+      throw Exception("Erro in create class $e");
+    }
+  }
+
+  _selectDate(BuildContext context, TextEditingController controller) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        controller.text =
+            "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarSecretaryComponent(name: AuthSecretaryService().currentUser?.name),
+      appBar: appBarSecretaryComponent(
+          name: AuthSecretaryService().currentUser?.name),
       drawer: const DrawerSecretaryComponent(),
       body: SingleChildScrollView(
         child: LayoutBuilder(
@@ -100,10 +171,6 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                               isSmallScreen: isSmallScreen,
                                               descriptionController:
                                                   descriptionController,
-                                              selectedSubject: selectedSubject,
-                                              onChangedSubject: (value) {
-                                                selectedSubject = value;
-                                              },
                                               dateInput: textFormField(
                                                 controller: dateController,
                                                 validator: (value) => validDate(
@@ -116,34 +183,11 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                 size: widthInput,
                                                 onTap: () async {
                                                   FocusScope.of(context)
-                                                      .requestFocus(
-                                                          FocusNode());
-                                                  final DateTime? pickedDate =
-                                                      await showDatePicker(
-                                                    context: context,
-                                                    initialDate: DateTime.now(),
-                                                    firstDate: DateTime(2000),
-                                                    lastDate: DateTime(2101),
-                                                  );
-                                                  if (pickedDate != null) {
-                                                    setState(() {
-                                                      dateController.text =
-                                                          "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                                                    });
-                                                  }
+                                                      .unfocus();
+                                                  await _selectDate(
+                                                      context, dateController);
                                                 },
                                               ),
-                                            ),
-                                            buildFormCreateClassPartTwo(
-                                              context: context,
-                                              isSmallScreen: isSmallScreen,
-                                              selectedTypeClass:
-                                                  selectedTypeClass,
-                                              onChangedTypeClass: (value) {
-                                                setState(() {
-                                                  selectedTypeClass = value;
-                                                });
-                                              },
                                               endDateInput: textFormField(
                                                 controller: endDateController,
                                                 validator: (value) =>
@@ -157,23 +201,26 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                 size: widthInput,
                                                 onTap: () async {
                                                   FocusScope.of(context)
-                                                      .requestFocus(
-                                                          FocusNode());
-                                                  final DateTime? pickedDate =
-                                                      await showDatePicker(
-                                                    context: context,
-                                                    initialDate: DateTime.now(),
-                                                    firstDate: DateTime(2000),
-                                                    lastDate: DateTime(2101),
-                                                  );
-                                                  if (pickedDate != null) {
-                                                    setState(() {
-                                                      endDateController.text =
-                                                          "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                                                    });
-                                                  }
+                                                      .unfocus();
+                                                  await _selectDate(context,
+                                                      endDateController);
                                                 },
                                               ),
+                                            ),
+                                            buildFormCreateClassPartTwo(
+                                              context: context,
+                                              isSmallScreen: isSmallScreen,
+                                              selectedTypeClass:
+                                                  selectedTypeClass,
+                                              onChangedTypeClass: (value) {
+                                                setState(() {
+                                                  selectedTypeClass = value;
+                                                });
+                                              },
+                                              selectedSubject: selectedSubject,
+                                              onChangedSubject: (value) {
+                                                selectedSubject = value;
+                                              },
                                             )
                                           ],
                                         ),
@@ -194,11 +241,6 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                   isSmallScreen: isSmallScreen,
                                                   descriptionController:
                                                       descriptionController,
-                                                  selectedSubject:
-                                                      selectedSubject,
-                                                  onChangedSubject: (value) {
-                                                    selectedSubject = value;
-                                                  },
                                                   dateInput: textFormField(
                                                     controller: dateController,
                                                     validator: (value) =>
@@ -213,38 +255,11 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                     size: widthInput,
                                                     onTap: () async {
                                                       FocusScope.of(context)
-                                                          .requestFocus(
-                                                              FocusNode());
-                                                      final DateTime?
-                                                          pickedDate =
-                                                          await showDatePicker(
-                                                        context: context,
-                                                        initialDate:
-                                                            DateTime.now(),
-                                                        firstDate:
-                                                            DateTime(2000),
-                                                        lastDate:
-                                                            DateTime(2101),
-                                                      );
-                                                      if (pickedDate != null) {
-                                                        setState(() {
-                                                          dateController.text =
-                                                              "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                                                        });
-                                                      }
+                                                          .unfocus();
+                                                      await _selectDate(context,
+                                                          dateController);
                                                     },
                                                   ),
-                                                ),
-                                                buildFormCreateClassPartTwo(
-                                                  context: context,
-                                                  isSmallScreen: isSmallScreen,
-                                                  selectedTypeClass:
-                                                      selectedTypeClass,
-                                                  onChangedTypeClass: (value) {
-                                                    setState(() {
-                                                      selectedTypeClass = value;
-                                                    });
-                                                  },
                                                   endDateInput: textFormField(
                                                     controller:
                                                         endDateController,
@@ -261,28 +276,27 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                     size: widthInput,
                                                     onTap: () async {
                                                       FocusScope.of(context)
-                                                          .requestFocus(
-                                                              FocusNode());
-                                                      final DateTime?
-                                                          pickedDate =
-                                                          await showDatePicker(
-                                                        context: context,
-                                                        initialDate:
-                                                            DateTime.now(),
-                                                        firstDate:
-                                                            DateTime(2000),
-                                                        lastDate:
-                                                            DateTime(2101),
-                                                      );
-                                                      if (pickedDate != null) {
-                                                        setState(() {
-                                                          endDateController
-                                                                  .text =
-                                                              "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                                                        });
-                                                      }
+                                                          .unfocus();
+                                                      await _selectDate(context,
+                                                          endDateController);
                                                     },
                                                   ),
+                                                ),
+                                                buildFormCreateClassPartTwo(
+                                                  context: context,
+                                                  isSmallScreen: isSmallScreen,
+                                                  selectedTypeClass:
+                                                      selectedTypeClass,
+                                                  onChangedTypeClass: (value) {
+                                                    setState(() {
+                                                      selectedTypeClass = value;
+                                                    });
+                                                  },
+                                                  selectedSubject:
+                                                      selectedSubject,
+                                                  onChangedSubject: (value) {
+                                                    selectedSubject = value;
+                                                  },
                                                 )
                                               ],
                                             )
@@ -294,7 +308,7 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                   width: 600,
                                   child: Center(
                                     child: FutureBuilder<List<UserFirebase>>(
-                                      future: fetchStudants(),
+                                      future: futureStudants,
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
                                           final student = snapshot.data!;
@@ -331,10 +345,20 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                             ),
                                             onConfirm: (results) {
                                               setState(() {
-                                                confirmResults = List<int>.from(
-                                                    results.map((e) => e.uid));
+                                                for (var student in results) {
+                                                  if (!confirmResults
+                                                      .contains(student.uid)) {
+                                                    confirmResults
+                                                        .add(student.uid);
+                                                  }
+                                                  selectedStudents = results
+                                                      .map((student) => student)
+                                                      .toList();
+                                                }
                                               });
                                             },
+                                            initialValue:
+                                                selectedStudents, // Certifique-se de que os alunos selecionados são mantidos
                                             searchable: true,
                                             searchHint: 'Pesquise alunos',
                                           );
@@ -388,19 +412,12 @@ Widget buildFormCreateClassPartOne({
   required BuildContext context,
   required bool isSmallScreen,
   required TextEditingController descriptionController,
-  required String? selectedSubject,
-  required void Function(String?)? onChangedSubject,
   required Widget dateInput,
+  required Widget endDateInput,
 }) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
       : MediaQuery.of(context).size.width * 0.35;
-
-  final List<DropdownMenuItem<String>> dropdownItemsModule = [
-    const DropdownMenuItem(value: '1', child: Text('Módulo 1')),
-    const DropdownMenuItem(value: '2', child: Text('Módulo 2')),
-    const DropdownMenuItem(value: '3', child: Text('Módulo 3')),
-  ];
 
   return Column(
     children: [
@@ -414,17 +431,7 @@ Widget buildFormCreateClassPartOne({
       const SizedBox(height: 25),
       dateInput,
       const SizedBox(height: 25),
-      SizedBox(
-        width: widthInput,
-        child: dropDownField(
-          label: 'Módulo',
-          select: selectedSubject,
-          onChanged: onChangedSubject,
-          hintText: 'Selecione o módulo para turma',
-          items: dropdownItemsModule,
-          validator: (value) => validatorDropdown(value),
-        ),
-      ),
+      endDateInput,
     ],
   );
 }
@@ -433,13 +440,19 @@ Widget buildFormCreateClassPartTwo({
   required BuildContext context,
   required bool isSmallScreen,
   required String? selectedTypeClass,
-  required Widget endDateInput,
+  required String? selectedSubject,
+  required void Function(String?)? onChangedSubject,
   required void Function(String?)? onChangedTypeClass,
 }) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
       : MediaQuery.of(context).size.width * 0.35;
 
+  final List<DropdownMenuItem<String>> dropdownItemsModule = [
+    const DropdownMenuItem(value: '1', child: Text('Módulo 1')),
+    const DropdownMenuItem(value: '2', child: Text('Módulo 2')),
+    const DropdownMenuItem(value: '3', child: Text('Módulo 3')),
+  ];
   return Column(
     children: [
       SizedBox(
@@ -459,7 +472,17 @@ Widget buildFormCreateClassPartTwo({
         ),
       ),
       const SizedBox(height: 25),
-      endDateInput,
+      SizedBox(
+        width: widthInput,
+        child: dropDownField(
+          label: 'Módulo',
+          select: selectedSubject,
+          onChanged: onChangedSubject,
+          hintText: 'Selecione o módulo para turma',
+          items: dropdownItemsModule,
+          validator: (value) => validatorDropdown(value),
+        ),
+      ),
       SizedBox(height: isSmallScreen ? 15 : 0),
     ],
   );

@@ -123,9 +123,10 @@ class _CoursesPageState extends State<CoursesPage> {
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                         colors: [
-                          const Color.fromARGB(255, 8, 21, 61).withOpacity(0.5),
+                          const Color.fromARGB(255, 8, 21, 61)
+                              .withValues(alpha: 0.5),
                           const Color.fromARGB(255, 20, 42, 138)
-                              .withOpacity(0.5),
+                              .withValues(alpha: 0.5)
                         ],
                       ),
                     ),

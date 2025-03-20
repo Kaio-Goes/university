@@ -48,7 +48,7 @@ textFormField({
             border: const OutlineInputBorder(),
             filled: true,
             fillColor: readOnly != null && readOnly
-                ? Colors.grey.withOpacity(0.5)
+                ? Colors.grey.withValues(alpha: 0.5)
                 : Colors.white,
             contentPadding: const EdgeInsets.only(top: 14.0, left: 14.0),
             hintText: hint,

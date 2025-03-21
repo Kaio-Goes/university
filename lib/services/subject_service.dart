@@ -37,6 +37,27 @@ class SubjectService {
     await newSubjectRef.set(values);
   }
 
+  Future<List<SubjectModule>> getSubjectsByUser(String userId) async {
+    DatabaseReference subjectRef =
+        FirebaseDatabase.instance.ref().child('subjects');
+    DataSnapshot snapshot = await subjectRef.get();
+
+    List<SubjectModule> subjectModules = [];
+
+    if (snapshot.exists) {
+      for (var child in snapshot.children) {
+        Map<dynamic, dynamic> data = child.value as Map<dynamic, dynamic>;
+        if (data['user_id'] == userId) {
+          SubjectModule subjectModule =
+              SubjectModule.fromJson(Map<String, dynamic>.from(data));
+          subjectModules.add(subjectModule);
+        }
+      }
+    }
+
+    return subjectModules;
+  }
+
   Future<List<SubjectModule>> getAllSubjectModule() async {
     DatabaseReference subjectRef =
         FirebaseDatabase.instance.ref().child('subjects');

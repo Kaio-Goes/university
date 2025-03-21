@@ -7,10 +7,12 @@ import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/class_firebase.dart';
+import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/alerts.dart';
 import 'package:university/services/class_service.dart';
 import 'package:university/services/auth_user_service.dart';
+import 'package:university/services/subject_service.dart';
 
 class ClassCreatePage extends StatefulWidget {
   final ClassFirebase? classFirebase;
@@ -24,14 +26,15 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
   final _formKey = GlobalKey<FormState>();
   final descriptionController = TextEditingController();
   Future<List<UserFirebase>>? futureStudants;
+  List<UserFirebase> teachers = [];
+  Future<List<SubjectModule>>? futureSubject;
   String? selectedTypeClass;
-  String? selectedSubject;
   List<String> confirmResults = [];
+  List<String> confirmResultsSubject = [];
   List<UserFirebase> selectedStudents = [];
+  List<SubjectModule> selectedSubjects = [];
   final TextEditingController dateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
-
-  Future<List<UserFirebase>> futureTag = fetchStudants();
 
   List<MultiSelectItem<UserFirebase>> buildStudents(
       List<UserFirebase> students) {
@@ -40,13 +43,64 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
         .toList();
   }
 
+  List<MultiSelectItem<SubjectModule>> buildSubject(
+      List<SubjectModule> subject) {
+    subject.sort((a, b) => a.module.compareTo(b.module));
+
+    return subject.map((e) {
+      // Encontrar o professor correspondente
+      var nameTeacher = teachers
+          .where((teacher) => teacher.uid == e.userId) // Aqui usa o `e.userId`
+          .map((teacher) => teacher.name)
+          .join(", ");
+      var surnameTeacher = teachers
+          .where((teacher) =>
+              teacher.uid == e.userId) // Aqui também usa o `e.userId`
+          .map((teacher) => teacher.surname)
+          .join(", ");
+
+      // Concatenar o nome e sobrenome
+      var fullTeacherName = '$nameTeacher $surnameTeacher';
+
+      return MultiSelectItem<SubjectModule>(
+        e,
+        '${e.title.toUpperCase()}\n'
+        'Módulo: ${e.module}\n'
+        'Professor(a): $fullTeacherName\n'
+        'Dias de aula: ${e.daysWeek.replaceAll('[', '').replaceAll(']', '')}\n'
+        'Horário: ${e.startHour} a ${e.endHour}',
+      );
+    }).toList();
+  }
+
   @override
   void initState() {
     super.initState();
-    futureStudants = fetchStudants();
+    futureStudants = AuthUserService().fetchStudants();
+    futureSubject = SubjectService().getAllSubjectModule();
+    _loadTeachers();
 
     if (widget.classFirebase != null) {
       editRequest();
+    }
+  }
+
+  Future _loadTeachers() async {
+    try {
+      // Problemas com as duas requisições rodando ao mesmo tempo por isso o delayed
+      await Future.delayed(const Duration(seconds: 1));
+      Map<String, List<UserFirebase>> fetchedUsers =
+          await AuthUserService().getAllUsers();
+
+      List<UserFirebase> fetchedTeachers = fetchedUsers['teachers'] ?? [];
+
+      var activeTeachers =
+          fetchedTeachers.where((teacher) => teacher.isActive).toList();
+      setState(() {
+        teachers = activeTeachers;
+      });
+    } catch (e) {
+      Exception('Erro loading users$e');
     }
   }
 
@@ -55,7 +109,6 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
     dateController.text = widget.classFirebase!.startDate;
     endDateController.text = widget.classFirebase!.endDate;
     selectedTypeClass = widget.classFirebase!.typeClass;
-    selectedSubject = widget.classFirebase!.subject;
     futureStudants!.then((students) {
       setState(() {
         selectedStudents = students
@@ -63,6 +116,15 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                 widget.classFirebase!.students.contains(student.uid))
             .toList();
         confirmResults = selectedStudents.map((s) => s.uid).toList();
+      });
+    });
+    futureSubject!.then((subjects) {
+      setState(() {
+        selectedSubjects = subjects
+            .where((subject) =>
+                widget.classFirebase!.subject.contains(subject.uid))
+            .toList();
+        confirmResultsSubject = selectedSubjects.map((s) => s.uid).toList();
       });
     });
   }
@@ -79,7 +141,7 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
           .updateClassFirebase(
         uid: widget.classFirebase!.uid,
         name: descriptionController.text,
-        subject: selectedSubject!,
+        subject: confirmResultsSubject,
         typeClass: selectedTypeClass!,
         startDate: dateController.text,
         endDate: endDateController.text,
@@ -94,7 +156,7 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
         ClassService()
             .createClass(
                 name: descriptionController.text,
-                subject: selectedSubject,
+                subject: confirmResultsSubject,
                 typeClass: selectedTypeClass,
                 startDate: dateController.text,
                 endDate: endDateController.text,
@@ -250,9 +312,70 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                   selectedTypeClass = value;
                                                 });
                                               },
-                                              selectedSubject: selectedSubject,
-                                              onChangedSubject: (value) {
-                                                selectedSubject = value;
+                                              future: futureSubject,
+                                              builder: (context, snapshot) {
+                                                if (snapshot.hasData) {
+                                                  final subject =
+                                                      snapshot.data!;
+                                                  return MultiSelectDialogField<
+                                                      SubjectModule>(
+                                                    items:
+                                                        buildSubject(subject),
+                                                    title: const Text(
+                                                        "Matérias cadastradas"),
+                                                    selectedColor:
+                                                        const Color.fromARGB(
+                                                            204, 88, 192, 206),
+                                                    decoration: BoxDecoration(
+                                                      color:
+                                                          const Color.fromARGB(
+                                                              28, 230, 81, 0),
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .all(
+                                                              Radius.circular(
+                                                                  10)),
+                                                      border: Border.all(
+                                                        color: const Color
+                                                            .fromARGB(
+                                                            204, 42, 97, 107),
+                                                        width: 2,
+                                                      ),
+                                                    ),
+                                                    buttonIcon: const Icon(
+                                                      Icons.airplane_ticket,
+                                                      color: Color.fromRGBO(
+                                                          124, 203, 223, 0.8),
+                                                    ),
+                                                    buttonText: const Text(
+                                                      "Matérias selecionados",
+                                                      style: TextStyle(
+                                                        color: Color.fromARGB(
+                                                            204, 42, 97, 107),
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                    onConfirm: (results) {
+                                                      setState(() {
+                                                        confirmResultsSubject =
+                                                            results
+                                                                .map((subject) =>
+                                                                    subject.uid)
+                                                                .toList();
+                                                        selectedSubjects =
+                                                            results;
+                                                      });
+                                                    },
+                                                    initialValue:
+                                                        selectedSubjects,
+                                                    searchable: true,
+                                                    searchHint:
+                                                        'Pesquise Matérias',
+                                                  );
+                                                } else {
+                                                  return const Text(
+                                                      'Não possui Matérias.');
+                                                }
                                               },
                                             )
                                           ],
@@ -349,10 +472,80 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
                                                       selectedTypeClass = value;
                                                     });
                                                   },
-                                                  selectedSubject:
-                                                      selectedSubject,
-                                                  onChangedSubject: (value) {
-                                                    selectedSubject = value;
+                                                  future: futureSubject,
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.hasData) {
+                                                      final subject =
+                                                          snapshot.data!;
+                                                      return MultiSelectDialogField<
+                                                          SubjectModule>(
+                                                        items: buildSubject(
+                                                            subject),
+                                                        title: const Text(
+                                                            "Matérias cadastradas"),
+                                                        selectedColor:
+                                                            const Color
+                                                                .fromARGB(204,
+                                                                88, 192, 206),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color
+                                                              .fromARGB(
+                                                              28, 230, 81, 0),
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                  .all(Radius
+                                                                      .circular(
+                                                                          10)),
+                                                          border: Border.all(
+                                                            color: const Color
+                                                                .fromARGB(204,
+                                                                42, 97, 107),
+                                                            width: 2,
+                                                          ),
+                                                        ),
+                                                        buttonIcon: const Icon(
+                                                          Icons.airplane_ticket,
+                                                          color: Color.fromRGBO(
+                                                              124,
+                                                              203,
+                                                              223,
+                                                              0.8),
+                                                        ),
+                                                        buttonText: const Text(
+                                                          "Matérias selecionados",
+                                                          style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    204,
+                                                                    42,
+                                                                    97,
+                                                                    107),
+                                                            fontSize: 16,
+                                                          ),
+                                                        ),
+                                                        onConfirm: (results) {
+                                                          setState(() {
+                                                            confirmResultsSubject =
+                                                                results
+                                                                    .map((subject) =>
+                                                                        subject
+                                                                            .uid)
+                                                                    .toList();
+                                                            selectedSubjects =
+                                                                results;
+                                                          });
+                                                        },
+                                                        initialValue:
+                                                            selectedSubjects,
+                                                        searchable: true,
+                                                        searchHint:
+                                                            'Pesquise Matérias',
+                                                      );
+                                                    } else {
+                                                      return const Text(
+                                                          'Não possui Matérias.');
+                                                    }
                                                   },
                                                 )
                                               ],
@@ -494,19 +687,14 @@ Widget buildFormCreateClassPartTwo({
   required BuildContext context,
   required bool isSmallScreen,
   required String? selectedTypeClass,
-  required String? selectedSubject,
-  required void Function(String?)? onChangedSubject,
+  required Future<List<SubjectModule>>? future,
+  required Widget Function(BuildContext, AsyncSnapshot) builder,
   required void Function(String?)? onChangedTypeClass,
 }) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
       : MediaQuery.of(context).size.width * 0.35;
 
-  final List<DropdownMenuItem<String>> dropdownItemsModule = [
-    const DropdownMenuItem(value: '1', child: Text('Módulo 1')),
-    const DropdownMenuItem(value: '2', child: Text('Módulo 2')),
-    const DropdownMenuItem(value: '3', child: Text('Módulo 3')),
-  ];
   return Column(
     children: [
       SizedBox(
@@ -528,14 +716,8 @@ Widget buildFormCreateClassPartTwo({
       const SizedBox(height: 25),
       SizedBox(
         width: widthInput,
-        child: dropDownField(
-          label: 'Módulo',
-          select: selectedSubject,
-          onChanged: onChangedSubject,
-          hintText: 'Selecione o módulo para turma',
-          items: dropdownItemsModule,
-          validator: (value) => validatorDropdown(value),
-        ),
+        child: FutureBuilder<List<SubjectModule>>(
+            future: future, builder: builder),
       ),
       SizedBox(height: isSmallScreen ? 15 : 0),
     ],

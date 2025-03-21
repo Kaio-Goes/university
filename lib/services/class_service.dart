@@ -4,7 +4,7 @@ import 'package:university/core/models/class_firebase.dart';
 class ClassService {
   Future<void> createClass({
     required String name,
-    required String? subject,
+    required List<String>? subject,
     required String? typeClass,
     required String startDate,
     required String endDate,
@@ -36,7 +36,7 @@ class ClassService {
   Future updateClassFirebase(
       {required String uid,
       required String name,
-      required String subject,
+      required List<String> subject,
       required String typeClass,
       required String startDate,
       required String endDate,

@@ -271,7 +271,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                             Text(
                                 "Dias de aula: ${widget.subjectModule![index].daysWeek.toString().replaceAll('[', '').replaceAll(']', '')}"),
                             Text(
-                                "Horário  : ${widget.subjectModule![index].startHour} a ${widget.subjectModule![index].endHour}"),
+                                "Horário: ${widget.subjectModule![index].startHour} a ${widget.subjectModule![index].endHour}"),
                           ],
                         ),
                         trailing: PopupMenuButton<String>(

@@ -1,7 +1,7 @@
 class ClassFirebase {
   late String uid;
   late String name;
-  late String subject;
+  late List<String> subject;
   late List<String> students;
   late String typeClass;
   late String startDate;
@@ -20,7 +20,10 @@ class ClassFirebase {
   ClassFirebase.fromJson(Map<String, dynamic> json) {
     uid = json['uid'] ?? '';
     name = json['name'] ?? '';
-    subject = json['subject'] ?? '';
+    subject = (json['subject'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        [];
     students = (json['students'] as List<dynamic>?)
             ?.map((e) => e.toString())
             .toList() ??

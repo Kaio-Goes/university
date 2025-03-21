@@ -151,7 +151,7 @@ class _ListClassState extends State<ListClass> {
                               Text(
                                   'Total de Alunos: ${classe.students.length}'),
                               Text(
-                                'Módulo: ${classe.subject}',
+                                'Total de Matérias: ${classe.subject.length}',
                               ),
                               const Divider(),
                             ],
@@ -205,7 +205,8 @@ class _ListClassState extends State<ListClass> {
                             ),
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 8.0),
-                              child: Text('Módulo', style: textFontBold),
+                              child: Text('Total de Matérias',
+                                  style: textFontBold),
                             ),
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -241,7 +242,7 @@ class _ListClassState extends State<ListClass> {
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(classe.subject),
+                                child: Text(classe.subject.length.toString()),
                               ),
                               Center(
                                 child: PopupMenuButton<String>(

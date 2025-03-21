@@ -57,19 +57,17 @@ class AuthUserService {
     String? rg = prefs.getString('rg');
     String? surname = prefs.getString('surname');
 
-    if (uid != null && name != null && email != null && role != null) {
-      _currentUser = UserFirebase(
-        uid: uid,
-        name: name,
-        email: email,
-        cpf: cpf ?? 'Não atribuido',
-        isActive: isActive == "true" ? true : false,
-        phone: phone ?? "",
-        rg: rg ?? "",
-        surname: surname ?? "",
-        role: role,
-      );
-    }
+    _currentUser = UserFirebase(
+      uid: uid ?? '',
+      name: name ?? '',
+      email: email ?? '',
+      cpf: cpf ?? 'Não atribuido',
+      isActive: isActive == "true" ? true : false,
+      phone: phone ?? "",
+      rg: rg ?? "",
+      surname: surname ?? "",
+      role: role ?? '',
+    );
   }
 
   Future<Map<String, List<UserFirebase>>> getAllUsers() async {
@@ -110,13 +108,13 @@ class AuthUserService {
 
     return {'teachers': teachersList, 'students': studentsList};
   }
-}
 
-Future<List<UserFirebase>> fetchStudants() async {
-  Map<String, List<UserFirebase>> fetchedUsers =
-      await AuthUserService().getAllUsers();
-  List<UserFirebase> fetchedStudents =
-      fetchedUsers['students']?.cast<UserFirebase>() ?? [];
+  Future<List<UserFirebase>> fetchStudants() async {
+    Map<String, List<UserFirebase>> fetchedUsers =
+        await AuthUserService().getAllUsers();
+    List<UserFirebase> fetchedStudents =
+        fetchedUsers['students']?.cast<UserFirebase>() ?? [];
 
-  return fetchedStudents.where((student) => student.isActive).toList();
+    return fetchedStudents.where((student) => student.isActive).toList();
+  }
 }

@@ -1,12 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:university/core/models/class_firebase.dart';
+import 'package:university/core/models/subject_module.dart';
+import 'package:university/core/utilities/styles.constants.dart';
 
 class ListClassTeacher extends StatefulWidget {
   final bool isSmallScreen;
   final TextEditingController searchController;
+  final List<ClassFirebase> paginetedClass;
+  final List<SubjectModule> listSubject;
+  final Function() sortTitleByName;
+  final bool isAscending;
+  final Function() previousPage;
+  final int currentPage;
+  final List<ClassFirebase> filteredClass;
+  final int itemsPerPage;
+  final Function() nextPage;
+
   const ListClassTeacher({
     super.key,
     required this.isSmallScreen,
     required this.searchController,
+    required this.paginetedClass,
+    required this.listSubject,
+    required this.sortTitleByName,
+    required this.isAscending,
+    required this.previousPage,
+    required this.currentPage,
+    required this.filteredClass,
+    required this.itemsPerPage,
+    required this.nextPage,
   });
 
   @override
@@ -51,6 +73,168 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
                 ],
               ),
               const SizedBox(height: 10),
+              widget.isSmallScreen
+                  ? Column()
+                  : Table(
+                      columnWidths: const {
+                        0: FlexColumnWidth(2),
+                        1: FlexColumnWidth(3),
+                        2: FlexColumnWidth(2),
+                        3: FlexColumnWidth(2),
+                        4: FlexColumnWidth(1),
+                        5: FixedColumnWidth(50),
+                      },
+                      children: [
+                        TableRow(
+                          children: [
+                            GestureDetector(
+                              onTap: widget.sortTitleByName,
+                              child: Row(
+                                children: [
+                                  const Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 8.0),
+                                    child: Text('Turma', style: textFontBold),
+                                  ),
+                                  Icon(
+                                    widget.isAscending
+                                        ? Icons.arrow_upward
+                                        : Icons.arrow_downward,
+                                    size: 16,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child:
+                                  Text('Data de Ínicio', style: textFontBold),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text('Data Final', style: textFontBold),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child:
+                                  Text('Total de Alunos', style: textFontBold),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text('Matéria', style: textFontBold),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text('Ação',
+                                  style: textFontBold,
+                                  textAlign: TextAlign.center),
+                            ),
+                          ],
+                        ),
+                        for (var classe in widget.paginetedClass) ...[
+                          TableRow(
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(classe.name),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(classe.startDate),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(classe.endDate),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(classe.students.length.toString()),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  widget.listSubject
+                                      .where((subject) =>
+                                          classe.subject.contains(subject.uid))
+                                      .map((subject) => subject.title)
+                                      .join(', '),
+                                ),
+                              ),
+                              Center(
+                                child: PopupMenuButton<String>(
+                                  icon: const Icon(Icons.more_vert),
+                                  onSelected: (String result) {
+                                    if (result == 'CreateNote') {
+                                    } else if (result == 'ReleaseNote') {}
+                                  },
+                                  itemBuilder: (BuildContext context) =>
+                                      <PopupMenuEntry<String>>[
+                                    const PopupMenuItem<String>(
+                                      value: 'CreateNote',
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                              'Adicionar Notas Trabalho/Provas'),
+                                          Icon(Icons.edit, size: 16)
+                                        ],
+                                      ),
+                                    ),
+                                    const PopupMenuItem<String>(
+                                      value: 'ReleaseNote',
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Lançar Notas/Visualizar Notas'),
+                                          Icon(Icons.remove_red_eye_sharp,
+                                              size: 16)
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          TableRow(
+                            children: List.generate(
+                              6,
+                              (_) => const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.0),
+                                child: Divider(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: widget.previousPage,
+                    icon: const Icon(Icons.arrow_back),
+                    color: widget.currentPage > 1 ? Colors.black : Colors.grey,
+                  ),
+                  Text(
+                      '${widget.currentPage}/${(widget.filteredClass.length / widget.itemsPerPage).ceil()}'),
+                  IconButton(
+                    onPressed: widget.nextPage,
+                    icon: const Icon(Icons.arrow_forward),
+                    color: widget.currentPage * widget.itemsPerPage <
+                            widget.filteredClass.length
+                        ? Colors.black
+                        : Colors.grey,
+                  ),
+                ],
+              ),
             ],
           ),
         ),

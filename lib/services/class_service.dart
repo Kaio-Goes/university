@@ -75,6 +75,35 @@ class ClassService {
     }
   }
 
+  Future<List<ClassFirebase>> getClassesBySubjects(
+      {required List<String> subjectUids}) async {
+    try {
+      DatabaseReference classRef =
+          FirebaseDatabase.instance.ref().child('class');
+      DataSnapshot snapshot = await classRef.get();
+
+      List<ClassFirebase> filteredClasses = [];
+
+      if (snapshot.exists) {
+        for (var child in snapshot.children) {
+          Map<dynamic, dynamic> data = child.value as Map<dynamic, dynamic>;
+          List<dynamic> classSubjects = data['subject'] ?? [];
+
+          // Verifica se a turma contém pelo menos um dos subjectUids informados
+          if (classSubjects.any((subject) => subjectUids.contains(subject))) {
+            ClassFirebase classFirebase =
+                ClassFirebase.fromJson(Map<String, dynamic>.from(data));
+            filteredClasses.add(classFirebase);
+          }
+        }
+      }
+      return filteredClasses;
+    } catch (e) {
+      Exception('Erro ao buscar classes por subjects: $e');
+      return [];
+    }
+  }
+
   Future<void> deleteClass({required String uid}) async {
     DatabaseReference classRef =
         FirebaseDatabase.instance.ref().child('class').child(uid);

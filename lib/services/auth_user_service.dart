@@ -117,4 +117,22 @@ class AuthUserService {
 
     return fetchedStudents.where((student) => student.isActive).toList();
   }
+
+  Future<List<UserFirebase>> getUsersByUids(
+      {required List<String> uids}) async {
+    DatabaseReference usersRef = FirebaseDatabase.instance.ref().child('users');
+    List<UserFirebase> usersList = [];
+
+    for (String uid in uids) {
+      DatabaseEvent event = await usersRef.child(uid).once();
+      DataSnapshot snapshot = event.snapshot;
+
+      if (snapshot.value != null) {
+        Map<String, dynamic> userData =
+            Map<String, dynamic>.from(snapshot.value as Map);
+        usersList.add(UserFirebase.fromJson(userData));
+      }
+    }
+    return usersList;
+  }
 }

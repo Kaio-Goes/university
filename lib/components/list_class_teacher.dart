@@ -74,7 +74,71 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
               ),
               const SizedBox(height: 10),
               widget.isSmallScreen
-                  ? Column()
+                  ? Column(
+                      children: widget.paginetedClass.map((classe) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    classe.name,
+                                    style: textFontBold,
+                                  ),
+                                  PopupMenuButton<String>(
+                                    icon: const Icon(Icons.more_vert),
+                                    onSelected: (String result) {
+                                      if (result == 'CreateNote') {
+                                      } else if (result == 'ReleaseNote') {}
+                                    },
+                                    itemBuilder: (BuildContext context) =>
+                                        <PopupMenuEntry<String>>[
+                                      const PopupMenuItem<String>(
+                                        value: 'CreateNote',
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                'Adicionar Notas Trabalho/Provas'),
+                                            Icon(Icons.edit, size: 16)
+                                          ],
+                                        ),
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'ReleaseNote',
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                'Lançar Notas/Visualizar Notas'),
+                                            Icon(Icons.remove_red_eye_sharp,
+                                                size: 16)
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Text('Data de Ínicio: ${classe.startDate}'),
+                              Text('Data final: ${classe.endDate}'),
+                              Text(
+                                  'Total de Alunos: ${classe.students.length}'),
+                              Text(
+                                'Matéria: ${widget.listSubject.where((subject) => classe.subject.contains(subject.uid)).map((subject) => subject.title).join(', ')}',
+                              ),
+                              const Divider(),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    )
                   : Table(
                       columnWidths: const {
                         0: FlexColumnWidth(2),

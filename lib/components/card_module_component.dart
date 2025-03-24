@@ -4,7 +4,7 @@ import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/alerts.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
-import 'package:university/services/subject_service.dart';
+import 'package:university/core/services/subject_service.dart';
 
 class CardModuleComponent extends StatefulWidget {
   final bool isSmallScreen;

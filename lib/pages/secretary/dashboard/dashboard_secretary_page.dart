@@ -9,9 +9,9 @@ import 'package:university/components/list_users_card.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
-import 'package:university/services/class_service.dart';
-import 'package:university/services/subject_service.dart';
-import 'package:university/services/auth_user_service.dart';
+import 'package:university/core/services/class_service.dart';
+import 'package:university/core/services/subject_service.dart';
+import 'package:university/core/services/auth_user_service.dart';
 
 class DashboardSecretaryPage extends StatefulWidget {
   const DashboardSecretaryPage({super.key});

@@ -4,7 +4,7 @@ import 'package:university/pages/secretary/class_create_page.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/pages/secretary/student_create_page.dart';
 import 'package:university/pages/secretary/teacher_create_page.dart';
-import 'package:university/services/auth_user_service.dart';
+import 'package:university/core/services/auth_user_service.dart';
 
 class DrawerSecretaryComponent extends StatelessWidget {
   const DrawerSecretaryComponent({super.key});

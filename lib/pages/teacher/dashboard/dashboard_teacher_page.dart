@@ -5,9 +5,9 @@ import 'package:university/components/footer.dart';
 import 'package:university/components/list_class_teacher.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/subject_module.dart';
-import 'package:university/services/auth_user_service.dart';
-import 'package:university/services/class_service.dart';
-import 'package:university/services/subject_service.dart';
+import 'package:university/core/services/auth_user_service.dart';
+import 'package:university/core/services/class_service.dart';
+import 'package:university/core/services/subject_service.dart';
 
 class DashboardTeacherPage extends StatefulWidget {
   const DashboardTeacherPage({super.key});
@@ -20,7 +20,6 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
   final TextEditingController searchController = TextEditingController();
   List<SubjectModule> listSubject = [];
   List<ClassFirebase> listClass = [];
-
   List<ClassFirebase> filteredClass = [];
 
   bool isAscendingClass = true;
@@ -103,7 +102,7 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
     int startIndexClass = (currentPageClass - 1) * itemsPerPageClass;
     int endIndexClass = startIndexClass + itemsPerPageClass;
 
-    List<ClassFirebase> paginetedClass = filteredClass.sublist(
+    List<ClassFirebase> paginatedClass = filteredClass.sublist(
         startIndexClass,
         endIndexClass > filteredClass.length
             ? filteredClass.length
@@ -111,14 +110,11 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
 
     return Scaffold(
       appBar: appBarUserComponent(userFirebase: AuthUserService().currentUser),
-      body: SingleChildScrollView(
-        child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-          bool isSmallScreen = constraints.maxWidth < 800;
-
-          return Column(
-            children: [
-              Padding(
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Padding(
                 padding: const EdgeInsets.all(32.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,36 +131,38 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
                     listClass.isEmpty
                         ? const Text(
                             "Não possuo matéria, peça ao secretário para adicionar sua matéria",
-                            style: TextStyle(fontSize: 14))
-                        : isSmallScreen
-                            ? Column(
-                                children: [
-                                  for (var subject in listSubject) ...[
-                                    CardSubject(
-                                      subjectModule: subject,
-                                      classFirebase: listClass,
+                            style: TextStyle(fontSize: 14),
+                          )
+                        : LayoutBuilder(
+                            builder: (context, constraints) {
+                              bool isSmallScreen = constraints.maxWidth < 800;
+                              return isSmallScreen
+                                  ? Column(
+                                      children: listSubject
+                                          .map((subject) => CardSubject(
+                                                subjectModule: subject,
+                                                classFirebase: listClass,
+                                              ))
+                                          .toList(),
                                     )
-                                  ],
-                                ],
-                              )
-                            : Wrap(
-                                spacing: 10.0,
-                                runSpacing: 10.0,
-                                alignment: WrapAlignment.center,
-                                children: [
-                                  for (var subject in listSubject) ...[
-                                    CardSubject(
-                                      subjectModule: subject,
-                                      classFirebase: listClass,
-                                    )
-                                  ],
-                                ],
-                              ),
+                                  : Wrap(
+                                      spacing: 10.0,
+                                      runSpacing: 10.0,
+                                      alignment: WrapAlignment.center,
+                                      children: listSubject
+                                          .map((subject) => CardSubject(
+                                                subjectModule: subject,
+                                                classFirebase: listClass,
+                                              ))
+                                          .toList(),
+                                    );
+                            },
+                          ),
                     const SizedBox(height: 15),
                     ListClassTeacher(
-                      isSmallScreen: isSmallScreen,
+                      isSmallScreen: MediaQuery.of(context).size.width < 800,
                       searchController: searchController,
-                      paginetedClass: paginetedClass,
+                      paginetedClass: paginatedClass,
                       listSubject: listSubject,
                       sortTitleByName: _sortClassByName,
                       isAscending: isAscendingClass,
@@ -177,11 +175,10 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 15),
-              const Footer(),
-            ],
-          );
-        }),
+            ),
+          ),
+          const Footer(), // Footer sempre no final
+        ],
       ),
     );
   }

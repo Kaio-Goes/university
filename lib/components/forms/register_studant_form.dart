@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/utilities/styles.constants.dart';
-import 'package:university/services/send_email.dart';
+import 'package:university/core/services/send_email.dart';
 
 class RegisterStudantForm extends StatefulWidget {
   final bool isSmallScreen;

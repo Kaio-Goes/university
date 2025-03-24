@@ -31,18 +31,19 @@ createSubjectFormComponent({
     builder: (context) {
       return SingleChildScrollView(
         child: AlertDialog(
-          titlePadding: const EdgeInsets.all(10),
-          contentPadding: const EdgeInsets.all(10),
-          actionsPadding: const EdgeInsets.all(10),
+          titlePadding: const EdgeInsets.all(20),
+          contentPadding: EdgeInsets.all(isSmallScreen ? 10 : 20),
+          actionsPadding: EdgeInsets.all(isSmallScreen ? 10 : 20),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(title),
               IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(Icons.close))
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(Icons.close),
+              )
             ],
           ),
           content: Text(subTitle),

@@ -5,7 +5,7 @@ import 'package:university/components/footer.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/utilities/styles.constants.dart';
-import 'package:university/services/send_email.dart';
+import 'package:university/core/services/send_email.dart';
 
 class CoursesPage extends StatefulWidget {
   final String titleCourse;

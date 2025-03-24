@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
 import 'package:university/pages/secretary/login/login_secretary_page.dart';
-import 'package:university/services/auth_user_service.dart';
+import 'package:university/core/services/auth_user_service.dart';
 
 appBarUserComponent({UserFirebase? userFirebase}) {
   return PreferredSize(

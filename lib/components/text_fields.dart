@@ -35,6 +35,7 @@ textFormField({
           onChanged: onSaved,
           controller: controller,
           validator: validator,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           obscureText: password ? !passwordVisible : false,
           readOnly: readOnly ?? false,
           style: const TextStyle(fontSize: 13),

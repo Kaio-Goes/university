@@ -9,8 +9,8 @@ import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
-import 'package:university/services/auth_user_service.dart';
-import 'package:university/services/send_email.dart';
+import 'package:university/core/services/auth_user_service.dart';
+import 'package:university/core/services/send_email.dart';
 
 class TeacherCreatePage extends StatefulWidget {
   final UserFirebase? userTeacher;

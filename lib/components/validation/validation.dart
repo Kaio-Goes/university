@@ -137,6 +137,25 @@ String? validDateBack(String? value, String startDate, String endDate) {
   return null;
 }
 
+String? validNote(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Por favor, insira uma nota válida';
+  }
+
+  // Verificar se o valor é maior que 10,00
+  double? noteValue = double.tryParse(value.replaceAll(',', '.'));
+  if (noteValue != null && noteValue > 10.00) {
+    return 'A nota não pode ser maior que 10,00';
+  }
+
+  // Verificar se a quantidade de caracteres é 5 (incluindo a vírgula)
+  if (value.length != 5) {
+    return 'O valor deve ter 5 caracteres (ex: 10,00)';
+  }
+
+  return null;
+}
+
 DateTime? _convertToDateTime(String date) {
   try {
     List<String> dateParts = date.split('/');

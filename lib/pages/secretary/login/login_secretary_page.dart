@@ -5,7 +5,7 @@ import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
-import 'package:university/services/auth_user_service.dart';
+import 'package:university/core/services/auth_user_service.dart';
 
 class LoginSecretaryPage extends StatefulWidget {
   const LoginSecretaryPage({super.key});

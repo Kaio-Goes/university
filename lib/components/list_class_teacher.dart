@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/pages/teacher/notes/create_notes_page.dart';
 
 class ListClassTeacher extends StatefulWidget {
   final bool isSmallScreen;
@@ -93,6 +94,15 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
                                     icon: const Icon(Icons.more_vert),
                                     onSelected: (String result) {
                                       if (result == 'CreateNote') {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                CreateNotesPage(
+                                              classFirebase: classe,
+                                              listSubject: widget.listSubject,
+                                            ),
+                                          ),
+                                        );
                                       } else if (result == 'ReleaseNote') {}
                                     },
                                     itemBuilder: (BuildContext context) =>
@@ -234,6 +244,14 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
                                   icon: const Icon(Icons.more_vert),
                                   onSelected: (String result) {
                                     if (result == 'CreateNote') {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => CreateNotesPage(
+                                            classFirebase: classe,
+                                            listSubject: widget.listSubject,
+                                          ),
+                                        ),
+                                      );
                                     } else if (result == 'ReleaseNote') {}
                                   },
                                   itemBuilder: (BuildContext context) =>

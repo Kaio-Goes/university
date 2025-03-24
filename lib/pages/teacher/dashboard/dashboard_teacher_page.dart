@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:university/components/app_bar_user_component.dart';
+import 'package:university/components/card_subject.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/list_class_teacher.dart';
 import 'package:university/core/models/class_firebase.dart';
@@ -52,7 +53,6 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
         listSubject = subjects;
         listClass = classList;
         filteredClass = listClass;
-        print(listClass);
       });
     } catch (e) {
       Exception('Erro loading class $e');
@@ -121,7 +121,45 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
               Padding(
                 padding: const EdgeInsets.all(32.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 15),
+                    const Text(
+                      'Minhas Matérias',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    listClass.isEmpty
+                        ? const Text(
+                            "Não possuo matéria, peça ao secretário para adicionar sua matéria",
+                            style: TextStyle(fontSize: 14))
+                        : isSmallScreen
+                            ? Column(
+                                children: [
+                                  for (var subject in listSubject) ...[
+                                    CardSubject(
+                                      subjectModule: subject,
+                                      classFirebase: listClass,
+                                    )
+                                  ],
+                                ],
+                              )
+                            : Wrap(
+                                spacing: 10.0,
+                                runSpacing: 10.0,
+                                alignment: WrapAlignment.center,
+                                children: [
+                                  for (var subject in listSubject) ...[
+                                    CardSubject(
+                                      subjectModule: subject,
+                                      classFirebase: listClass,
+                                    )
+                                  ],
+                                ],
+                              ),
                     const SizedBox(height: 15),
                     ListClassTeacher(
                       isSmallScreen: isSmallScreen,

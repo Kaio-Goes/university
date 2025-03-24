@@ -4,7 +4,7 @@ import 'package:university/core/utilities/alerts.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/class_create_page.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
-import 'package:university/services/class_service.dart';
+import 'package:university/core/services/class_service.dart';
 
 class ListClass extends StatefulWidget {
   final bool isSmallScreen;

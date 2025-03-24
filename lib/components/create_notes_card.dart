@@ -2,19 +2,104 @@ import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
+import 'package:university/core/models/class_firebase.dart';
+import 'package:university/core/models/subject_module.dart';
+import 'package:university/core/services/auth_user_service.dart';
+import 'package:university/core/services/note_service.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
+import 'package:university/pages/teacher/notes/create_notes_page.dart';
 
 class CreateNotesCard extends StatefulWidget {
-  const CreateNotesCard({super.key});
+  final ClassFirebase classFirebase;
+  final List<SubjectModule> listSubject;
+  const CreateNotesCard(
+      {super.key, required this.classFirebase, required this.listSubject});
 
   @override
   State<CreateNotesCard> createState() => _CreateNotesCardState();
 }
 
 class _CreateNotesCardState extends State<CreateNotesCard> {
-  final _form = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   TextEditingController titleController = TextEditingController();
   TextEditingController noteController = TextEditingController();
+
+  _clickButton({
+    required String title,
+    required String note,
+    required String userId,
+    required String classId,
+  }) async {
+    bool formOk = _formKey.currentState!.validate();
+
+    if (!formOk) {
+      return;
+    }
+
+    try {
+      await NoteService()
+          .createNote(
+              title: title, note: note, userId: userId, classId: classId)
+          .then((_) {
+        showDialog(
+          // ignore: use_build_context_synchronously
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Sucesso"),
+              content: const Text("Nota para turma criada com sucesso!"),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const DashboardSecretaryPage()),
+                        (Route<dynamic> route) => false);
+                  },
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  child: const Text(
+                    "Ir para o início",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CreateNotesPage(
+                          classFirebase: widget.classFirebase,
+                          listSubject: widget.listSubject,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 50, 102, 214)),
+                  child: const Text(
+                    "Ir para Adicionar Notas",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      });
+    } catch (e) {
+      Exception('Erro create notes $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +136,7 @@ class _CreateNotesCardState extends State<CreateNotesCard> {
                               "Após ser criado, estará disponível para lançar a nota para o aluno."),
                           const SizedBox(height: 15),
                           Form(
-                            key: _form,
+                            key: _formKey,
                             child: Column(
                               children: [
                                 textFormField(
@@ -100,7 +185,14 @@ class _CreateNotesCardState extends State<CreateNotesCard> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _clickButton(
+                            title: titleController.text,
+                            note: noteController.text,
+                            classId: widget.classFirebase.uid,
+                            userId: AuthUserService().currentUser!.uid,
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                             elevation: 5,
                             backgroundColor: colorPrimaty,

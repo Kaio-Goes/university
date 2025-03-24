@@ -43,7 +43,10 @@ class _CreateNotesPageState extends State<CreateNotesPage> {
                     Text(
                         "Adicionar notas Trabalhos ou Provas para a matéria ${widget.listSubject.where((subject) => widget.classFirebase.subject.contains(subject.uid)).map((subject) => subject.title).join(', ')} "),
                     const SizedBox(height: 20),
-                    CreateNotesCard()
+                    CreateNotesCard(
+                      classFirebase: widget.classFirebase,
+                      listSubject: widget.listSubject,
+                    )
                   ],
                 ),
               ),

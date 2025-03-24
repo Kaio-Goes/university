@@ -110,75 +110,73 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
 
     return Scaffold(
       appBar: appBarUserComponent(userFirebase: AuthUserService().currentUser),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 15),
-                    const Text(
-                      'Minhas Matérias',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 15),
+                  const Text(
+                    'Minhas Matérias',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 10),
-                    listClass.isEmpty
-                        ? const Text(
-                            "Não possuo matéria, peça ao secretário para adicionar sua matéria",
-                            style: TextStyle(fontSize: 14),
-                          )
-                        : LayoutBuilder(
-                            builder: (context, constraints) {
-                              bool isSmallScreen = constraints.maxWidth < 800;
-                              return isSmallScreen
-                                  ? Column(
-                                      children: listSubject
-                                          .map((subject) => CardSubject(
-                                                subjectModule: subject,
-                                                classFirebase: listClass,
-                                              ))
-                                          .toList(),
-                                    )
-                                  : Wrap(
-                                      spacing: 10.0,
-                                      runSpacing: 10.0,
-                                      alignment: WrapAlignment.center,
-                                      children: listSubject
-                                          .map((subject) => CardSubject(
-                                                subjectModule: subject,
-                                                classFirebase: listClass,
-                                              ))
-                                          .toList(),
-                                    );
-                            },
-                          ),
-                    const SizedBox(height: 15),
-                    ListClassTeacher(
-                      isSmallScreen: MediaQuery.of(context).size.width < 800,
-                      searchController: searchController,
-                      paginetedClass: paginatedClass,
-                      listSubject: listSubject,
-                      sortTitleByName: _sortClassByName,
-                      isAscending: isAscendingClass,
-                      itemsPerPage: itemsPerPageClass,
-                      currentPage: currentPageClass,
-                      filteredClass: filteredClass,
-                      previousPage: _previousPageClass,
-                      nextPage: _nextPageClass,
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 10),
+                  listClass.isEmpty
+                      ? const Text(
+                          "Não possuo matéria, peça ao secretário para adicionar sua matéria",
+                          style: TextStyle(fontSize: 14),
+                        )
+                      : LayoutBuilder(
+                          builder: (context, constraints) {
+                            bool isSmallScreen = constraints.maxWidth < 800;
+                            return isSmallScreen
+                                ? Column(
+                                    children: listSubject
+                                        .map((subject) => CardSubject(
+                                              subjectModule: subject,
+                                              classFirebase: listClass,
+                                            ))
+                                        .toList(),
+                                  )
+                                : Wrap(
+                                    spacing: 10.0,
+                                    runSpacing: 10.0,
+                                    alignment: WrapAlignment.center,
+                                    children: listSubject
+                                        .map((subject) => CardSubject(
+                                              subjectModule: subject,
+                                              classFirebase: listClass,
+                                            ))
+                                        .toList(),
+                                  );
+                          },
+                        ),
+                  const SizedBox(height: 15),
+                  ListClassTeacher(
+                    isSmallScreen: MediaQuery.of(context).size.width < 800,
+                    searchController: searchController,
+                    paginetedClass: paginatedClass,
+                    listSubject: listSubject,
+                    sortTitleByName: _sortClassByName,
+                    isAscending: isAscendingClass,
+                    itemsPerPage: itemsPerPageClass,
+                    currentPage: currentPageClass,
+                    filteredClass: filteredClass,
+                    previousPage: _previousPageClass,
+                    nextPage: _nextPageClass,
+                  ),
+                ],
               ),
             ),
-          ),
-          const Footer(), // Footer sempre no final
-        ],
+            const Footer(), // Footer sempre no final
+          ],
+        ),
       ),
     );
   }

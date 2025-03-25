@@ -34,7 +34,7 @@ class UserNoteService {
 
   Future<List<UserNote>> getListUserNote({
     required String classId,
-    required String userId,
+    String? userId,
     String? teacherId, // Opcional
   }) async {
     DatabaseReference userNoteRef =
@@ -52,7 +52,7 @@ class UserNoteService {
         if (value is Map) {
           // Verifica os filtros
           bool matchClass = value["class_id"] == classId;
-          bool matchUser = value["user_id"] == userId;
+          bool matchUser = userId == null || value["user_id"] == userId;
           bool matchTeacher =
               teacherId == null || value["teacher_id"] == teacherId;
 

@@ -30,6 +30,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
     super.initState();
     _loadUserInClass();
     _loadNotes();
+    _loadUserNotes();
   }
 
   _loadUserInClass() async {
@@ -61,7 +62,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
     }
   }
 
-  _loadUserNotes({required String studentId}) async {
+  _loadUserNotes({String? studentId}) async {
     try {
       // uid do logado vai no teacherId :)
       var userNotes = await UserNoteService().getListUserNote(
@@ -75,6 +76,20 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
     } catch (e) {
       Exception("Erro loaging User Notes $e");
     }
+  }
+
+  String _calculateAverage(Map<String, String> userNotesUidMap) {
+    List<double> validNotes = userNotesUidMap.values
+        .where((value) => value != "N/A")
+        .map((value) => double.tryParse(value.replaceAll(',', '.')) ?? 0.0)
+        .toList();
+
+    if (validNotes.isEmpty) return "N/A";
+
+    double sum = validNotes.reduce((a, b) => a + b);
+    double average = sum;
+
+    return average.toStringAsFixed(2);
   }
 
   @override
@@ -117,6 +132,13 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                     itemCount: listUser.length,
                                     itemBuilder: (context, index) {
                                       final user = listUser[index];
+
+                                      Map<String, String> userNotesUidMap = {
+                                        for (var userNote in listUserNote.where(
+                                            (note) => note.userId == user.uid))
+                                          userNote.noteId: userNote.value
+                                      };
+
                                       return Card.outlined(
                                         child: ListTile(
                                           contentPadding:
@@ -133,6 +155,9 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                           subtitle: SingleChildScrollView(
                                             scrollDirection: Axis.horizontal,
                                             child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
                                                 Column(
                                                   crossAxisAlignment:
@@ -153,6 +178,27 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                                   ],
                                                 ),
                                                 const SizedBox(width: 20),
+                                                Wrap(
+                                                  spacing: 12.0,
+                                                  children:
+                                                      listNotes.map((note) {
+                                                    // Pegando a nota correspondente do userNotesUidMap
+                                                    String userNoteValue =
+                                                        userNotesUidMap[
+                                                                    note.uid]
+                                                                ?.replaceAll(
+                                                                    '.', ',') ??
+                                                            "N/A";
+
+                                                    return Chip(
+                                                      label: Text(
+                                                          '${note.title}: $userNoteValue'),
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                                const SizedBox(width: 20),
+                                                Text(
+                                                    "Soma das Notas: ${_calculateAverage(userNotesUidMap)}"),
                                               ],
                                             ),
                                           ),

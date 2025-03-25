@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/pages/teacher/notes/add_notes_student_page.dart';
 import 'package:university/pages/teacher/notes/create_notes_page.dart';
 
 class ListClassTeacher extends StatefulWidget {
@@ -103,7 +104,16 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
                                             ),
                                           ),
                                         );
-                                      } else if (result == 'ReleaseNote') {}
+                                      } else if (result == 'ReleaseNote') {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                AddNotesStudentPage(
+                                              classe: classe,
+                                            ),
+                                          ),
+                                        );
+                                      }
                                     },
                                     itemBuilder: (BuildContext context) =>
                                         <PopupMenuEntry<String>>[
@@ -252,7 +262,16 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
                                           ),
                                         ),
                                       );
-                                    } else if (result == 'ReleaseNote') {}
+                                    } else if (result == 'ReleaseNote') {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AddNotesStudentPage(
+                                            classe: classe,
+                                          ),
+                                        ),
+                                      );
+                                    }
                                   },
                                   itemBuilder: (BuildContext context) =>
                                       <PopupMenuEntry<String>>[

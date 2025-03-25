@@ -5,7 +5,8 @@ import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/utilities/styles.constants.dart';
-import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
+import 'package:university/pages/teacher/dashboard/dashboard_teacher_page.dart';
+import 'package:university/pages/teacher/notes/add_notes_student_page.dart';
 import 'package:university/pages/teacher/notes/create_notes_page.dart';
 
 createNoteCard(
@@ -59,7 +60,7 @@ createNoteCard(
                         const SizedBox(height: 20),
                         textFormField(
                             controller: noteController,
-                            validator: (value) => validNote(value),
+                            validator: (value) => validNote(value, 10.0),
                             inputFormatters: [
                               MaskTextInputFormatter(
                                 mask: '##,##',
@@ -128,7 +129,7 @@ sucessNoteCreate(
             onPressed: () {
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
-                      builder: (context) => const DashboardSecretaryPage()),
+                      builder: (context) => const DashboardTeacherPage()),
                   (Route<dynamic> route) => false);
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
@@ -152,6 +153,60 @@ sucessNoteCreate(
                     listSubject: listSubject,
                   ),
                 ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 50, 102, 214)),
+            child: const Text(
+              "Ir para Adicionar Notas",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+sucessUserNoteCreate({
+  required BuildContext context,
+  required ClassFirebase classe,
+}) {
+  return showDialog(
+    // ignore: use_build_context_synchronously
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text("Sucesso"),
+        content: const Text("Nota para aluno criada com sucesso!"),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => const DashboardTeacherPage()),
+                  (Route<dynamic> route) => false);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+            child: const Text(
+              "Ir para o início",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => AddNotesStudentPage(classe: classe)),
               );
             },
             style: ElevatedButton.styleFrom(

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:university/components/add_notes_card.dart';
 import 'package:university/components/app_bar_user_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/core/models/class_firebase.dart';
+import 'package:university/core/models/note.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/services/auth_user_service.dart';
+import 'package:university/core/services/note_service.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 
 class AddNotesStudentPage extends StatefulWidget {
@@ -16,12 +19,14 @@ class AddNotesStudentPage extends StatefulWidget {
 
 class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
   List<UserFirebase> listUser = [];
+  List<Note> listNotes = [];
   bool isLoading = true;
 
   @override
   initState() {
     super.initState();
     _loadUserInClass();
+    _loadNotes();
   }
 
   _loadUserInClass() async {
@@ -36,6 +41,20 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
     } catch (e) {
       setState(() => isLoading = false);
       Exception("Erro loading student in class $e");
+    }
+  }
+
+  _loadNotes() async {
+    try {
+      var notes = await NoteService().getListNotesByClass(
+          userId: AuthUserService().currentUser!.uid,
+          classId: widget.classe.uid);
+
+      setState(() {
+        listNotes = notes;
+      });
+    } catch (e) {
+      Exception('Erro ao carregar notas do usuário $e');
     }
   }
 
@@ -119,6 +138,84 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                             child: const Icon(
                                               Icons.person,
                                               color: Colors.white,
+                                            ),
+                                          ),
+                                          trailing: ElevatedButton.icon(
+                                            onPressed: () async {
+                                              if (listNotes.isEmpty) {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          const Text(
+                                                              "Não permitido"),
+                                                          IconButton(
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                            icon: const Icon(
+                                                                Icons.close),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      content: const Text(
+                                                          "Para adicionar nota ao Aluno é necessario criar as notas"),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          style: ElevatedButton.styleFrom(
+                                                              elevation: 5,
+                                                              backgroundColor:
+                                                                  Colors
+                                                                      .redAccent,
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          30)),
+                                                          child: const Text(
+                                                            'Entendi',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              } else {
+                                                addNotesCard(
+                                                  context: context,
+                                                  user: user,
+                                                  classe: widget.classe,
+                                                  listNotes: listNotes,
+                                                );
+                                              }
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    const Color.fromARGB(
+                                                        255, 69, 106, 185)),
+                                            icon: const Icon(
+                                              Icons.edit,
+                                              color: Colors.white,
+                                            ),
+                                            iconAlignment: IconAlignment.end,
+                                            label: const Text(
+                                              "NOTAS",
+                                              style: TextStyle(
+                                                  color: Colors.white),
                                             ),
                                           ),
                                         ),

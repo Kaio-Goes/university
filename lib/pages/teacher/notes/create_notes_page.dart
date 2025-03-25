@@ -73,7 +73,7 @@ class _CreateNotesPageState extends State<CreateNotesPage> {
         listNotes = notes;
       });
     } catch (e) {
-      Exception('Erro ao carregar notas do usuário');
+      Exception('Erro ao carregar notas do usuário $e');
     }
   }
 

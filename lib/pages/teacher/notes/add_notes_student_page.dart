@@ -5,8 +5,10 @@ import 'package:university/components/footer.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/note.dart';
 import 'package:university/core/models/user_firebase.dart';
+import 'package:university/core/models/user_note.dart';
 import 'package:university/core/services/auth_user_service.dart';
 import 'package:university/core/services/note_service.dart';
+import 'package:university/core/services/user_note_service.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 
 class AddNotesStudentPage extends StatefulWidget {
@@ -20,6 +22,7 @@ class AddNotesStudentPage extends StatefulWidget {
 class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
   List<UserFirebase> listUser = [];
   List<Note> listNotes = [];
+  List<UserNote> listUserNote = [];
   bool isLoading = true;
 
   @override
@@ -55,6 +58,22 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
       });
     } catch (e) {
       Exception('Erro ao carregar notas do usuário $e');
+    }
+  }
+
+  _loadUserNotes({required String studentId}) async {
+    try {
+      // uid do logado vai no teacherId :)
+      var userNotes = await UserNoteService().getListUserNote(
+          classId: widget.classe.uid,
+          userId: studentId,
+          teacherId: AuthUserService().currentUser!.uid);
+
+      setState(() {
+        listUserNote = userNotes;
+      });
+    } catch (e) {
+      Exception("Erro loaging User Notes $e");
     }
   }
 
@@ -111,21 +130,31 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w800),
                                           ),
-                                          subtitle: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "Email: ${user.email}",
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
-                                                style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                              ),
-                                              Text("Celular: ${user.phone}")
-                                            ],
+                                          subtitle: SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: Row(
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Email: ${user.email}",
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                    Text(
+                                                        "Celular: ${user.phone}")
+                                                  ],
+                                                ),
+                                                const SizedBox(width: 20),
+                                              ],
+                                            ),
                                           ),
                                           leading: Container(
                                             height: 50,
@@ -195,11 +224,44 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                                   },
                                                 );
                                               } else {
+                                                // Mostra um diálogo de carregamento enquanto busca as notas
+                                                showDialog(
+                                                  context: context,
+                                                  barrierDismissible:
+                                                      false, // Impede fechar enquanto carrega
+                                                  builder: (context) {
+                                                    return const AlertDialog(
+                                                      content: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          CircularProgressIndicator(),
+                                                          SizedBox(height: 16),
+                                                          Text(
+                                                              "Carregando notas..."),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+
+                                                // Aguarda carregar os dados
+                                                await _loadUserNotes(
+                                                    studentId: user.uid);
+
+                                                // Fecha o diálogo de carregamento
+                                                if (context.mounted) {
+                                                  Navigator.pop(context);
+                                                }
+
+                                                // Exibe o modal de notas
                                                 addNotesCard(
+                                                  // ignore: use_build_context_synchronously
                                                   context: context,
                                                   user: user,
                                                   classe: widget.classe,
                                                   listNotes: listNotes,
+                                                  listUserNotes: listUserNote,
                                                 );
                                               }
                                             },

@@ -212,7 +212,7 @@ sucessUserNoteCreate({
             style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 50, 102, 214)),
             child: const Text(
-              "Ir para Adicionar Notas",
+              "Ir para Alunos",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,

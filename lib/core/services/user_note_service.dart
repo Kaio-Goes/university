@@ -65,4 +65,23 @@ class UserNoteService {
 
     return userNotes;
   }
+
+  Future<void> updateUserNote({
+    required String uid,
+    required String newNote,
+    required String teacherId,
+  }) async {
+    DatabaseReference userNoteRef =
+        FirebaseDatabase.instance.ref().child("user_note").child(uid);
+
+    String formattedNote = newNote.replaceAll(',', '.');
+
+    Map<String, String> updatedValues = {
+      "value": formattedNote,
+      "teacher_id": teacherId,
+      "updated_at": DateTime.now().toLocal().toString(),
+    };
+
+    await userNoteRef.update(updatedValues);
+  }
 }

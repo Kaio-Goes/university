@@ -6,6 +6,7 @@ import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/note.dart';
 import 'package:university/core/models/user_firebase.dart';
+import 'package:university/core/models/user_note.dart';
 import 'package:university/core/services/auth_user_service.dart';
 import 'package:university/core/services/user_note_service.dart';
 import 'package:university/core/utilities/styles.constants.dart';
@@ -15,10 +16,22 @@ addNotesCard({
   required UserFirebase user,
   required ClassFirebase classe,
   required List<Note> listNotes,
+  required List<UserNote> listUserNotes,
 }) async {
-  // Criando uma lista de TextEditingControllers, um para cada nota
-  List<TextEditingController> controllers =
-      List.generate(listNotes.length, (index) => TextEditingController());
+  Map<String, String> userNotesMap = {
+    for (var userNote in listUserNotes)
+      userNote.noteId: userNote.value.replaceAll(".", ",")
+  };
+
+  // Criando controladores e preenchendo caso haja notas salvas
+  List<TextEditingController> controllers = List.generate(
+    listNotes.length,
+    (index) => TextEditingController(
+      text:
+          userNotesMap[listNotes[index].uid] ?? '', // Define o valor se existir
+    ),
+  );
+
   final formKey = GlobalKey<FormState>();
 
   return showDialog(
@@ -105,24 +118,50 @@ addNotesCard({
                     if (!formOk) {
                       return;
                     }
+                    Map<String, String> userNotesUidMap = {
+                      for (var userNote in listUserNotes)
+                        userNote.noteId: userNote.uid
+                    };
 
                     for (int i = 0; i < listNotes.length; i++) {
                       String noteId = listNotes[i].uid;
+                      String? userNoteUid = userNotesUidMap[
+                          noteId]; // Pegando o uid da UserNote se existir
+
                       try {
-                        await UserNoteService()
-                            .createUserNote(
-                          note: controllers[i].text,
-                          classId: classe.uid,
-                          studentId: user.uid,
-                          teacherId: AuthUserService().currentUser!.uid,
-                          noteId: noteId,
-                        )
-                            .then((_) {
-                          sucessUserNoteCreate(
-                              // ignore: use_build_context_synchronously
-                              context: context,
-                              classe: classe);
-                        });
+                        if (listUserNotes.isEmpty) {
+                          await UserNoteService()
+                              .createUserNote(
+                            note: controllers[i].text,
+                            classId: classe.uid,
+                            studentId: user.uid,
+                            teacherId: AuthUserService().currentUser!.uid,
+                            noteId: noteId,
+                          )
+                              .then(
+                            (_) {
+                              sucessUserNoteCreate(
+                                  // ignore: use_build_context_synchronously
+                                  context: context,
+                                  classe: classe);
+                            },
+                          );
+                        } else {
+                          await UserNoteService()
+                              .updateUserNote(
+                            uid: userNoteUid!,
+                            newNote: controllers[i].text,
+                            teacherId: AuthUserService().currentUser!.uid,
+                          )
+                              .then(
+                            (_) {
+                              sucessUserNoteCreate(
+                                  // ignore: use_build_context_synchronously
+                                  context: context,
+                                  classe: classe);
+                            },
+                          );
+                        }
                       } catch (e) {
                         Exception("Erro create UserNoteService $e");
                       }

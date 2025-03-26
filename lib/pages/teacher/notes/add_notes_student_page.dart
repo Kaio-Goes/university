@@ -11,6 +11,7 @@ import 'package:university/core/services/auth_user_service.dart';
 import 'package:university/core/services/note_service.dart';
 import 'package:university/core/services/user_note_service.dart';
 import 'package:university/core/utilities/styles.constants.dart';
+import 'package:university/pages/teacher/dashboard/dashboard_teacher_page.dart';
 
 class AddNotesStudentPage extends StatefulWidget {
   final ClassFirebase classe;
@@ -104,7 +105,18 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBarUserComponent(userFirebase: AuthUserService().currentUser),
+      appBar: appBarUserComponent(
+        userFirebase: AuthUserService().currentUser,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                    builder: (context) => const DashboardTeacherPage()),
+                (Route<dynamic> route) => false);
+          },
+        ),
+      ),
       body: SingleChildScrollView(
         child: LayoutBuilder(
           builder: (context, constraints) {

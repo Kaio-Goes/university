@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
-import 'package:university/pages/secretary/login/login_secretary_page.dart';
 import 'package:university/core/services/auth_user_service.dart';
 
-appBarUserComponent({UserFirebase? userFirebase}) {
+appBarUserComponent({UserFirebase? userFirebase, Widget? leading}) {
   return PreferredSize(
     preferredSize: const Size.fromHeight(80.0), // Altura da AppBar
     child: LayoutBuilder(
@@ -14,16 +13,7 @@ appBarUserComponent({UserFirebase? userFirebase}) {
           return AppBar(
             backgroundColor: Colors.white,
             elevation: 1,
-            leading: Builder(
-              builder: (context) {
-                return IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.black),
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                );
-              },
-            ),
+            leading: leading,
             title: SizedBox(
               height: 60,
               child: Image.asset(
@@ -51,8 +41,7 @@ appBarUserComponent({UserFirebase? userFirebase}) {
                         AuthUserService().logout();
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const LoginSecretaryPage()),
+                                builder: (context) => const DashboardPage()),
                             (Route<dynamic> route) => false);
                       }
                     },
@@ -79,6 +68,7 @@ appBarUserComponent({UserFirebase? userFirebase}) {
           return AppBar(
             backgroundColor: Colors.white,
             elevation: 1,
+            leading: leading,
             title: Transform.translate(
               offset: const Offset(0, 5),
               child: Row(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/utilities/alerts.dart';
 import 'package:university/core/utilities/styles.constants.dart';
-import 'package:university/pages/secretary/class_create_page.dart';
+import 'package:university/pages/secretary/classe/class_create_page.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/core/services/class_service.dart';
 

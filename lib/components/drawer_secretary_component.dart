@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
-import 'package:university/pages/secretary/class_create_page.dart';
+import 'package:university/pages/secretary/classe/class_create_page.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/pages/secretary/student_create_page.dart';
 import 'package:university/pages/secretary/teacher_create_page.dart';

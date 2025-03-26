@@ -4,6 +4,7 @@ import 'package:university/components/app_bar_user_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/note.dart';
+import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/models/user_note.dart';
 import 'package:university/core/services/auth_user_service.dart';
@@ -13,7 +14,12 @@ import 'package:university/core/utilities/styles.constants.dart';
 
 class AddNotesStudentPage extends StatefulWidget {
   final ClassFirebase classe;
-  const AddNotesStudentPage({super.key, required this.classe});
+  final SubjectModule subject;
+  const AddNotesStudentPage({
+    super.key,
+    required this.classe,
+    required this.subject,
+  });
 
   @override
   State<AddNotesStudentPage> createState() => _AddNotesStudentPageState();
@@ -51,8 +57,10 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
   _loadNotes() async {
     try {
       var notes = await NoteService().getListNotesByClass(
-          userId: AuthUserService().currentUser!.uid,
-          classId: widget.classe.uid);
+        userId: AuthUserService().currentUser!.uid,
+        classId: widget.classe.uid,
+        subjectId: widget.subject.uid,
+      );
 
       setState(() {
         listNotes = notes;
@@ -68,7 +76,8 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
       var userNotes = await UserNoteService().getListUserNote(
           classId: widget.classe.uid,
           userId: studentId,
-          teacherId: AuthUserService().currentUser!.uid);
+          teacherId: AuthUserService().currentUser!.uid,
+          subjectId: widget.subject.uid);
 
       setState(() {
         listUserNote = userNotes;
@@ -306,6 +315,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                                   context: context,
                                                   user: user,
                                                   classe: widget.classe,
+                                                  subject: widget.subject,
                                                   listNotes: listNotes,
                                                   listUserNotes: listUserNote,
                                                 );

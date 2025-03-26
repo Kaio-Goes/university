@@ -10,9 +10,9 @@ import 'package:university/core/services/note_service.dart';
 
 class CreateNotesPage extends StatefulWidget {
   final ClassFirebase classFirebase;
-  final List<SubjectModule> listSubject;
+  final SubjectModule subject;
   const CreateNotesPage(
-      {super.key, required this.classFirebase, required this.listSubject});
+      {super.key, required this.classFirebase, required this.subject});
 
   @override
   State<CreateNotesPage> createState() => _CreateNotesPageState();
@@ -44,13 +44,14 @@ class _CreateNotesPageState extends State<CreateNotesPage> {
               title: title,
               note: formattedNote,
               userId: userId,
-              classId: classId)
+              classId: classId,
+              subjectId: widget.subject.uid)
           .then((_) {
         sucessNoteCreate(
             // ignore: use_build_context_synchronously
             context: context,
             classFirebase: widget.classFirebase,
-            listSubject: widget.listSubject);
+            subject: widget.subject);
       });
     } catch (e) {
       Exception('Erro create notes $e');
@@ -66,8 +67,10 @@ class _CreateNotesPageState extends State<CreateNotesPage> {
   _loadNotes() async {
     try {
       var notes = await NoteService().getListNotesByClass(
-          userId: AuthUserService().currentUser!.uid,
-          classId: widget.classFirebase.uid);
+        userId: AuthUserService().currentUser!.uid,
+        classId: widget.classFirebase.uid,
+        subjectId: widget.subject.uid,
+      );
 
       setState(() {
         listNotes = notes;
@@ -108,7 +111,7 @@ class _CreateNotesPageState extends State<CreateNotesPage> {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                          "Adicionar notas Trabalhos ou Provas para a matéria ${widget.listSubject.where((subject) => widget.classFirebase.subject.contains(subject.uid)).map((subject) => subject.title).join(', ')} "),
+                          "Adicionar notas Trabalhos ou Provas para a matéria ${widget.subject.title}"),
                       const SizedBox(height: 20),
                       TextButton.icon(
                         onPressed: () {
@@ -205,6 +208,7 @@ class _CreateNotesPageState extends State<CreateNotesPage> {
                                                   .currentUser!
                                                   .uid,
                                               classId: note.classId,
+                                              subejctId: "",
                                             )
                                                 .then((_) {
                                               sucessNoteCreate(
@@ -212,8 +216,7 @@ class _CreateNotesPageState extends State<CreateNotesPage> {
                                                   context: context,
                                                   classFirebase:
                                                       widget.classFirebase,
-                                                  listSubject:
-                                                      widget.listSubject);
+                                                  subject: widget.subject);
                                             });
                                           } catch (e) {
                                             Exception(

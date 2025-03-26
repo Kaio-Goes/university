@@ -83,76 +83,84 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    classe.name,
-                                    style: textFontBold,
-                                  ),
-                                  PopupMenuButton<String>(
-                                    icon: const Icon(Icons.more_vert),
-                                    onSelected: (String result) {
-                                      if (result == 'CreateNote') {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                CreateNotesPage(
-                                              classFirebase: classe,
-                                              listSubject: widget.listSubject,
-                                            ),
-                                          ),
-                                        );
-                                      } else if (result == 'ReleaseNote') {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                AddNotesStudentPage(
-                                              classe: classe,
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    itemBuilder: (BuildContext context) =>
-                                        <PopupMenuEntry<String>>[
-                                      const PopupMenuItem<String>(
-                                        value: 'CreateNote',
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                                'Adicionar Notas Trabalho/Provas'),
-                                            Icon(Icons.edit, size: 16)
-                                          ],
-                                        ),
-                                      ),
-                                      const PopupMenuItem<String>(
-                                        value: 'ReleaseNote',
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                                'Lançar Notas/Visualizar Notas'),
-                                            Icon(Icons.remove_red_eye_sharp,
-                                                size: 16)
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
                               Text('Data de Ínicio: ${classe.startDate}'),
                               Text('Data final: ${classe.endDate}'),
                               Text(
                                   'Total de Alunos: ${classe.students.length}'),
-                              Text(
-                                'Matéria: ${widget.listSubject.where((subject) => classe.subject.contains(subject.uid)).map((subject) => subject.title).join(', ')}',
-                              ),
+                              for (var subject in widget.listSubject
+                                  .where((s) => classe.subject.contains(s.uid)))
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Matéria: ${subject.title}'),
+                                        PopupMenuButton<String>(
+                                          icon: const Icon(Icons.more_vert),
+                                          onSelected: (String result) {
+                                            if (result == 'CreateNote') {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      CreateNotesPage(
+                                                    classFirebase: classe,
+                                                    subject: subject,
+                                                  ),
+                                                ),
+                                              );
+                                            } else if (result ==
+                                                'ReleaseNote') {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AddNotesStudentPage(
+                                                    classe: classe,
+                                                    subject: subject,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          itemBuilder: (BuildContext context) =>
+                                              <PopupMenuEntry<String>>[
+                                            const PopupMenuItem<String>(
+                                              value: 'CreateNote',
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                      'Adicionar Notas Trabalho/Provas'),
+                                                  Icon(Icons.edit, size: 16)
+                                                ],
+                                              ),
+                                            ),
+                                            const PopupMenuItem<String>(
+                                              value: 'ReleaseNote',
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                      'Lançar Notas/Visualizar Notas'),
+                                                  Icon(
+                                                      Icons
+                                                          .remove_red_eye_sharp,
+                                                      size: 16)
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Text('Módulo : ${subject.module}'),
+                                  ],
+                                ),
                               const Divider(),
                             ],
                           ),
@@ -161,12 +169,13 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
                     )
                   : Table(
                       columnWidths: const {
-                        0: FlexColumnWidth(2),
-                        1: FlexColumnWidth(3),
-                        2: FlexColumnWidth(2),
-                        3: FlexColumnWidth(2),
+                        0: FlexColumnWidth(1),
+                        1: FlexColumnWidth(1),
+                        2: FlexColumnWidth(1),
+                        3: FlexColumnWidth(1),
                         4: FlexColumnWidth(1),
-                        5: FixedColumnWidth(50),
+                        5: FixedColumnWidth(100),
+                        6: FixedColumnWidth(50),
                       },
                       children: [
                         TableRow(
@@ -205,6 +214,10 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
                             ),
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text('Módulo', style: textFontBold),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
                               child: Text('Matéria', style: textFontBold),
                             ),
                             const Padding(
@@ -216,97 +229,102 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
                           ],
                         ),
                         for (var classe in widget.paginetedClass) ...[
-                          TableRow(
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(classe.name),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(classe.startDate),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(classe.endDate),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(classe.students.length.toString()),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(
-                                  widget.listSubject
-                                      .where((subject) =>
-                                          classe.subject.contains(subject.uid))
-                                      .map((subject) => subject.title)
-                                      .join(', '),
+                          for (var subject in widget.listSubject
+                              .where((s) => classe.subject.contains(s.uid)))
+                            TableRow(
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(classe.name),
                                 ),
-                              ),
-                              Center(
-                                child: PopupMenuButton<String>(
-                                  icon: const Icon(Icons.more_vert),
-                                  onSelected: (String result) {
-                                    if (result == 'CreateNote') {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => CreateNotesPage(
-                                            classFirebase: classe,
-                                            listSubject: widget.listSubject,
-                                          ),
-                                        ),
-                                      );
-                                    } else if (result == 'ReleaseNote') {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              AddNotesStudentPage(
-                                            classe: classe,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  },
-                                  itemBuilder: (BuildContext context) =>
-                                      <PopupMenuEntry<String>>[
-                                    const PopupMenuItem<String>(
-                                      value: 'CreateNote',
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                              'Adicionar Notas Trabalho/Provas'),
-                                          Icon(Icons.edit, size: 16)
-                                        ],
-                                      ),
-                                    ),
-                                    const PopupMenuItem<String>(
-                                      value: 'ReleaseNote',
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text('Lançar Notas/Visualizar Notas'),
-                                          Icon(Icons.remove_red_eye_sharp,
-                                              size: 16)
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(classe.startDate),
                                 ),
-                              )
-                            ],
-                          ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(classe.endDate),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child:
+                                      Text(classe.students.length.toString()),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(subject.module),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(subject.title),
+                                ),
+                                Center(
+                                  child: PopupMenuButton<String>(
+                                    icon: const Icon(Icons.more_vert),
+                                    onSelected: (String result) {
+                                      if (result == 'CreateNote') {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                CreateNotesPage(
+                                              classFirebase: classe,
+                                              subject: subject,
+                                            ),
+                                          ),
+                                        );
+                                      } else if (result == 'ReleaseNote') {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                AddNotesStudentPage(
+                                              classe: classe,
+                                              subject: subject,
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) =>
+                                        <PopupMenuEntry<String>>[
+                                      const PopupMenuItem<String>(
+                                        value: 'CreateNote',
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                'Adicionar Notas Trabalho/Provas'),
+                                            Icon(Icons.edit, size: 16)
+                                          ],
+                                        ),
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'ReleaseNote',
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                                'Lançar Notas/Visualizar Notas'),
+                                            Icon(Icons.remove_red_eye_sharp,
+                                                size: 16)
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           TableRow(
                             children: List.generate(
-                              6,
+                              7,
                               (_) => const Padding(
                                 padding: EdgeInsets.symmetric(vertical: 8.0),
                                 child: Divider(),

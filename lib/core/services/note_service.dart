@@ -7,6 +7,7 @@ class NoteService {
     required String note,
     required String userId,
     required String classId,
+    required String subjectId,
   }) async {
     DatabaseReference noteRef = FirebaseDatabase.instance.ref().child("notes");
 
@@ -20,6 +21,7 @@ class NoteService {
       "value": note,
       "user_id": userId,
       "class_id": classId,
+      "subject_id": subjectId,
     };
 
     await newNoteRef.set(values);
@@ -28,6 +30,7 @@ class NoteService {
   Future<List<Note>> getListNotesByClass({
     required String userId,
     required String classId,
+    required String subjectId,
   }) async {
     DatabaseReference noteRef = FirebaseDatabase.instance.ref().child('notes');
     DataSnapshot snapshot = await noteRef.get();
@@ -37,7 +40,9 @@ class NoteService {
     if (snapshot.exists) {
       for (var child in snapshot.children) {
         Map<dynamic, dynamic> data = child.value as Map<dynamic, dynamic>;
-        if (data['user_id'] == userId && data['class_id'] == classId) {
+        if (data['user_id'] == userId &&
+            data['class_id'] == classId &&
+            data['subject_id'] == subjectId) {
           Note note = Note.fromJson(Map<String, dynamic>.from(data));
           notes.add(note);
         }
@@ -52,6 +57,7 @@ class NoteService {
     required String note,
     required String userId,
     required String classId,
+    required String subejctId,
   }) async {
     DatabaseReference noteRef =
         FirebaseDatabase.instance.ref().child("notes").child(uid);
@@ -61,7 +67,9 @@ class NoteService {
     if (snapshot.exists) {
       Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
 
-      if (data['user_id'] == userId && data['class_id'] == classId) {
+      if (data['user_id'] == userId &&
+          data['class_id'] == classId &&
+          data['subject_id'] == subejctId) {
         await noteRef.update({
           "title": title,
           "value": note,

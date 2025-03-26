@@ -4,6 +4,7 @@ class Note {
   late String value;
   late String userId;
   late String classId;
+  late String subjectId;
 
   Note({
     required this.uid,
@@ -11,6 +12,7 @@ class Note {
     required this.value,
     required this.userId,
     required this.classId,
+    required this.subjectId,
   });
 
   Note.fromJson(Map<String, dynamic> json) {
@@ -19,5 +21,6 @@ class Note {
     value = json['value'];
     userId = json['user_id'];
     classId = json['class_id'];
+    subjectId = json['subject_id'];
   }
 }

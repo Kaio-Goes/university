@@ -5,6 +5,7 @@ import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/note.dart';
+import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/models/user_note.dart';
 import 'package:university/core/services/auth_user_service.dart';
@@ -15,6 +16,7 @@ addNotesCard({
   required BuildContext context,
   required UserFirebase user,
   required ClassFirebase classe,
+  required SubjectModule subject,
   required List<Note> listNotes,
   required List<UserNote> listUserNotes,
 }) async {
@@ -123,13 +125,18 @@ addNotesCard({
                         userNote.noteId: userNote.uid
                     };
 
+                    bool isListEmptyOrDifferentSubject =
+                        listUserNotes.isEmpty ||
+                            listUserNotes
+                                .every((note) => note.subjectId != subject.uid);
+
                     for (int i = 0; i < listNotes.length; i++) {
                       String noteId = listNotes[i].uid;
                       String? userNoteUid = userNotesUidMap[
                           noteId]; // Pegando o uid da UserNote se existir
 
                       try {
-                        if (listUserNotes.isEmpty) {
+                        if (isListEmptyOrDifferentSubject) {
                           await UserNoteService()
                               .createUserNote(
                             note: controllers[i].text,
@@ -137,13 +144,16 @@ addNotesCard({
                             studentId: user.uid,
                             teacherId: AuthUserService().currentUser!.uid,
                             noteId: noteId,
+                            subjectId: subject.uid,
                           )
                               .then(
                             (_) {
                               sucessUserNoteCreate(
-                                  // ignore: use_build_context_synchronously
-                                  context: context,
-                                  classe: classe);
+                                // ignore: use_build_context_synchronously
+                                context: context,
+                                classe: classe,
+                                subject: subject,
+                              );
                             },
                           );
                         } else {
@@ -156,9 +166,11 @@ addNotesCard({
                               .then(
                             (_) {
                               sucessUserNoteCreate(
-                                  // ignore: use_build_context_synchronously
-                                  context: context,
-                                  classe: classe);
+                                // ignore: use_build_context_synchronously
+                                context: context,
+                                classe: classe,
+                                subject: subject,
+                              );
                             },
                           );
                         }

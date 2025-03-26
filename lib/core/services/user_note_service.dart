@@ -8,6 +8,7 @@ class UserNoteService {
       required String studentId,
       required String teacherId,
       required String noteId,
+      required String subjectId,
       required}) async {
     DatabaseReference userNoteRef =
         FirebaseDatabase.instance.ref().child("user_note");
@@ -25,6 +26,7 @@ class UserNoteService {
       "user_id": studentId,
       "teacher_id": teacherId,
       "note_id": noteId,
+      "subject_id": subjectId,
       "created_at": DateTime.now().toLocal().toString(),
       "updated_at": DateTime.now().toLocal().toString(),
     };
@@ -36,6 +38,7 @@ class UserNoteService {
     required String classId,
     String? userId,
     String? teacherId, // Opcional
+    String? subjectId,
   }) async {
     DatabaseReference userNoteRef =
         FirebaseDatabase.instance.ref().child("user_note");
@@ -55,8 +58,10 @@ class UserNoteService {
           bool matchUser = userId == null || value["user_id"] == userId;
           bool matchTeacher =
               teacherId == null || value["teacher_id"] == teacherId;
+          bool matchSubject =
+              subjectId == null || value["subject_id"] == subjectId;
 
-          if (matchClass && matchUser && matchTeacher) {
+          if (matchClass && matchUser && matchTeacher && matchSubject) {
             userNotes.add(UserNote.fromJson(Map<String, dynamic>.from(value)));
           }
         }

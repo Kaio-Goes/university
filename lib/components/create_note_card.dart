@@ -116,7 +116,7 @@ createNoteCard(
 sucessNoteCreate(
     {required BuildContext context,
     required ClassFirebase classFirebase,
-    required List<SubjectModule> listSubject}) {
+    required SubjectModule subject}) {
   return showDialog(
     // ignore: use_build_context_synchronously
     context: context,
@@ -150,7 +150,7 @@ sucessNoteCreate(
                 MaterialPageRoute(
                   builder: (context) => CreateNotesPage(
                     classFirebase: classFirebase,
-                    listSubject: listSubject,
+                    subject: subject,
                   ),
                 ),
               );
@@ -174,6 +174,7 @@ sucessNoteCreate(
 sucessUserNoteCreate({
   required BuildContext context,
   required ClassFirebase classe,
+  required SubjectModule subject,
 }) {
   return showDialog(
     // ignore: use_build_context_synchronously
@@ -206,7 +207,11 @@ sucessUserNoteCreate({
               Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => AddNotesStudentPage(classe: classe)),
+                  builder: (context) => AddNotesStudentPage(
+                    classe: classe,
+                    subject: subject,
+                  ),
+                ),
               );
             },
             style: ElevatedButton.styleFrom(

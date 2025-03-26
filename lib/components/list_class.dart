@@ -116,7 +116,7 @@ class _ListClassState extends State<ListClass> {
                                                       (Route<dynamic> route) =>
                                                           false);
                                             });
-                                      }
+                                      } else if (result == "notes") {}
                                     },
                                     itemBuilder: (BuildContext context) =>
                                         <PopupMenuEntry<String>>[
@@ -132,13 +132,30 @@ class _ListClassState extends State<ListClass> {
                                         ),
                                       ),
                                       const PopupMenuItem<String>(
+                                        value: 'notes',
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text('Notas dos Alunos'),
+                                            Icon(Icons.groups_2_rounded,
+                                                size: 16)
+                                          ],
+                                        ),
+                                      ),
+                                      const PopupMenuItem<String>(
                                         value: 'delete',
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text('Excluir'),
-                                            Icon(Icons.delete, size: 16)
+                                            Text(
+                                              'Excluir',
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            ),
+                                            Icon(Icons.delete,
+                                                size: 16, color: Colors.red)
                                           ],
                                         ),
                                       ),
@@ -270,7 +287,7 @@ class _ListClassState extends State<ListClass> {
                                                     (Route<dynamic> route) =>
                                                         false);
                                           });
-                                    }
+                                    } else if (result == "notes") {}
                                   },
                                   itemBuilder: (BuildContext context) =>
                                       <PopupMenuEntry<String>>[
@@ -286,13 +303,28 @@ class _ListClassState extends State<ListClass> {
                                       ),
                                     ),
                                     const PopupMenuItem<String>(
+                                      value: 'notes',
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text('Notas dos Alunos'),
+                                          Icon(Icons.groups_2_rounded, size: 16)
+                                        ],
+                                      ),
+                                    ),
+                                    const PopupMenuItem<String>(
                                       value: 'delete',
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text('Excluir'),
-                                          Icon(Icons.delete, size: 16)
+                                          Text(
+                                            'Excluir',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                          Icon(Icons.delete,
+                                              size: 16, color: Colors.red)
                                         ],
                                       ),
                                     ),

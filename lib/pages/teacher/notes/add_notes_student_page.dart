@@ -301,8 +301,16 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                                 );
 
                                                 // Aguarda carregar os dados
-                                                await _loadUserNotes(
-                                                    studentId: user.uid);
+                                                var userNotes =
+                                                    await UserNoteService()
+                                                        .getListUserNote(
+                                                  classId: widget.classe.uid,
+                                                  userId: user.uid,
+                                                  teacherId: AuthUserService()
+                                                      .currentUser!
+                                                      .uid,
+                                                  subjectId: widget.subject.uid,
+                                                );
 
                                                 // Fecha o diálogo de carregamento
                                                 if (context.mounted) {
@@ -317,7 +325,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                                   classe: widget.classe,
                                                   subject: widget.subject,
                                                   listNotes: listNotes,
-                                                  listUserNotes: listUserNote,
+                                                  listUserNotes: userNotes,
                                                 );
                                               }
                                             },

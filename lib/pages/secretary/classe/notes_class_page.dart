@@ -171,130 +171,124 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                       final user = listUser[index];
 
                                       return Card.outlined(
-                                        child: SingleChildScrollView(
-                                          child: ListTile(
-                                            contentPadding:
-                                                const EdgeInsets.all(16),
-                                            hoverColor: Colors.grey[200],
-                                            title: Text(
-                                              user.name,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w800),
-                                            ),
-                                            subtitle: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Text(
-                                                    "Matérias:",
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w700),
-                                                  ),
-                                                  const SizedBox(height: 5),
-                                                  ...listSubject.map((subject) {
-                                                    var teacher = listTeacher
-                                                        .where((t) =>
-                                                            t.uid ==
-                                                            subject.userId)
-                                                        .firstOrNull;
-                                                    return Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        const SizedBox(
-                                                            height: 5),
-                                                        Row(
-                                                          children: [
-                                                            SizedBox(
-                                                              width: 180,
-                                                              child: Text(
-                                                                subject.title,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontSize: 15,
-                                                                ),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 1,
+                                        child: ListTile(
+                                          contentPadding:
+                                              const EdgeInsets.all(16),
+                                          hoverColor: Colors.grey[200],
+                                          title: Text(
+                                            user.name,
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w800),
+                                          ),
+                                          subtitle: SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  "Matérias:",
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w700),
+                                                ),
+                                                const SizedBox(height: 5),
+                                                ...listSubject.map((subject) {
+                                                  var teacher = listTeacher
+                                                      .where((t) =>
+                                                          t.uid ==
+                                                          subject.userId)
+                                                      .firstOrNull;
+                                                  return Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const SizedBox(height: 5),
+                                                      Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width: 180,
+                                                            child: Text(
+                                                              subject.title,
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 15,
                                                               ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              maxLines: 1,
                                                             ),
-                                                            const SizedBox(
-                                                                width: 20),
-                                                            Wrap(
-                                                              spacing: 12.0,
-                                                              children: listUserNote
-                                                                  .where((userNote) =>
-                                                                      userNote.userId ==
-                                                                          user
-                                                                              .uid &&
-                                                                      userNote.subjectId ==
-                                                                          subject
-                                                                              .uid)
-                                                                  .expand(
-                                                                      (userNote) {
-                                                                // Filtra todas as notas que correspondem ao userNote.noteId
-                                                                var matchingNotes =
-                                                                    listNotes
-                                                                        .where(
-                                                                  (n) =>
-                                                                      n.uid ==
-                                                                      userNote
-                                                                          .noteId,
-                                                                );
-
-                                                                // Mapeia cada nota correspondente para um Chip
-                                                                return matchingNotes
-                                                                    .map(
-                                                                  (note) =>
-                                                                      Chip(
-                                                                    label: Text(
-                                                                        "${note.title}: ${userNote.value.replaceAll(".", ",")}"),
-                                                                    backgroundColor:
-                                                                        const Color
-                                                                            .fromARGB(
-                                                                            24,
-                                                                            224,
-                                                                            248,
-                                                                            250),
-                                                                  ),
-                                                                );
-                                                              }).toList(),
-                                                            ),
-                                                            const SizedBox(
-                                                                width: 20),
-                                                            Text(
-                                                              "Soma: ${_calculateTotalScoreBySubject(user.uid, subject.uid).toStringAsFixed(2).replaceAll('.', ',')}",
-                                                              style: const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        if (teacher != null)
-                                                          Text(
-                                                            "Professor ${teacher.name} ${teacher.surname}",
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        12),
                                                           ),
-                                                        const SizedBox(
-                                                            height: 5)
-                                                      ],
-                                                    );
-                                                  }),
-                                                ],
-                                              ),
+                                                          const SizedBox(
+                                                              width: 20),
+                                                          Wrap(
+                                                            spacing: 12.0,
+                                                            children: listUserNote
+                                                                .where((userNote) =>
+                                                                    userNote.userId ==
+                                                                        user
+                                                                            .uid &&
+                                                                    userNote.subjectId ==
+                                                                        subject
+                                                                            .uid)
+                                                                .expand(
+                                                                    (userNote) {
+                                                              // Filtra todas as notas que correspondem ao userNote.noteId
+                                                              var matchingNotes =
+                                                                  listNotes
+                                                                      .where(
+                                                                (n) =>
+                                                                    n.uid ==
+                                                                    userNote
+                                                                        .noteId,
+                                                              );
+
+                                                              // Mapeia cada nota correspondente para um Chip
+                                                              return matchingNotes
+                                                                  .map(
+                                                                (note) => Chip(
+                                                                  label: Text(
+                                                                      "${note.title}: ${userNote.value.replaceAll(".", ",")}"),
+                                                                  backgroundColor:
+                                                                      const Color
+                                                                          .fromARGB(
+                                                                          24,
+                                                                          224,
+                                                                          248,
+                                                                          250),
+                                                                ),
+                                                              );
+                                                            }).toList(),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 20),
+                                                          Text(
+                                                            "Soma: ${_calculateTotalScoreBySubject(user.uid, subject.uid).toStringAsFixed(2).replaceAll('.', ',')}",
+                                                            style: const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      if (teacher != null)
+                                                        Text(
+                                                          "Professor ${teacher.name} ${teacher.surname}",
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 12),
+                                                        ),
+                                                      const SizedBox(height: 5)
+                                                    ],
+                                                  );
+                                                }),
+                                              ],
                                             ),
                                           ),
                                         ),

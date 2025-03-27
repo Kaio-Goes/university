@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/styles.constants.dart';
-import 'package:university/pages/secretary/student_create_page.dart';
+import 'package:university/pages/secretary/student/history_notes_page.dart';
+import 'package:university/pages/secretary/student/student_create_page.dart';
 import 'package:university/pages/secretary/teacher_create_page.dart';
 
 class ListUsersCard extends StatefulWidget {
@@ -103,6 +104,15 @@ class _ListUsersCardState extends State<ListUsersCard> {
                                                         userTeacher: user),
                                           ),
                                         );
+                                      } else if (result == "historyNotes") {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                HistoryNotesPage(
+                                              user: user,
+                                            ),
+                                          ),
+                                        );
                                       }
                                     },
                                     itemBuilder: (BuildContext context) =>
@@ -118,6 +128,19 @@ class _ListUsersCardState extends State<ListUsersCard> {
                                           ],
                                         ),
                                       ),
+                                      if (user.role == "student") ...[
+                                        const PopupMenuItem<String>(
+                                          value: 'historyNotes',
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text('Histórico de Notas'),
+                                              Icon(Icons.history, size: 16)
+                                            ],
+                                          ),
+                                        ),
+                                      ]
                                     ],
                                   ),
                                 ],
@@ -233,6 +256,13 @@ class _ListUsersCardState extends State<ListUsersCard> {
                                                       userTeacher: user),
                                         ),
                                       );
+                                    } else if (result == "historyNotes") {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              HistoryNotesPage(user: user),
+                                        ),
+                                      );
                                     }
                                   },
                                   itemBuilder: (BuildContext context) =>
@@ -248,6 +278,19 @@ class _ListUsersCardState extends State<ListUsersCard> {
                                         ],
                                       ),
                                     ),
+                                    if (user.role == "student") ...[
+                                      const PopupMenuItem<String>(
+                                        value: 'historyNotes',
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text('Histórico de Notas'),
+                                            Icon(Icons.history, size: 16)
+                                          ],
+                                        ),
+                                      ),
+                                    ]
                                   ],
                                 ),
                               )

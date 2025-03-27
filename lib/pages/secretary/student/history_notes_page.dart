@@ -172,7 +172,7 @@ class _HistoryNotesPageState extends State<HistoryNotesPage> {
                             )
                           : listClass.isEmpty
                               ? const Center(
-                                  child: Text("Nenhuma classe encontrada"),
+                                  child: Text("Nenhuma turma encontrada"),
                                 )
                               : SizedBox(
                                   height: listClass.length * 250,

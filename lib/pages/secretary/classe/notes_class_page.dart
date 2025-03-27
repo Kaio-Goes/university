@@ -290,7 +290,19 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                                         style: const TextStyle(
                                                             fontSize: 12),
                                                       ),
-                                                      const SizedBox(height: 5)
+                                                      const SizedBox(height: 5),
+                                                      Container(
+                                                        height: 1,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            1,
+                                                        color: const Color
+                                                            .fromARGB(
+                                                            255, 133, 215, 226),
+                                                      ),
+                                                      const SizedBox(height: 5),
                                                     ],
                                                   );
                                                 }),

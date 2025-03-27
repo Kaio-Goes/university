@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:university/pages/landingPage/dashboard/dashboard_page.dart';
 import 'package:university/pages/landingPage/units/units_page.dart';
 import 'package:university/pages/secretary/login/login_secretary_page.dart';
+import 'package:university/pages/student/login/login_student_page.dart';
 import 'package:university/pages/teacher/login/login_teacher_page.dart';
 
 class DrawerComponent extends StatelessWidget {
@@ -43,6 +44,16 @@ class DrawerComponent extends StatelessWidget {
             },
           ),
           const SizedBox(height: 250),
+          ListTile(
+            leading: const Icon(Icons.school),
+            title: const Text('Área do Aluno'),
+            onTap: () {
+              // Navegação para Contato
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      const LoginStudentPage())); // Fecha o drawer
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.account_circle_rounded),
             title: const Text('Área do Professor'),

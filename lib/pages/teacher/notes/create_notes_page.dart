@@ -220,7 +220,7 @@ class _CreateNotesPageState extends State<CreateNotesPage> {
                                                   .currentUser!
                                                   .uid,
                                               classId: note.classId,
-                                              subejctId: "",
+                                              subejctId: widget.subject.uid,
                                             )
                                                 .then((_) {
                                               sucessNoteCreate(

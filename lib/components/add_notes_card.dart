@@ -44,7 +44,7 @@ addNotesCard({
           builder: (context, setState) {
             return AlertDialog(
               titlePadding: const EdgeInsets.all(20),
-              actionsPadding: const EdgeInsets.all(20),
+              actionsPadding: const EdgeInsets.all(10),
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -58,7 +58,9 @@ addNotesCard({
                 ],
               ),
               content: SizedBox(
-                height: listNotes.length * 120,
+                height: listNotes.length == 1
+                    ? listNotes.length * 160
+                    : listNotes.length * 140,
                 width: double.infinity,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

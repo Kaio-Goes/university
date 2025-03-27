@@ -128,10 +128,13 @@ class _HistoryNotesPageState extends State<HistoryNotesPage> {
     }
   }
 
-  double _calculateTotalScoreBySubject(String userId, String subjectId) {
+  double _calculateTotalScoreBySubject(
+      String userId, String subjectId, String classId) {
     return listUserNote
         .where((userNote) =>
-            userNote.userId == userId && userNote.subjectId == subjectId)
+            userNote.userId == userId &&
+            userNote.subjectId == subjectId &&
+            userNote.classId == classId)
         .map((userNote) => double.tryParse(userNote.value) ?? 0.0)
         .fold(0.0, (sum, value) => sum + value);
   }
@@ -216,6 +219,9 @@ class _HistoryNotesPageState extends State<HistoryNotesPage> {
                                                               subject.uid))
                                                       .map(
                                                         (subject) => Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
                                                           children: [
                                                             Row(
                                                               children: [
@@ -245,7 +251,7 @@ class _HistoryNotesPageState extends State<HistoryNotesPage> {
                                                                               const SizedBox(height: 15, width: 15, child: CircularProgressIndicator())
                                                                             ]
                                                                           : listUserNote
-                                                                              .where((userNote) => userNote.userId == widget.user.uid && userNote.subjectId == subject.uid)
+                                                                              .where((userNote) => userNote.userId == widget.user.uid && userNote.subjectId == subject.uid && userNote.classId == classe.uid)
                                                                               .expand(
                                                                               (userNote) {
                                                                                 var matchingNotes = listNotes.where(
@@ -263,7 +269,7 @@ class _HistoryNotesPageState extends State<HistoryNotesPage> {
                                                                 const SizedBox(
                                                                     width: 20),
                                                                 Text(
-                                                                  "Soma: ${_calculateTotalScoreBySubject(widget.user.uid, subject.uid).toStringAsFixed(2).replaceAll('.', ',')}",
+                                                                  "Soma: ${_calculateTotalScoreBySubject(widget.user.uid, subject.uid, classe.uid).toStringAsFixed(2).replaceAll('.', ',')}",
                                                                   style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -272,8 +278,23 @@ class _HistoryNotesPageState extends State<HistoryNotesPage> {
                                                               ],
                                                             ),
                                                             const SizedBox(
-                                                              height: 5,
-                                                            )
+                                                                height: 5),
+                                                            Container(
+                                                              height: 1,
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  1,
+                                                              color: const Color
+                                                                  .fromARGB(
+                                                                  255,
+                                                                  133,
+                                                                  215,
+                                                                  226),
+                                                            ),
+                                                            const SizedBox(
+                                                                height: 5),
                                                           ],
                                                         ),
                                                       )

@@ -27,6 +27,7 @@ class _NotesClassPageState extends State<NotesClassPage> {
   List<UserNote> listUserNote = [];
   List<SubjectModule> listSubject = [];
   bool isLoading = true;
+  bool isLoadingUserNote = true;
 
   @override
   void initState() {
@@ -97,8 +98,10 @@ class _NotesClassPageState extends State<NotesClassPage> {
 
       setState(() {
         listUserNote = userNotes;
+        isLoadingUserNote = false;
       });
     } catch (e) {
+      setState(() => isLoadingUserNote = false);
       Exception("Erro loaging User Notes $e");
     }
   }
@@ -180,7 +183,7 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
                                             style: const TextStyle(
-                                                fontSize: 16,
+                                                fontSize: 17,
                                                 fontWeight: FontWeight.w800),
                                           ),
                                           subtitle: SingleChildScrollView(
@@ -217,7 +220,7 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                                               subject.title,
                                                               style:
                                                                   const TextStyle(
-                                                                fontSize: 15,
+                                                                fontSize: 16,
                                                               ),
                                                               overflow:
                                                                   TextOverflow
@@ -229,42 +232,40 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                                               width: 20),
                                                           Wrap(
                                                             spacing: 12.0,
-                                                            children: listUserNote
-                                                                .where((userNote) =>
-                                                                    userNote.userId ==
-                                                                        user
-                                                                            .uid &&
-                                                                    userNote.subjectId ==
-                                                                        subject
-                                                                            .uid)
-                                                                .expand(
-                                                                    (userNote) {
-                                                              // Filtra todas as notas que correspondem ao userNote.noteId
-                                                              var matchingNotes =
-                                                                  listNotes
-                                                                      .where(
-                                                                (n) =>
-                                                                    n.uid ==
-                                                                    userNote
-                                                                        .noteId,
-                                                              );
+                                                            children:
+                                                                isLoadingUserNote
+                                                                    ? [
+                                                                        const CircularProgressIndicator()
+                                                                      ]
+                                                                    : listUserNote
+                                                                        .where((userNote) =>
+                                                                            userNote.userId == user.uid &&
+                                                                            userNote.subjectId ==
+                                                                                subject.uid)
+                                                                        .expand((userNote) {
+                                                                        // Filtra todas as notas que correspondem ao userNote.noteId
+                                                                        var matchingNotes =
+                                                                            listNotes.where(
+                                                                          (n) =>
+                                                                              n.uid ==
+                                                                              userNote.noteId,
+                                                                        );
 
-                                                              // Mapeia cada nota correspondente para um Chip
-                                                              return matchingNotes
-                                                                  .map(
-                                                                (note) => Chip(
-                                                                  label: Text(
-                                                                      "${note.title}: ${userNote.value.replaceAll(".", ",")}"),
-                                                                  backgroundColor:
-                                                                      const Color
-                                                                          .fromARGB(
-                                                                          24,
-                                                                          224,
-                                                                          248,
-                                                                          250),
-                                                                ),
-                                                              );
-                                                            }).toList(),
+                                                                        // Mapeia cada nota correspondente para um Chip
+                                                                        return matchingNotes
+                                                                            .map(
+                                                                          (note) =>
+                                                                              Chip(
+                                                                            label:
+                                                                                Text("${note.title}: ${userNote.value.replaceAll(".", ",")}"),
+                                                                            backgroundColor: const Color.fromARGB(
+                                                                                24,
+                                                                                224,
+                                                                                248,
+                                                                                250),
+                                                                          ),
+                                                                        );
+                                                                      }).toList(),
                                                           ),
                                                           const SizedBox(
                                                               width: 20),
@@ -284,6 +285,11 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                                               const TextStyle(
                                                                   fontSize: 12),
                                                         ),
+                                                      Text(
+                                                        "Módulo ${subject.module}",
+                                                        style: const TextStyle(
+                                                            fontSize: 12),
+                                                      ),
                                                       const SizedBox(height: 5)
                                                     ],
                                                   );

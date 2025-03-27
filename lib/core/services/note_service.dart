@@ -28,7 +28,7 @@ class NoteService {
   }
 
   Future<List<Note>> getListNotesByClass({
-    required String userId,
+    String? userId,
     required String classId,
     required String subjectId,
   }) async {

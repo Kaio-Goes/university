@@ -3,6 +3,7 @@ import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/utilities/alerts.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/classe/class_create_page.dart';
+import 'package:university/pages/secretary/classe/notes_class_page.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/core/services/class_service.dart';
 
@@ -116,7 +117,16 @@ class _ListClassState extends State<ListClass> {
                                                       (Route<dynamic> route) =>
                                                           false);
                                             });
-                                      } else if (result == "notes") {}
+                                      } else if (result == "notes") {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                NotesClassPage(
+                                              classFirebase: classe,
+                                            ),
+                                          ),
+                                        );
+                                      }
                                     },
                                     itemBuilder: (BuildContext context) =>
                                         <PopupMenuEntry<String>>[
@@ -287,7 +297,15 @@ class _ListClassState extends State<ListClass> {
                                                     (Route<dynamic> route) =>
                                                         false);
                                           });
-                                    } else if (result == "notes") {}
+                                    } else if (result == "notes") {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => NotesClassPage(
+                                            classFirebase: classe,
+                                          ),
+                                        ),
+                                      );
+                                    }
                                   },
                                   itemBuilder: (BuildContext context) =>
                                       <PopupMenuEntry<String>>[

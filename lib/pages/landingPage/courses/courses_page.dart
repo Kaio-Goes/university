@@ -345,8 +345,10 @@ class _CoursesPageState extends State<CoursesPage> {
                                                   _selectedUnit = value;
                                                 });
                                               },
-                                              items: <String>['Planaltina']
-                                                  .map((String value) {
+                                              items: <String>[
+                                                'Planaltina',
+                                                'Paranoá'
+                                              ].map((String value) {
                                                 return DropdownMenuItem<String>(
                                                   value: value,
                                                   child: Text(value),
@@ -507,8 +509,10 @@ class _CoursesPageState extends State<CoursesPage> {
                                                   _selectedUnit = value;
                                                 });
                                               },
-                                              items: <String>['Planaltina']
-                                                  .map((String value) {
+                                              items: <String>[
+                                                'Planaltina',
+                                                'Paranoá'
+                                              ].map((String value) {
                                                 return DropdownMenuItem<String>(
                                                   value: value,
                                                   child: Text(value),

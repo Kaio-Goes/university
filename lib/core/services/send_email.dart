@@ -115,12 +115,12 @@ class SendEmail {
             "fields": {
               "subject": {
                 "stringValue":
-                    "Seu Perfil de Professor foi criado na AnnaNery Aluno(a) $name"
+                    "Seu Perfil de Estudante foi criado na AnnaNery Aluno(a) $name"
               },
               "html": {
                 "stringValue": """
                     <p>Prezado(a) <strong>$name</strong>,</p>
-                    <p>Estamos felizes em informá-lo(a) que seu perfil de professor foi criado com sucesso na <strong>AnnaNery</strong>.</p>
+                    <p>Estamos felizes em informá-lo(a) que seu perfil de estudante foi criado com sucesso na <strong>AnnaNery</strong>.</p>
                     <p>Abaixo estão os detalhes da sua conta:</p>
                     <ul>
                       <li><strong>Email:</strong> $email</li>

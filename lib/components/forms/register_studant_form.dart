@@ -183,7 +183,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                       _selectedUnit = value;
                                     });
                                   },
-                                  items: <String>['Planaltina']
+                                  items: <String>['Planaltina', 'Paranoá']
                                       .map((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
@@ -289,7 +289,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
                                             _selectedUnit = value;
                                           });
                                         },
-                                        items: <String>['Planaltina']
+                                        items: <String>['Planaltina', 'Paranoá']
                                             .map((String value) {
                                           return DropdownMenuItem<String>(
                                             value: value,

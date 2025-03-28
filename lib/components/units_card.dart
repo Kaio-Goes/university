@@ -6,12 +6,15 @@ class UnitsCard extends StatelessWidget {
   final String pole;
   final String address;
   final String phone;
-  const UnitsCard(
-      {super.key,
-      required this.local,
-      required this.pole,
-      required this.address,
-      required this.phone});
+  final String image;
+  const UnitsCard({
+    super.key,
+    required this.local,
+    required this.pole,
+    required this.address,
+    required this.phone,
+    required this.image,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +60,7 @@ class UnitsCard extends StatelessWidget {
                                 pole: pole,
                                 address: address,
                                 phone: phone,
+                                image: image,
                               )),
                     );
                   },

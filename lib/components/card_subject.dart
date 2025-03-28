@@ -25,6 +25,11 @@ class CardSubject extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final classes = classFirebase
+        .where((c) => c.subject.contains(subjectModule.uid))
+        .map((c) => c.name)
+        .toList();
+
     return SizedBox(
       height: 160,
       width: 350,
@@ -66,7 +71,7 @@ class CardSubject extends StatelessWidget {
                     ),
                     Text("Módulo: ${subjectModule.module}"),
                     Text(
-                      "Turmas: ${classFirebase.map((c) => c.name).join(', ')}",
+                      "Turmas: ${classes.isNotEmpty ? classes.join(', ') : 'Não possuo'}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                     ),

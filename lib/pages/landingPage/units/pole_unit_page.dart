@@ -8,12 +8,14 @@ class PoleUnitPage extends StatelessWidget {
   final String pole;
   final String address;
   final String phone;
+  final String image;
 
   const PoleUnitPage({
     super.key,
     required this.pole,
     required this.address,
     required this.phone,
+    required this.image,
   });
 
   @override
@@ -128,7 +130,7 @@ class PoleUnitPage extends StatelessWidget {
           height: 300,
           width: 500,
           child: Image.asset(
-            'assets/images/memberannanery.png',
+            image,
             fit: BoxFit.cover,
           ),
         ),

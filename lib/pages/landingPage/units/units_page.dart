@@ -81,19 +81,32 @@ class _UnitsPageState extends State<UnitsPage> {
               const Column(
                 children: [
                   SizedBox(height: 45),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      UnitsCard(
-                        local: 'Planaltina / DF',
-                        pole: 'Polo Planaltina',
-                        address:
-                            'Conj. A, Lote 22, Residencial Sandray, Arapoangas',
-                        phone: '(61) 99501-3912',
-                      )
-                    ],
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        UnitsCard(
+                          local: 'Planaltina / DF',
+                          pole: 'Polo Planaltina',
+                          address:
+                              'Conj. A, Lote 22, Residencial Sandray, Arapoangas',
+                          phone: '(61) 99501-3912',
+                          image: "assets/images/memberannanery.png",
+                        ),
+                        SizedBox(width: 10),
+                        UnitsCard(
+                          local: 'Paranoá / DF',
+                          pole: 'Polo Paranoá',
+                          address:
+                              "Edifício Paranoá, Quadra 25 Conj. A, Lote 18/19 - 2 Andar",
+                          phone: '(61) 98211-6846',
+                          image: "assets/images/annaneryparanoa.png",
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 180)
+                  SizedBox(height: 190)
                 ],
               ),
               const Footer()

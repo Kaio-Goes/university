@@ -86,7 +86,9 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
             'rg': rg,
             'phone': phone,
             'role': 'student',
-            'isActive': true
+            'isActive': true,
+            'created_at': DateTime.now(),
+            'updated_at': DateTime.now(),
           },
         ).then((_) async {
           showDialog(
@@ -145,6 +147,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
             'cpf': cpf,
             'phone': phone,
             'isActive': widget.userTeacher!.isActive,
+            'updated_at': DateTime.now(),
           },
         ).then((_) {
           // ignore: use_build_context_synchronously

@@ -71,7 +71,7 @@ class CardSubject extends StatelessWidget {
                     ),
                     Text("Módulo: ${subjectModule.module}"),
                     Text(
-                      "Turmas: ${classes.isNotEmpty ? classes.join(', ') : 'Não possuo'}",
+                      "Turmas: ${classes.isNotEmpty ? classes.join(', ') : 'Não possui'}",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                     ),

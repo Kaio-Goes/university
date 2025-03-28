@@ -30,7 +30,9 @@ class SubjectService {
       'user_id': idUser,
       'daysWeeks': daysWeek,
       'startHour': startHour,
-      'endHour': endHour
+      'endHour': endHour,
+      'created_at': DateTime.now().toLocal().toString(),
+      'updated_at': DateTime.now().toLocal().toString(),
     };
 
     // Definir os valores no path gerado
@@ -119,7 +121,8 @@ class SubjectService {
       'user_id': idUser,
       'daysWeeks': daysWeek,
       'startHour': startHour,
-      'endHour': endHour
+      'endHour': endHour,
+      'updated_at': DateTime.now().toLocal().toString(),
     });
   }
 

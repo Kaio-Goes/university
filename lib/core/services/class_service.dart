@@ -24,6 +24,8 @@ class ClassService {
         'startDate': startDate,
         'endDate': endDate,
         'students': students ?? [],
+        'created_at': DateTime.now().toLocal().toString(),
+        'updated_at': DateTime.now().toLocal().toString(),
       };
 
       await newClassRef.set(classData);
@@ -49,6 +51,7 @@ class ClassService {
       'startDate': startDate,
       'endDate': endDate,
       'students': students,
+      'updated_at': DateTime.now().toLocal().toString(),
     });
   }
 

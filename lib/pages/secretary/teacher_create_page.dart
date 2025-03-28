@@ -86,8 +86,8 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
             'phone': phone,
             'role': 'teacher',
             'isActive': true,
-            'created_at': DateTime.now(),
-            'updated_at': DateTime.now(),
+            'created_at': DateTime.now().toLocal().toString(),
+            'updated_at': DateTime.now().toLocal().toString(),
           },
         ).then((_) async {
           showDialog(
@@ -149,7 +149,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
             'cpf': cpf,
             'phone': phone,
             'isActive': widget.userTeacher!.isActive,
-            'updated_at': DateTime.now(),
+            'updated_at': DateTime.now().toLocal().toString(),
           },
         ).then((_) {
           _showSuccessDialog();

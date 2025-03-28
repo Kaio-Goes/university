@@ -22,6 +22,8 @@ class NoteService {
       "user_id": userId,
       "class_id": classId,
       "subject_id": subjectId,
+      'created_at': DateTime.now().toLocal().toString(),
+      'updated_at': DateTime.now().toLocal().toString(),
     };
 
     await newNoteRef.set(values);
@@ -73,6 +75,7 @@ class NoteService {
         await noteRef.update({
           "title": title,
           "value": note,
+          'updated_at': DateTime.now().toLocal().toString(),
         });
       } else {
         throw Exception("Permissão negada: Usuário ou turma inválidos.");

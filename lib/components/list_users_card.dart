@@ -101,7 +101,7 @@ class _ListUsersCardState extends State<ListUsersCard> {
                                                     ? TeacherCreatePage(
                                                         userTeacher: user)
                                                     : StudantCreatePage(
-                                                        userTeacher: user),
+                                                        userStudent: user),
                                           ),
                                         );
                                       } else if (result == "historyNotes") {
@@ -251,9 +251,11 @@ class _ListUsersCardState extends State<ListUsersCard> {
                                           builder: (context) =>
                                               user.role == 'teacher'
                                                   ? TeacherCreatePage(
-                                                      userTeacher: user)
+                                                      userTeacher: user,
+                                                    )
                                                   : StudantCreatePage(
-                                                      userTeacher: user),
+                                                      userStudent: user,
+                                                    ),
                                         ),
                                       );
                                     } else if (result == "historyNotes") {

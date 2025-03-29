@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:university/components/app_bar_user_component.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
@@ -14,8 +15,8 @@ import 'package:university/core/services/auth_user_service.dart';
 import 'package:university/core/services/send_email.dart';
 
 class StudantCreatePage extends StatefulWidget {
-  final UserFirebase? userTeacher;
-  const StudantCreatePage({super.key, this.userTeacher});
+  final UserFirebase? userStudent;
+  const StudantCreatePage({super.key, this.userStudent});
 
   @override
   State<StudantCreatePage> createState() => _StudantCreatePageState();
@@ -29,6 +30,10 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
+  String? _selectedSex;
+  final birthDateController = TextEditingController();
+  final addressController = TextEditingController();
+  final cepController = TextEditingController();
   bool _passwordVisible = false;
   String _errorMessage = '';
 
@@ -36,17 +41,46 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
   void initState() {
     super.initState();
 
-    if (widget.userTeacher != null) {
+    if (widget.userStudent != null) {
       editResquest();
     }
   }
 
   void editResquest() {
-    nameController.text = widget.userTeacher!.name;
-    emailController.text = widget.userTeacher!.email;
-    rgController.text = widget.userTeacher!.rg!;
-    cpfController.text = widget.userTeacher!.cpf;
-    phoneController.text = widget.userTeacher!.phone;
+    nameController.text = widget.userStudent!.name;
+    emailController.text = widget.userStudent!.email;
+    rgController.text = widget.userStudent!.rg!;
+    cpfController.text = widget.userStudent!.cpf;
+    phoneController.text = widget.userStudent!.phone;
+    _selectedSex = widget.userStudent!.sex;
+    birthDateController.text = widget.userStudent!.birthDate!;
+    cepController.text = widget.userStudent!.cep!;
+    addressController.text = widget.userStudent!.address!;
+  }
+
+  String generateRegistration() {
+    String year = DateTime.now().year.toString();
+    String randomDigits =
+        (100000 + (DateTime.now().millisecondsSinceEpoch % 900000))
+            .toString()
+            .substring(0, 6);
+    return '$year$randomDigits';
+  }
+
+  Future<String> generateUniqueRegistration() async {
+    String registration;
+    DatabaseReference usersRef = FirebaseDatabase.instance.ref().child('users');
+    DataSnapshot snapshot;
+
+    do {
+      registration = generateRegistration();
+      snapshot = await usersRef
+          .orderByChild('registration')
+          .equalTo(registration)
+          .get();
+    } while (snapshot.value != null); // Verifica se o registro já existe
+
+    return registration;
   }
 
   _clickButton({
@@ -56,6 +90,10 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
     required String cpf,
     required String rg,
     required String phone,
+    required String sex,
+    required String birthDate,
+    required String cep,
+    required String address,
   }) async {
     bool formOk = _formKey.currentState!.validate();
 
@@ -63,8 +101,10 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
       return;
     }
 
-    if (widget.userTeacher == null) {
+    if (widget.userStudent == null) {
       try {
+        String uniqueRegistration = await generateUniqueRegistration();
+
         UserCredential userCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email,
@@ -77,13 +117,20 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
         DatabaseReference usersRef =
             FirebaseDatabase.instance.ref().child('users');
 
+        print(uniqueRegistration);
+
         usersRef.child(uid).set(
           {
             'uid': uid,
+            'registration': uniqueRegistration,
             'email': email,
             'name': name,
             'cpf': cpf,
             'rg': rg,
+            'sex': sex,
+            'birth_date': birthDate,
+            'cep': cep,
+            'address': address,
             'phone': phone,
             'role': 'student',
             'isActive': true,
@@ -131,12 +178,13 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
         });
       } catch (e) {
         setState(() {
-          _errorMessage = "E-mail já utilizado, exclua a conta com esse e-mail";
+          _errorMessage =
+              "E-mail já utilizado, exclua a conta com esse e-mail $e";
         });
       }
     } else {
       try {
-        String uid = widget.userTeacher!.uid;
+        String uid = widget.userStudent!.uid;
 
         // Atualizando usuário no Realtime Database (sem o campo e-mail)
         DatabaseReference usersRef =
@@ -146,7 +194,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
             'name': name,
             'cpf': cpf,
             'phone': phone,
-            'isActive': widget.userTeacher!.isActive,
+            'isActive': widget.userStudent!.isActive,
             'updated_at': DateTime.now().toLocal().toString(),
           },
         ).then((_) {
@@ -161,6 +209,22 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
     }
   }
 
+  _selectDate(BuildContext context, TextEditingController controller) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        controller.text =
+            "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,6 +234,11 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             bool isSmallScreen = constraints.maxWidth < 800;
+
+            var widthInput = isSmallScreen
+                ? MediaQuery.of(context).size.width * 1
+                : MediaQuery.of(context).size.width * 0.38;
+
             return Column(
               children: [
                 const SizedBox(height: 25),
@@ -184,7 +253,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'Criar um novo Aluno',
+                            'Criar um novo Aluno(a)',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 24,
@@ -211,15 +280,21 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                           runSpacing: 20,
                                           children: [
                                             builFormCreateTeacherPartOne(
-                                                context: context,
-                                                isSmallScreen: isSmallScreen,
-                                                emailController:
-                                                    emailController,
-                                                nameController: nameController,
-                                                phoneController:
-                                                    phoneController,
-                                                userTeacher:
-                                                    widget.userTeacher),
+                                              context: context,
+                                              isSmallScreen: isSmallScreen,
+                                              emailController: emailController,
+                                              nameController: nameController,
+                                              phoneController: phoneController,
+                                              userStudent: widget.userStudent,
+                                              selectedSex: _selectedSex,
+                                              onChanged: (sex) {
+                                                setState(() {
+                                                  _selectedSex = sex;
+                                                });
+                                              },
+                                              addressController:
+                                                  addressController,
+                                            ),
                                             builFormCreateTeacherPartTwo(
                                               context: context,
                                               isSmallScreen: isSmallScreen,
@@ -234,15 +309,41 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                                       !_passwordVisible;
                                                 });
                                               },
-                                              userTeacher: widget.userTeacher,
+                                              birthDate: textFormField(
+                                                controller: birthDateController,
+                                                validator: (value) =>
+                                                    validateBirthDate(value),
+                                                inputFormatters: [
+                                                  MaskTextInputFormatter(
+                                                    mask: '##/##/####',
+                                                    filter: {
+                                                      "#": RegExp(r'^[0-9]*$')
+                                                    },
+                                                    type: MaskAutoCompletionType
+                                                        .lazy,
+                                                  )
+                                                ],
+                                                hint:
+                                                    'Selecione a Data de Nascimento',
+                                                label: 'Data de Nascimento',
+                                                size: widthInput,
+                                                onTap: () async {
+                                                  FocusScope.of(context)
+                                                      .unfocus();
+                                                  await _selectDate(context,
+                                                      birthDateController);
+                                                },
+                                              ),
+                                              userStudent: widget.userStudent,
                                               isActive:
-                                                  widget.userTeacher?.isActive,
+                                                  widget.userStudent?.isActive,
                                               onChangedIsActive: (value) {
                                                 setState(() {
-                                                  widget.userTeacher?.isActive =
+                                                  widget.userStudent?.isActive =
                                                       value;
                                                 });
                                               },
+                                              cepController: cepController,
                                             )
                                           ],
                                         ),
@@ -257,17 +358,25 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                                       .spaceBetween,
                                               children: [
                                                 builFormCreateTeacherPartOne(
-                                                    context: context,
-                                                    isSmallScreen:
-                                                        isSmallScreen,
-                                                    nameController:
-                                                        nameController,
-                                                    emailController:
-                                                        emailController,
-                                                    phoneController:
-                                                        phoneController,
-                                                    userTeacher:
-                                                        widget.userTeacher),
+                                                  context: context,
+                                                  isSmallScreen: isSmallScreen,
+                                                  nameController:
+                                                      nameController,
+                                                  emailController:
+                                                      emailController,
+                                                  phoneController:
+                                                      phoneController,
+                                                  userStudent:
+                                                      widget.userStudent,
+                                                  selectedSex: _selectedSex,
+                                                  onChanged: (sex) {
+                                                    setState(() {
+                                                      _selectedSex = sex;
+                                                    });
+                                                  },
+                                                  addressController:
+                                                      addressController,
+                                                ),
                                                 builFormCreateTeacherPartTwo(
                                                   context: context,
                                                   isSmallScreen: isSmallScreen,
@@ -283,16 +392,46 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                                           !_passwordVisible;
                                                     });
                                                   },
-                                                  userTeacher:
-                                                      widget.userTeacher,
+                                                  birthDate: textFormField(
+                                                    controller:
+                                                        birthDateController,
+                                                    validator: (value) =>
+                                                        validateBirthDate(
+                                                            value),
+                                                    inputFormatters: [
+                                                      MaskTextInputFormatter(
+                                                        mask: '##/##/####',
+                                                        filter: {
+                                                          "#": RegExp(
+                                                              r'^[0-9]*$')
+                                                        },
+                                                        type:
+                                                            MaskAutoCompletionType
+                                                                .lazy,
+                                                      )
+                                                    ],
+                                                    hint:
+                                                        'Selecione a Data de Nascimento',
+                                                    label: 'Data de Nascimento',
+                                                    size: widthInput,
+                                                    onTap: () async {
+                                                      FocusScope.of(context)
+                                                          .unfocus();
+                                                      await _selectDate(context,
+                                                          birthDateController);
+                                                    },
+                                                  ),
+                                                  userStudent:
+                                                      widget.userStudent,
                                                   isActive: widget
-                                                      .userTeacher?.isActive,
+                                                      .userStudent?.isActive,
                                                   onChangedIsActive: (value) {
                                                     setState(() {
-                                                      widget.userTeacher
+                                                      widget.userStudent
                                                           ?.isActive = value;
                                                     });
                                                   },
+                                                  cepController: cepController,
                                                 ),
                                               ],
                                             ),
@@ -317,6 +456,10 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                         email: emailController.text,
                                         rg: rgController.text,
                                         phone: phoneController.text,
+                                        sex: _selectedSex!,
+                                        birthDate: birthDateController.text,
+                                        address: addressController.text,
+                                        cep: cepController.text,
                                         password: passwordController.text,
                                       );
                                     },
@@ -327,7 +470,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          widget.userTeacher != null
+                                          widget.userStudent != null
                                               ? 'Salvar'
                                               : 'Adicionar',
                                           style: const TextStyle(
@@ -364,7 +507,10 @@ Widget builFormCreateTeacherPartOne({
   required TextEditingController nameController,
   required TextEditingController emailController,
   required TextEditingController phoneController,
-  required UserFirebase? userTeacher,
+  required UserFirebase? userStudent,
+  required String? selectedSex,
+  required TextEditingController addressController,
+  required void Function(String?)? onChanged,
 }) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
@@ -372,49 +518,81 @@ Widget builFormCreateTeacherPartOne({
   return Column(
     children: [
       textFormField(
-          controller: nameController,
-          validator: (value) => validInputNome(value),
-          hint: 'Digite o primeiro nome',
-          label: 'Nome Completo',
-          size: widthInput),
+        controller: nameController,
+        validator: (value) => validInputNome(value),
+        hint: 'Digite o primeiro nome',
+        label: 'Nome Completo',
+        size: widthInput,
+      ),
       const SizedBox(height: 25),
       textFormField(
-          controller: emailController,
-          validator: (value) => validInputEmail(value),
-          hint: 'Digite seu e-mail',
-          label: 'E-mail',
-          readOnly: userTeacher != null ? true : false,
-          size: widthInput),
+        controller: emailController,
+        validator: (value) => validInputEmail(value),
+        hint: 'Digite seu e-mail',
+        label: 'E-mail',
+        readOnly: userStudent != null ? true : false,
+        size: widthInput,
+      ),
+      const SizedBox(height: 25),
+      SizedBox(
+        width: widthInput,
+        child: dropDownField(
+            label: 'Sexo',
+            select: selectedSex,
+            onChanged: onChanged,
+            items: <String>['Masculino', 'Feminino'].map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            hintText: 'Selecione o sexo',
+            validator: (value) => validatorDropdown(value)),
+      ),
       const SizedBox(height: 25),
       textFormField(
-          controller: phoneController,
-          validator: (value) => validInputPhone(value),
-          hint: 'Digite o Telefone',
-          inputFormatters: [phoneMask],
-          label: 'Telefone',
-          size: widthInput),
+        controller: phoneController,
+        validator: (value) => validInputPhone(value),
+        hint: 'Digite o Telefone',
+        inputFormatters: [phoneMask],
+        label: 'Telefone',
+        size: widthInput,
+      ),
+      const SizedBox(height: 25),
+      textFormField(
+        controller: addressController,
+        validator: (value) {
+          return null;
+        },
+        hint: 'Digite o endereço',
+        label: 'Endereço',
+        size: widthInput,
+      ),
     ],
   );
 }
 
-Widget builFormCreateTeacherPartTwo(
-    {required BuildContext context,
-    required bool isSmallScreen,
-    required TextEditingController rgController,
-    required TextEditingController cpfController,
-    required TextEditingController passwordController,
-    required bool passwordVisible,
-    required Function() togglePasswordVisibility,
-    required UserFirebase? userTeacher,
-    bool? isActive,
-    Function(bool)? onChangedIsActive}) {
+Widget builFormCreateTeacherPartTwo({
+  required BuildContext context,
+  required bool isSmallScreen,
+  required TextEditingController rgController,
+  required TextEditingController cpfController,
+  required TextEditingController passwordController,
+  required bool passwordVisible,
+  required Function() togglePasswordVisibility,
+  required UserFirebase? userStudent,
+  required TextEditingController cepController,
+  bool? isActive,
+  Function(bool)? onChangedIsActive,
+  required Widget birthDate,
+}) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
       : MediaQuery.of(context).size.width * 0.38;
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      userTeacher != null
+      userStudent != null
           ? const SizedBox(height: 1)
           : const SizedBox(height: 19),
       textFormField(
@@ -433,7 +611,26 @@ Widget builFormCreateTeacherPartTwo(
           label: 'CPF',
           size: widthInput),
       const SizedBox(height: 25),
-      userTeacher != null
+      birthDate,
+      const SizedBox(height: 25),
+      textFormField(
+        controller: cepController,
+        validator: (value) {
+          return null;
+        },
+        inputFormatters: [
+          MaskTextInputFormatter(
+            mask: '#####-###',
+            filter: {"#": RegExp(r'^[0-9]*$')},
+            type: MaskAutoCompletionType.lazy,
+          )
+        ],
+        hint: "Digiete o CEP",
+        label: 'CEP',
+        size: widthInput,
+      ),
+      const SizedBox(height: 25),
+      userStudent != null
           ? const Text('')
           : textFormField(
               controller: passwordController,
@@ -444,10 +641,10 @@ Widget builFormCreateTeacherPartTwo(
               label: 'Senha',
               togglePasswordVisibility: togglePasswordVisibility,
               size: widthInput),
-      userTeacher != null
+      userStudent != null
           ? const SizedBox(height: 5)
           : const SizedBox(height: 0),
-      userTeacher != null
+      userStudent != null
           ? SizedBox(
               width: widthInput,
               child: SwitchListTile(

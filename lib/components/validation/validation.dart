@@ -137,6 +137,26 @@ String? validDateBack(String? value, String startDate, String endDate) {
   return null;
 }
 
+String? validateBirthDate(String? value) {
+  if (value == null || value.isEmpty) {
+    return "Este campo é obrigatório";
+  }
+
+  DateTime? birthDate = _convertToDateTime(value);
+  if (birthDate == null) {
+    return "Data inválida";
+  }
+
+  final today = DateTime.now();
+  final adultDate = DateTime(today.year - 18, today.month, today.day);
+
+  if (birthDate.isAfter(adultDate)) {
+    return "É necessário ter mais de 18 anos";
+  }
+
+  return null;
+}
+
 String? validNote(String? value, double noteMax) {
   if (value == null || value.isEmpty) {
     return 'Por favor, insira uma nota válida';

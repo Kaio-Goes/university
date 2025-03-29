@@ -127,11 +127,6 @@ addNotesCard({
                         userNote.noteId: userNote.uid
                     };
 
-                    bool isListEmptyOrDifferentSubject =
-                        listUserNotes.isEmpty ||
-                            listUserNotes
-                                .every((note) => note.subjectId != subject.uid);
-
                     for (int i = 0; i < listNotes.length; i++) {
                       String noteId = listNotes[i].uid;
                       String? userNoteUid = userNotesUidMap[

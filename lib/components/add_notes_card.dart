@@ -138,7 +138,7 @@ addNotesCard({
                           noteId]; // Pegando o uid da UserNote se existir
 
                       try {
-                        if (isListEmptyOrDifferentSubject) {
+                        if (userNoteUid == null) {
                           await UserNoteService()
                               .createUserNote(
                             note: controllers[i].text,
@@ -161,7 +161,7 @@ addNotesCard({
                         } else {
                           await UserNoteService()
                               .updateUserNote(
-                            uid: userNoteUid!,
+                            uid: userNoteUid,
                             newNote: controllers[i].text,
                             teacherId: AuthUserService().currentUser!.uid,
                           )

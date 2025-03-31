@@ -117,8 +117,6 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
         DatabaseReference usersRef =
             FirebaseDatabase.instance.ref().child('users');
 
-        print(uniqueRegistration);
-
         usersRef.child(uid).set(
           {
             'uid': uid,

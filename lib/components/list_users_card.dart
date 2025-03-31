@@ -169,15 +169,16 @@ class _ListUsersCardState extends State<ListUsersCard> {
                       children: [
                         TableRow(
                           children: [
+                            if (widget.title == "Lista de Alunos")
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text('Matrícula', style: textFontBold),
+                              ),
                             GestureDetector(
                               onTap: widget.sortTeachersByName,
                               child: Row(
                                 children: [
-                                  const Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                    child: Text('Nome', style: textFontBold),
-                                  ),
+                                  const Text('Nome ', style: textFontBold),
                                   Icon(
                                     widget.isAscending
                                         ? Icons.arrow_upward
@@ -214,6 +215,12 @@ class _ListUsersCardState extends State<ListUsersCard> {
                         for (var user in widget.paginetedUsers) ...[
                           TableRow(
                             children: [
+                              if (user.role == "student")
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text('${user.registration}'),
+                                ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
@@ -300,7 +307,7 @@ class _ListUsersCardState extends State<ListUsersCard> {
                           ),
                           TableRow(
                             children: List.generate(
-                              6,
+                              user.role == "student" ? 7 : 6,
                               (_) => const Padding(
                                 padding: EdgeInsets.symmetric(vertical: 8.0),
                                 child: Divider(),

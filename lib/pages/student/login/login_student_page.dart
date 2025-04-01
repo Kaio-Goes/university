@@ -123,14 +123,18 @@ class _LoginStudentPageState extends State<LoginStudentPage> {
                 final String email = _resetEmailController.text.trim();
                 if (email.isNotEmpty) {
                   try {
+                    FirebaseAuth.instance.setLanguageCode(
+                        "pt-BR"); // Define o idioma para português
                     await FirebaseAuth.instance
                         .sendPasswordResetEmail(email: email);
+
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pop();
                     // ignore: use_build_context_synchronously
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('E-mail de recuperação enviado!'),
+                        content: Text(
+                            'E-mail de recuperação enviado! Verifique sua caixa de entrada.'),
                       ),
                     );
                   } on FirebaseAuthException catch (e) {

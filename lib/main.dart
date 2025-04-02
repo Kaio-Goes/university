@@ -13,13 +13,13 @@ void main() async {
 
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: FirebaseOptionsDev.apiKey,
-      appId: FirebaseOptionsDev.appId,
-      messagingSenderId: FirebaseOptionsDev.messagingSenderId,
-      projectId: FirebaseOptionsDev.projectId,
-      authDomain: FirebaseOptionsDev.authDomain,
-      storageBucket: FirebaseOptionsDev.storageBucket,
-      databaseURL: FirebaseOptionsDev.databaseURL,
+      apiKey: FirebaseOptionsProd.apiKey,
+      appId: FirebaseOptionsProd.appId,
+      messagingSenderId: FirebaseOptionsProd.messagingSenderId,
+      projectId: FirebaseOptionsProd.projectId,
+      authDomain: FirebaseOptionsProd.authDomain,
+      storageBucket: FirebaseOptionsProd.storageBucket,
+      databaseURL: FirebaseOptionsProd.databaseURL,
     ),
   );
 

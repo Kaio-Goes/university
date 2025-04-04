@@ -4,6 +4,7 @@ import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.da
 void showSuccessDialog(BuildContext context) {
   showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (BuildContext context) {
       return AlertDialog(
         title: const Text("Sucesso"),

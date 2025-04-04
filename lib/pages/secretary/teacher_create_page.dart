@@ -165,6 +165,7 @@ class _TeacherCreatePageState extends State<TeacherCreatePage> {
   void _showSuccessDialog() {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Sucesso"),

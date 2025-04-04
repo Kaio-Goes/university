@@ -83,23 +83,35 @@ String? validateTime({
   required String? startTime,
   required String? endTime,
 }) {
-  if (startTime!.isEmpty || endTime!.isEmpty) {
+  if (startTime == null ||
+      endTime == null ||
+      startTime.isEmpty ||
+      endTime.isEmpty) {
     return "Preencha as duas horas";
   }
 
-  // Converter as horas para DateTime para facilitar a comparação
-  final start = TimeOfDay(
-    hour: int.parse(startTime.split(':')[0]),
-    minute: int.parse(startTime.split(':')[1]),
-  );
-  final end = TimeOfDay(
-    hour: int.parse(endTime.split(':')[0]),
-    minute: int.parse(endTime.split(':')[1]),
-  );
+  // Garante que as strings tenham o formato correto (HH:mm)
+  if (!RegExp(r'^\d{2}:\d{2}$').hasMatch(startTime) ||
+      !RegExp(r'^\d{2}:\d{2}$').hasMatch(endTime)) {
+    return "Formato de hora inválido (use HH:mm)";
+  }
 
-  if (start.hour > end.hour ||
-      (start.hour == end.hour && start.minute > end.minute)) {
-    return "A hora inicial deve ser menor que a final";
+  try {
+    final start = TimeOfDay(
+      hour: int.parse(startTime.split(':')[0]),
+      minute: int.parse(startTime.split(':')[1]),
+    );
+    final end = TimeOfDay(
+      hour: int.parse(endTime.split(':')[0]),
+      minute: int.parse(endTime.split(':')[1]),
+    );
+
+    if (start.hour > end.hour ||
+        (start.hour == end.hour && start.minute >= end.minute)) {
+      return "A hora inicial deve ser menor que a final";
+    }
+  } catch (e) {
+    return "Erro ao processar as horas";
   }
 
   return null;

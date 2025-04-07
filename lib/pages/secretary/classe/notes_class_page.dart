@@ -8,6 +8,7 @@ import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/models/user_note.dart';
 import 'package:university/core/services/auth_user_service.dart';
+import 'package:university/core/services/generate_excel_service.dart';
 import 'package:university/core/services/note_service.dart';
 import 'package:university/core/services/subject_service.dart';
 import 'package:university/core/services/user_note_service.dart';
@@ -27,6 +28,7 @@ class _NotesClassPageState extends State<NotesClassPage> {
   List<UserNote> listUserNote = [];
   List<SubjectModule> listSubject = [];
   bool isLoading = true;
+  bool isLoadingSubject = true;
   bool isLoadingUserNote = true;
 
   @override
@@ -60,12 +62,14 @@ class _NotesClassPageState extends State<NotesClassPage> {
 
       setState(() {
         listSubject = subjects;
+        isLoadingSubject = false;
       });
 
       for (var subject in subjects) {
         await _loadNotes(subjectId: subject.uid, teacherId: subject.userId);
       }
     } catch (e) {
+      setState(() => isLoadingSubject = false);
       Exception("Erro loadgin subjects in class $e");
     }
   }
@@ -155,6 +159,86 @@ class _NotesClassPageState extends State<NotesClassPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      const SizedBox(height: 20),
+                      const Text("Visualize Diário de Classe pelas Matérias"),
+                      const SizedBox(height: 5),
+                      isLoadingSubject
+                          ? const Center(child: CircularProgressIndicator())
+                          : listSubject.isEmpty
+                              ? const Center(
+                                  child: Text("Nenhuma Matéria adicionada"),
+                                )
+                              : SizedBox(
+                                  height: listSubject.length * 20,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: listSubject.length,
+                                    itemBuilder: (context, index) {
+                                      final subject = listSubject[index];
+
+                                      var teacher = listTeacher
+                                          .where((t) => t.uid == subject.userId)
+                                          .firstOrNull;
+                                      return Wrap(
+                                        spacing:
+                                            12, // espaçamento horizontal entre botões
+                                        runSpacing:
+                                            12, // espaçamento vertical quando quebrar linha
+                                        children: [
+                                          ElevatedButton.icon(
+                                            onPressed: () {
+                                              List<Map<String, String>> users =
+                                                  [
+                                                {
+                                                  'nome': 'João da Silva',
+                                                  'matricula': '12345'
+                                                },
+                                                {
+                                                  'nome': 'Maria Oliveira',
+                                                  'matricula': '67890'
+                                                },
+                                                {
+                                                  'nome': 'Carlos Souza',
+                                                  'matricula': '54321'
+                                                },
+                                              ];
+
+                                              print(users);
+                                              print(subject.title);
+                                              print(widget.classFirebase.name);
+                                              print(teacher!.name);
+
+                                              generateExcel(
+                                                users: users,
+                                                subjectTitle: subject.title,
+                                                classTitle:
+                                                    widget.classFirebase.name,
+                                                teacherName: teacher!.name,
+                                              );
+                                            },
+                                            iconAlignment: IconAlignment.end,
+                                            label: Text(
+                                              subject.title,
+                                              style: const TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                            icon: const Icon(
+                                              Icons.description_outlined,
+                                              color: Colors.white,
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 69, 106, 185),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 5)
+                                          // você pode adicionar mais botões aqui se quiser
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ),
                       const SizedBox(height: 5),
                       const Text("Visualize as notas dos Alunos"),
                       const SizedBox(height: 20),

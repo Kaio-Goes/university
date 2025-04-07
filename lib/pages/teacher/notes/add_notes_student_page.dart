@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:university/components/add_notes_card.dart';
 import 'package:university/components/app_bar_user_component.dart';
 import 'package:university/components/footer.dart';
@@ -7,6 +8,7 @@ import 'package:university/core/models/note.dart';
 import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/models/user_note.dart';
+import 'package:university/core/services/attendence_list_service.dart';
 import 'package:university/core/services/auth_user_service.dart';
 import 'package:university/core/services/note_service.dart';
 import 'package:university/core/services/user_note_service.dart';
@@ -31,6 +33,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
   List<Note> listNotes = [];
   List<UserNote> listUserNote = [];
   bool isLoading = true;
+  Map<String, Map<DateTime, String>> presencaMap = {};
 
   @override
   initState() {
@@ -49,10 +52,37 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
         listUser = users..sort((a, b) => a.name.compareTo(b.name));
         isLoading = false;
       });
+
+      await _loadPresence();
     } catch (e) {
       setState(() => isLoading = false);
       Exception("Erro loading student in class $e");
     }
+  }
+
+  Future<void> _loadPresence() async {
+    final service = AttendenceListService();
+
+    for (final aluno in listUser) {
+      final attendenceList = await service.getAttendenceList(
+          studentId: aluno.uid,
+          teacherId: AuthUserService().currentUser!.uid,
+          classId: widget.classe.uid,
+          subjectId: widget.subject.uid);
+
+      for (final presence in attendenceList) {
+        final date = presence.dateClass;
+        final inputFormat = DateFormat('dd/MM/yyyy');
+        final parsedDate = inputFormat.parse(date);
+
+        if (date != null) {
+          presencaMap[aluno.uid] ??= {};
+          presencaMap[aluno.uid]![parsedDate] = presence.status;
+        }
+      }
+    }
+
+    setState(() {});
   }
 
   _loadNotes() async {
@@ -69,6 +99,44 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
     } catch (e) {
       Exception('Erro ao carregar notas do usuário $e');
     }
+  }
+
+  List<DateTime> getDatesByWeekdays() {
+    // Mapeia o nome dos dias para números: segunda=1, ..., domingo=7
+    Map<String, int> diasSemanaMap = {
+      "Segunda-feira": DateTime.monday,
+      "Terça-feira": DateTime.tuesday,
+      "Quarta-feira": DateTime.wednesday,
+      "Quinta-feira": DateTime.thursday,
+      "Sexta-feira": DateTime.friday,
+      "Sábado": DateTime.saturday,
+      "Domingo": DateTime.sunday,
+    };
+
+    List<int> diasSelecionados = widget.subject.daysWeek
+        .replaceAll('[', '')
+        .replaceAll(']', '')
+        .split(',') // <- aqui está o segredo
+        .map((dia) => diasSemanaMap[dia.trim()])
+        .whereType<int>()
+        .toList();
+
+    final DateFormat formatter = DateFormat('d/M/y');
+
+    DateTime dataInicial = formatter.parse(widget.classe.startDate);
+    DateTime dataFinal = formatter.parse(widget.classe.endDate);
+
+    List<DateTime> datasFiltradas = [];
+
+    for (DateTime data = dataInicial;
+        !data.isAfter(dataFinal);
+        data = data.add(const Duration(days: 1))) {
+      if (diasSelecionados.contains(data.weekday)) {
+        datasFiltradas.add(data);
+      }
+    }
+
+    return datasFiltradas;
   }
 
   _loadUserNotes({String? studentId}) async {
@@ -148,11 +216,13 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                   child: Text("Nenhum aluno encontrado."),
                                 )
                               : SizedBox(
-                                  height: listUser.length * 120,
+                                  height: listUser.length * 240,
                                   child: ListView.builder(
                                     itemCount: listUser.length,
                                     itemBuilder: (context, index) {
                                       final user = listUser[index];
+
+                                      final datas = getDatesByWeekdays();
 
                                       Map<String, String> userNotesUidMap = {
                                         for (var userNote in listUserNote.where(
@@ -173,54 +243,262 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w800),
                                           ),
-                                          subtitle: SingleChildScrollView(
-                                            scrollDirection: Axis.horizontal,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "Email: ${user.email}",
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      style: const TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    ),
-                                                    Text(
-                                                        "Celular: ${user.phone}")
-                                                  ],
-                                                ),
-                                                const SizedBox(width: 20),
-                                                Wrap(
-                                                  spacing: 12.0,
-                                                  children:
-                                                      listNotes.map((note) {
-                                                    // Pegando a nota correspondente do userNotesUidMap
-                                                    String userNoteValue =
-                                                        userNotesUidMap[
-                                                                    note.uid]
-                                                                ?.replaceAll(
-                                                                    '.', ',') ??
-                                                            "N/A";
+                                          subtitle: Scrollbar(
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        "Matrícula: ${user.registration}",
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                      ),
+                                                      Text(
+                                                        "Email: ${user.email}",
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                      ),
+                                                      Text(
+                                                          "Celular: ${user.phone}"),
+                                                      const SizedBox(
+                                                          height: 30),
+                                                      const Text(
+                                                        "Notas de Provas e Trabalhos:",
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 10),
+                                                      Row(
+                                                        children: [
+                                                          Wrap(
+                                                            spacing: 12.0,
+                                                            children: listNotes
+                                                                .map((note) {
+                                                              String
+                                                                  userNoteValue =
+                                                                  userNotesUidMap[note
+                                                                              .uid]
+                                                                          ?.replaceAll(
+                                                                              '.',
+                                                                              ',') ??
+                                                                      "N/A";
 
-                                                    return Chip(
-                                                      label: Text(
-                                                          '${note.title}: $userNoteValue'),
-                                                    );
-                                                  }).toList(),
-                                                ),
-                                                const SizedBox(width: 20),
-                                                Text(
-                                                    "Soma das Notas: ${_calculateAverage(userNotesUidMap)}"),
-                                              ],
+                                                              return Chip(
+                                                                label: Text(
+                                                                    '${note.title}: $userNoteValue'),
+                                                              );
+                                                            }).toList(),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 20),
+                                                          Text(
+                                                              "Soma das Notas: ${_calculateAverage(userNotesUidMap)}"),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      const Text(
+                                                        "Data das Aulas",
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600),
+                                                      ),
+                                                      const Text(
+                                                          "Adicionar presença ao Aluno"),
+                                                      Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children:
+                                                            datas.map((data) {
+                                                          final formattedDate =
+                                                              "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
+
+                                                          return Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8.0),
+                                                            child: Column(
+                                                              children: [
+                                                                Text(
+                                                                  formattedDate,
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          14),
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 120,
+                                                                  child:
+                                                                      DropdownButtonFormField<
+                                                                          String>(
+                                                                    value: presencaMap[
+                                                                            user.uid]
+                                                                        ?[data],
+                                                                    items: const [
+                                                                      DropdownMenuItem(
+                                                                        value:
+                                                                            "Presente",
+                                                                        child: Text(
+                                                                            "Presente"),
+                                                                      ),
+                                                                      DropdownMenuItem(
+                                                                        value:
+                                                                            "Falta",
+                                                                        child: Text(
+                                                                            "Falta"),
+                                                                      ),
+                                                                      DropdownMenuItem(
+                                                                        value:
+                                                                            "Feriado",
+                                                                        child: Text(
+                                                                            "Feriado"),
+                                                                      ),
+                                                                    ],
+                                                                    onChanged:
+                                                                        (value) async {
+                                                                      print(
+                                                                          data);
+                                                                      setState(
+                                                                          () {
+                                                                        presencaMap[user.uid] ??=
+                                                                            {};
+                                                                        presencaMap[user.uid]![data] =
+                                                                            value!;
+                                                                      });
+
+                                                                      final service =
+                                                                          AttendenceListService();
+                                                                      final attendenceList =
+                                                                          await service
+                                                                              .getAttendenceList(
+                                                                        studentId:
+                                                                            user.uid,
+                                                                        teacherId: AuthUserService()
+                                                                            .currentUser!
+                                                                            .uid,
+                                                                        classId: widget
+                                                                            .classe
+                                                                            .uid,
+                                                                        subjectId: widget
+                                                                            .subject
+                                                                            .uid,
+                                                                      );
+
+                                                                      // Verifica se já existe presença para essa data específica
+                                                                      bool
+                                                                          found =
+                                                                          false;
+                                                                      for (final presence
+                                                                          in attendenceList) {
+                                                                        if (presence.dateClass ==
+                                                                            formattedDate) {
+                                                                          // Já existe: atualiza
+                                                                          await service
+                                                                              .updateAttendenceList(
+                                                                            uid:
+                                                                                presence.uid,
+                                                                            studentId:
+                                                                                user.uid,
+                                                                            teacherId:
+                                                                                AuthUserService().currentUser!.uid,
+                                                                            subjectId:
+                                                                                widget.subject.uid,
+                                                                            classId:
+                                                                                widget.classe.uid,
+                                                                            status:
+                                                                                value!,
+                                                                          );
+                                                                          found =
+                                                                              true;
+                                                                          break;
+                                                                        }
+                                                                      }
+
+                                                                      // Se não encontrou, cria nova presença
+                                                                      if (!found) {
+                                                                        await service
+                                                                            .createAttendenceList(
+                                                                          studentId:
+                                                                              user.uid,
+                                                                          teacherId: AuthUserService()
+                                                                              .currentUser!
+                                                                              .uid,
+                                                                          subjectId: widget
+                                                                              .subject
+                                                                              .uid,
+                                                                          classId: widget
+                                                                              .classe
+                                                                              .uid,
+                                                                          status:
+                                                                              value!,
+                                                                          classDate:
+                                                                              formattedDate,
+                                                                          roleUser:
+                                                                              'teacher',
+                                                                        );
+                                                                      }
+                                                                    },
+                                                                    decoration:
+                                                                        const InputDecoration(
+                                                                      isDense:
+                                                                          true,
+                                                                      contentPadding: EdgeInsets.symmetric(
+                                                                          horizontal:
+                                                                              8,
+                                                                          vertical:
+                                                                              10),
+                                                                      border:
+                                                                          OutlineInputBorder(),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        }).toList(),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                           leading: Container(

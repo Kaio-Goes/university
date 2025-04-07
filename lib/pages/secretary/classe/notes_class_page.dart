@@ -167,7 +167,7 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                   child: Text("Nenhum aluno encontrado."),
                                 )
                               : SizedBox(
-                                  height: listUser.length * 130,
+                                  height: listUser.length * 300,
                                   child: ListView.builder(
                                     itemCount: listUser.length,
                                     itemBuilder: (context, index) {

@@ -52,10 +52,37 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
         listUser = users..sort((a, b) => a.name.compareTo(b.name));
         isLoading = false;
       });
+
+      await _loadPresence();
     } catch (e) {
       setState(() => isLoading = false);
       Exception("Erro loading student in class $e");
     }
+  }
+
+  Future<void> _loadPresence() async {
+    final service = AttendenceListService();
+
+    for (final aluno in listUser) {
+      final attendenceList = await service.getAttendenceList(
+          studentId: aluno.uid,
+          teacherId: AuthUserService().currentUser!.uid,
+          classId: widget.classe.uid,
+          subjectId: widget.subject.uid);
+
+      for (final presence in attendenceList) {
+        final date = presence.dateClass;
+        final inputFormat = DateFormat('dd/MM/yyyy');
+        final parsedDate = inputFormat.parse(date);
+
+        if (date != null) {
+          presencaMap[aluno.uid] ??= {};
+          presencaMap[aluno.uid]![parsedDate] = presence.status;
+        }
+      }
+    }
+
+    setState(() {});
   }
 
   _loadNotes() async {
@@ -202,15 +229,6 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                             (note) => note.userId == user.uid))
                                           userNote.noteId: userNote.value
                                       };
-
-                                      var attendenceList =
-                                          AttendenceListService()
-                                              .getAttendenceList(
-                                        studentId: user.uid,
-                                        teacherId:
-                                            AuthUserService().currentUser!.uid,
-                                        classId: widget.classe.uid,
-                                      );
 
                                       return Card.outlined(
                                         child: ListTile(
@@ -375,7 +393,9 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                                                       ),
                                                                     ],
                                                                     onChanged:
-                                                                        (value) {
+                                                                        (value) async {
+                                                                      print(
+                                                                          data);
                                                                       setState(
                                                                           () {
                                                                         presencaMap[user.uid] ??=
@@ -383,6 +403,78 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                                                         presencaMap[user.uid]![data] =
                                                                             value!;
                                                                       });
+
+                                                                      final service =
+                                                                          AttendenceListService();
+                                                                      final attendenceList =
+                                                                          await service
+                                                                              .getAttendenceList(
+                                                                        studentId:
+                                                                            user.uid,
+                                                                        teacherId: AuthUserService()
+                                                                            .currentUser!
+                                                                            .uid,
+                                                                        classId: widget
+                                                                            .classe
+                                                                            .uid,
+                                                                        subjectId: widget
+                                                                            .subject
+                                                                            .uid,
+                                                                      );
+
+                                                                      // Verifica se já existe presença para essa data específica
+                                                                      bool
+                                                                          found =
+                                                                          false;
+                                                                      for (final presence
+                                                                          in attendenceList) {
+                                                                        if (presence.dateClass ==
+                                                                            formattedDate) {
+                                                                          // Já existe: atualiza
+                                                                          await service
+                                                                              .updateAttendenceList(
+                                                                            uid:
+                                                                                presence.uid,
+                                                                            studentId:
+                                                                                user.uid,
+                                                                            teacherId:
+                                                                                AuthUserService().currentUser!.uid,
+                                                                            subjectId:
+                                                                                widget.subject.uid,
+                                                                            classId:
+                                                                                widget.classe.uid,
+                                                                            status:
+                                                                                value!,
+                                                                          );
+                                                                          found =
+                                                                              true;
+                                                                          break;
+                                                                        }
+                                                                      }
+
+                                                                      // Se não encontrou, cria nova presença
+                                                                      if (!found) {
+                                                                        await service
+                                                                            .createAttendenceList(
+                                                                          studentId:
+                                                                              user.uid,
+                                                                          teacherId: AuthUserService()
+                                                                              .currentUser!
+                                                                              .uid,
+                                                                          subjectId: widget
+                                                                              .subject
+                                                                              .uid,
+                                                                          classId: widget
+                                                                              .classe
+                                                                              .uid,
+                                                                          status:
+                                                                              value!,
+                                                                          classDate:
+                                                                              formattedDate,
+                                                                          roleUser:
+                                                                              'teacher',
+                                                                        );
+                                                                      }
                                                                     },
                                                                     decoration:
                                                                         const InputDecoration(

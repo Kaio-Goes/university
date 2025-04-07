@@ -45,6 +45,7 @@ class AttendenceListService {
     required String studentId,
     required String teacherId,
     required String classId,
+    required String subjectId,
   }) async {
     try {
       DatabaseReference ref =
@@ -59,7 +60,8 @@ class AttendenceListService {
           final value = Map<String, dynamic>.from(entry.value);
           return value['user_id'] == studentId &&
               value['teacher_id'] == teacherId &&
-              value['class_id'] == classId;
+              value['class_id'] == classId &&
+              value['subject_id'] == subjectId;
         }).map((entry) {
           final value = Map<String, dynamic>.from(entry.value);
           return AttendenceList.fromJson(value);

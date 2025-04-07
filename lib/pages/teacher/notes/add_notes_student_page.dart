@@ -75,10 +75,8 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
         final inputFormat = DateFormat('dd/MM/yyyy');
         final parsedDate = inputFormat.parse(date);
 
-        if (date != null) {
-          presencaMap[aluno.uid] ??= {};
-          presencaMap[aluno.uid]![parsedDate] = presence.status;
-        }
+        presencaMap[aluno.uid] ??= {};
+        presencaMap[aluno.uid]![parsedDate] = presence.status;
       }
     }
 
@@ -394,8 +392,6 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                                                     ],
                                                                     onChanged:
                                                                         (value) async {
-                                                                      print(
-                                                                          data);
                                                                       setState(
                                                                           () {
                                                                         presencaMap[user.uid] ??=

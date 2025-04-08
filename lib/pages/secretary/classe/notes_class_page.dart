@@ -187,33 +187,20 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                         children: [
                                           ElevatedButton.icon(
                                             onPressed: () {
-                                              List<Map<String, String>> users =
-                                                  [
-                                                {
-                                                  'nome': 'João da Silva',
-                                                  'matricula': '12345'
-                                                },
-                                                {
-                                                  'nome': 'Maria Oliveira',
-                                                  'matricula': '67890'
-                                                },
-                                                {
-                                                  'nome': 'Carlos Souza',
-                                                  'matricula': '54321'
-                                                },
-                                              ];
-
-                                              print(users);
-                                              print(subject.title);
-                                              print(widget.classFirebase.name);
-                                              print(teacher!.name);
-
                                               generateExcel(
-                                                users: users,
+                                                users: listUser,
                                                 subjectTitle: subject.title,
+                                                subjectModule: subject.module,
+                                                daysWeeksSubject:
+                                                    subject.daysWeek,
                                                 classTitle:
                                                     widget.classFirebase.name,
+                                                stardDateClass: widget
+                                                    .classFirebase.startDate,
+                                                endDateClass: widget
+                                                    .classFirebase.endDate,
                                                 teacherName: teacher!.name,
+                                                listNotes: listNotes,
                                               );
                                             },
                                             iconAlignment: IconAlignment.end,

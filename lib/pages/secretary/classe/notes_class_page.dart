@@ -31,6 +31,7 @@ class _NotesClassPageState extends State<NotesClassPage> {
   List<SubjectModule> listSubject = [];
   Map<String, Map<DateTime, String>> presencaMap = {};
   bool isLoading = true;
+  bool isLoadingTeacher = true;
   bool isLoadingSubject = true;
   bool isLoadingUserNote = true;
 
@@ -89,9 +90,11 @@ class _NotesClassPageState extends State<NotesClassPage> {
       var activeTeachers =
           fetchedTeachers.where((teacher) => teacher.isActive).toList();
       setState(() {
+        isLoadingTeacher = false;
         listTeacher = activeTeachers;
       });
     } catch (e) {
+      setState(() => isLoadingTeacher = false);
       Exception('Erro loading users$e');
     }
   }
@@ -208,53 +211,88 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                           .where((t) => t.uid == subject.userId)
                                           .firstOrNull;
                                       return Wrap(
-                                        spacing:
-                                            12, // espaçamento horizontal entre botões
-                                        runSpacing:
-                                            12, // espaçamento vertical quando quebrar linha
+                                        spacing: 12,
+                                        runSpacing: 12,
                                         children: [
-                                          ElevatedButton.icon(
-                                            onPressed: () async {
-                                              await _loadPresence(
-                                                subjectId: subject.uid,
-                                                teacherId: teacher!.uid,
-                                              );
+                                          isLoadingTeacher
+                                              ? ElevatedButton.icon(
+                                                  onPressed:
+                                                      null, // desabilita enquanto carrega
+                                                  icon: const SizedBox(
+                                                    height: 20,
+                                                    width: 20,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      strokeWidth: 2,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  label: const Text(
+                                                    'Gerando...',
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        const Color.fromARGB(
+                                                            255, 69, 106, 185),
+                                                  ),
+                                                )
+                                              : ElevatedButton.icon(
+                                                  onPressed: () async {
+                                                    setState(() =>
+                                                        isLoadingTeacher =
+                                                            true);
 
-                                              generateExcel(
-                                                users: listUser,
-                                                subject: subject,
-                                                daysWeeksSubject:
-                                                    subject.daysWeek,
-                                                classTitle:
-                                                    widget.classFirebase.name,
-                                                stardDateClass: widget
-                                                    .classFirebase.startDate,
-                                                endDateClass: widget
-                                                    .classFirebase.endDate,
-                                                teacherName: teacher.name,
-                                                listNotes: listNotes,
-                                                presencaMap: presencaMap,
-                                                listUserNote: listUserNote,
-                                              );
-                                            },
-                                            iconAlignment: IconAlignment.end,
-                                            label: Text(
-                                              subject.title,
-                                              style: const TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            icon: const Icon(
-                                              Icons.description_outlined,
-                                              color: Colors.white,
-                                            ),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  const Color.fromARGB(
-                                                      255, 69, 106, 185),
-                                            ),
-                                          ),
+                                                    await _loadPresence(
+                                                      subjectId: subject.uid,
+                                                      teacherId: teacher!.uid,
+                                                    );
+
+                                                    generateExcel(
+                                                      users: listUser,
+                                                      subject: subject,
+                                                      daysWeeksSubject:
+                                                          subject.daysWeek,
+                                                      classTitle: widget
+                                                          .classFirebase.name,
+                                                      stardDateClass: widget
+                                                          .classFirebase
+                                                          .startDate,
+                                                      endDateClass: widget
+                                                          .classFirebase
+                                                          .endDate,
+                                                      teacherName: teacher.name,
+                                                      listNotes: listNotes,
+                                                      presencaMap: presencaMap,
+                                                      listUserNote:
+                                                          listUserNote,
+                                                    );
+
+                                                    setState(() =>
+                                                        isLoadingTeacher =
+                                                            false);
+                                                  },
+                                                  iconAlignment:
+                                                      IconAlignment.end,
+                                                  label: Text(
+                                                    subject.title,
+                                                    style: const TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                  icon: const Icon(
+                                                    Icons.description_outlined,
+                                                    color: Colors.white,
+                                                  ),
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        const Color.fromARGB(
+                                                            255, 69, 106, 185),
+                                                  ),
+                                                ),
                                           const SizedBox(width: 5)
-                                          // você pode adicionar mais botões aqui se quiser
                                         ],
                                       );
                                     },

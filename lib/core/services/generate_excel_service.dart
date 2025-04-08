@@ -177,10 +177,23 @@ Future<void> generateExcel({
       sheet.workbook.styles.add('matriculaStyle');
   matriculaStyle.hAlign = xlsio.HAlignType.center;
   matriculaStyle.fontSize = 8; // (se quiser manter o tamanho também)
+  matriculaStyle.borders.left.lineStyle = xlsio.LineStyle.thin;
+  matriculaStyle.borders.right.lineStyle = xlsio.LineStyle.thin;
+  matriculaStyle.borders.top.lineStyle = xlsio.LineStyle.thin;
+  matriculaStyle.borders.bottom.lineStyle = xlsio.LineStyle.thin;
 
   for (int i = 0; i < users!.length; i++) {
     final user = users[i];
     final row = headersRowIndex + i + 1;
+
+    final lastCol = 3 + datasFiltradas.length + (listNotes?.length ?? 0) + 1;
+    for (int col = 1; col <= lastCol; col++) {
+      final cell = sheet.getRangeByIndex(row, col);
+      cell.cellStyle.borders.left.lineStyle = xlsio.LineStyle.thin;
+      cell.cellStyle.borders.right.lineStyle = xlsio.LineStyle.thin;
+      cell.cellStyle.borders.top.lineStyle = xlsio.LineStyle.thin;
+      cell.cellStyle.borders.bottom.lineStyle = xlsio.LineStyle.thin;
+    }
 
     sheet.getRangeByIndex(row, 1).setNumber(i + 1);
     // Dentro do for, onde preenche os dados dos usuários:

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart'; // kIsWeb
 import 'package:flutter/services.dart' show rootBundle;
@@ -5,22 +6,25 @@ import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
 import 'package:path_provider/path_provider.dart';
 import 'package:university/core/models/note.dart';
+import 'package:university/core/models/subject_module.dart';
 
 // ignore: avoid_web_libraries_in_flutter, deprecated_member_use
 import 'dart:html' as html;
 
 import 'package:university/core/models/user_firebase.dart';
+import 'package:university/core/models/user_note.dart';
 
 Future<void> generateExcel({
   List<UserFirebase>? users,
-  String? subjectTitle,
-  String? subjectModule,
+  SubjectModule? subject,
   required String classTitle,
   required String teacherName,
   required String daysWeeksSubject,
   required String stardDateClass,
   required String endDateClass,
   List<Note>? listNotes,
+  Map<String, Map<DateTime, String>>? presencaMap,
+  List<UserNote>? listUserNote,
 }) async {
   final workbook = xlsio.Workbook();
   final sheet = workbook.worksheets[0];
@@ -49,9 +53,9 @@ Future<void> generateExcel({
     'Curso: $classTitle',
     'Eixo tecnológico: Ambiente e Saúde',
     'Oferta: Forma Presencial',
-    'Módulo: $subjectModule',
+    'Módulo: ${subject?.module}',
     'Professor(a) : $teacherName',
-    'Matéria: $subjectTitle',
+    'Matéria: ${subject?.title}',
   ];
 
   List<int> diasSelecionados = daysWeeksSubject
@@ -128,6 +132,19 @@ Future<void> generateExcel({
     'NOTA FINAL'
   ];
 
+// Ajuste de largura das colunas principais
+  sheet.getRangeByName('A1').columnWidth = 5;
+  sheet.getRangeByName('B1').columnWidth = 15;
+  sheet.getRangeByName('C1').columnWidth = 30;
+
+  // Aqui entra o novo ajuste
+  if (listNotes != null) {
+    for (int i = 0; i < listNotes.length; i++) {
+      final colIndex = 4 + datasFiltradas.length + i;
+      sheet.getRangeByIndex(1, colIndex).columnWidth = 13;
+    }
+  }
+
 // Define as bordas do cabeçalho inteiro (superior e inferior)
   for (int i = 0; i < headers.length; i++) {
     final cell = sheet.getRangeByIndex(headersRowIndex, i + 1);
@@ -135,6 +152,7 @@ Future<void> generateExcel({
     final style = cell.cellStyle
       ..bold = true
       ..fontSize = 8
+      ..hAlign = xlsio.HAlignType.center
       ..borders.top.lineStyle = xlsio.LineStyle.thick
       ..borders.bottom.lineStyle = xlsio.LineStyle.thick
       ..borders.left.lineStyle = xlsio.LineStyle.thin
@@ -154,17 +172,91 @@ Future<void> generateExcel({
       style.borders.right.lineStyle = xlsio.LineStyle.thick;
     }
   } // Dados dos alunos
+
+  final xlsio.Style matriculaStyle =
+      sheet.workbook.styles.add('matriculaStyle');
+  matriculaStyle.hAlign = xlsio.HAlignType.center;
+  matriculaStyle.fontSize = 8; // (se quiser manter o tamanho também)
+
   for (int i = 0; i < users!.length; i++) {
     final user = users[i];
     final row = headersRowIndex + i + 1;
 
     sheet.getRangeByIndex(row, 1).setNumber(i + 1);
-    sheet.getRangeByIndex(row, 2).setText(user.registration ?? '');
+    // Dentro do for, onde preenche os dados dos usuários:
+    sheet.getRangeByIndex(row, 2)
+      ..setText(user.registration ?? '')
+      ..cellStyle = matriculaStyle;
     sheet.getRangeByIndex(row, 3).setText(user.name);
-    sheet.getRangeByIndex(row, 4).setText('');
-    sheet.getRangeByIndex(row, 5).setText('');
-    sheet.getRangeByIndex(row, 6).setText('');
-    sheet.getRangeByIndex(row, 7).setText('');
+
+    // 👇 Loop pelas datas
+    for (int j = 0; j < datasFiltradas.length; j++) {
+      final data = datasFiltradas[j];
+
+      // Coluna da presença: começa em 4 (D), então soma o offset `j`
+      final col = 4 + j;
+
+      // Busca no map de presenças
+      final status = presencaMap?[user.uid]?[data] ?? '';
+
+      sheet.getRangeByIndex(row, col).setText(status);
+    }
+
+    int notaStartCol = 4 + datasFiltradas.length;
+    int notaFinalCol = notaStartCol + (listNotes?.length ?? 0);
+
+// Mapa para armazenar as notas do aluno atual (usando o título da nota como chave)
+    Map<String, double> notasDoAluno = {};
+
+// Percorre todas as userNote e associa as notas do aluno atual
+    for (var i = 0; i < (listUserNote?.length ?? 0); i++) {
+      final userNote = listUserNote![i];
+
+      if (userNote.userId == user.uid && userNote.subjectId == subject?.uid) {
+        // Procurar o note correspondente sem usar firstWhere
+        for (var j = 0; j < (listNotes?.length ?? 0); j++) {
+          final note = listNotes![j];
+
+          if (note.uid == userNote.noteId) {
+            notasDoAluno[note.title] = double.parse(userNote.value);
+            break; // achou, pode parar esse for
+          }
+        }
+      }
+    }
+    const numberFormat = '#,##0.00';
+
+// Agora vamos preencher as colunas de nota
+    for (var n = 0; n < (listNotes?.length ?? 0); n++) {
+      final note = listNotes![n];
+      final col = notaStartCol + n;
+
+      if (notasDoAluno.containsKey(note.title)) {
+        final valor = notasDoAluno[note.title]!;
+        final cell = sheet.getRangeByIndex(row, col);
+        cell.setNumber(valor);
+        cell.numberFormat = numberFormat;
+        cell.cellStyle.fontSize = 8;
+      } else {
+        sheet.getRangeByIndex(row, col).setText('');
+      }
+    }
+
+// Soma das notas como nota final (em vez da média)
+    if (notasDoAluno.isNotEmpty) {
+      double soma = 0;
+
+      for (var valor in notasDoAluno.values) {
+        soma += valor;
+      }
+
+      final cell = sheet.getRangeByIndex(row, notaFinalCol);
+      cell.setNumber(soma);
+      cell.numberFormat = numberFormat;
+      cell.cellStyle.fontSize = 8;
+    } else {
+      sheet.getRangeByIndex(row, notaFinalCol).setText('');
+    }
 
     for (int colIndex = 1; colIndex <= 3 + datasFiltradas.length; colIndex++) {
       sheet.getRangeByIndex(row, colIndex).cellStyle.fontSize = 10;
@@ -182,17 +274,17 @@ Future<void> generateExcel({
     // ignore: unused_local_variable
     final anchor = html.AnchorElement(href: url)
       ..setAttribute("download",
-          "diario_classe_${subjectTitle?.replaceAll(' ', '_')}.xlsx")
+          "diario_classe_${subject?.title.replaceAll(' ', '_')}.xlsx")
       ..click();
     html.Url.revokeObjectUrl(url);
-    print("Arquivo Excel gerado para download (Web)");
+    log("Arquivo Excel gerado para download (Web)");
   } else {
     final directory = await getApplicationDocumentsDirectory();
     final path =
-        '${directory.path}/diario_classe_${subjectTitle?.replaceAll(' ', '_')}.xlsx';
+        '${directory.path}/diario_classe_${subject?.title.replaceAll(' ', '_')}.xlsx';
     final file = io.File(path);
     await file.writeAsBytes(bytes, flush: true);
-    print("Arquivo Excel gerado com sucesso em: $path");
+    log("Arquivo Excel gerado com sucesso em: $path");
   }
 }
 
@@ -202,7 +294,7 @@ Future<Uint8List> _loadLogoImage() async {
     final byteData = await rootBundle.load('assets/images/logo_anna_nery.png');
     return byteData.buffer.asUint8List();
   } catch (e) {
-    print('Erro ao carregar a imagem: $e');
+    Exception('Erro ao carregar a imagem: $e');
     return Uint8List(0);
   }
 }

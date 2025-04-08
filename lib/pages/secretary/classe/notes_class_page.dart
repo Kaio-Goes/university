@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:university/components/app_bar_user_component.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
@@ -7,6 +8,7 @@ import 'package:university/core/models/note.dart';
 import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/models/user_note.dart';
+import 'package:university/core/services/attendence_list_service.dart';
 import 'package:university/core/services/auth_user_service.dart';
 import 'package:university/core/services/generate_excel_service.dart';
 import 'package:university/core/services/note_service.dart';
@@ -27,6 +29,7 @@ class _NotesClassPageState extends State<NotesClassPage> {
   List<Note> listNotes = [];
   List<UserNote> listUserNote = [];
   List<SubjectModule> listSubject = [];
+  Map<String, Map<DateTime, String>> presencaMap = {};
   bool isLoading = true;
   bool isLoadingSubject = true;
   bool isLoadingUserNote = true;
@@ -127,6 +130,31 @@ class _NotesClassPageState extends State<NotesClassPage> {
     }
   }
 
+  Future<void> _loadPresence(
+      {required String subjectId, required String teacherId}) async {
+    final service = AttendenceListService();
+
+    for (final aluno in listUser) {
+      final attendenceList = await service.getAttendenceList(
+          studentId: aluno.uid,
+          teacherId: teacherId,
+          classId: widget.classFirebase.uid,
+          subjectId: subjectId);
+
+      for (final presence in attendenceList) {
+        final date = presence.dateClass;
+
+        final inputFormat = DateFormat('dd/MM/yyyy');
+        final parsedDate = inputFormat.parse(date);
+
+        presencaMap[aluno.uid] ??= {};
+        presencaMap[aluno.uid]![parsedDate] = presence.status;
+      }
+    }
+
+    setState(() {});
+  }
+
   double _calculateTotalScoreBySubject(String userId, String subjectId) {
     return listUserNote
         .where((userNote) =>
@@ -186,11 +214,15 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                             12, // espaçamento vertical quando quebrar linha
                                         children: [
                                           ElevatedButton.icon(
-                                            onPressed: () {
+                                            onPressed: () async {
+                                              await _loadPresence(
+                                                subjectId: subject.uid,
+                                                teacherId: teacher!.uid,
+                                              );
+
                                               generateExcel(
                                                 users: listUser,
-                                                subjectTitle: subject.title,
-                                                subjectModule: subject.module,
+                                                subject: subject,
                                                 daysWeeksSubject:
                                                     subject.daysWeek,
                                                 classTitle:
@@ -199,8 +231,10 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                                     .classFirebase.startDate,
                                                 endDateClass: widget
                                                     .classFirebase.endDate,
-                                                teacherName: teacher!.name,
+                                                teacherName: teacher.name,
                                                 listNotes: listNotes,
+                                                presencaMap: presencaMap,
+                                                listUserNote: listUserNote,
                                               );
                                             },
                                             iconAlignment: IconAlignment.end,

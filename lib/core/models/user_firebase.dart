@@ -9,6 +9,7 @@ class UserFirebase {
   String? sex;
   String? birthDate;
   String? cep;
+  String? unity;
   String? address;
   String? registration;
   late String role;
@@ -27,6 +28,7 @@ class UserFirebase {
     this.cep,
     this.address,
     this.registration,
+    this.unity,
     required this.role,
     required this.isActive,
   });
@@ -41,6 +43,7 @@ class UserFirebase {
     role = json['role'];
     phone = json['phone'];
     sex = json['sex'];
+    unity = json['unity'];
     birthDate = json['birth_date'];
     cep = json['cep'];
     address = json['address'];

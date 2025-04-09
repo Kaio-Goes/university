@@ -36,6 +36,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
   final cepController = TextEditingController();
   bool _passwordVisible = false;
   String _errorMessage = '';
+  String? selectedTypeUnity;
 
   @override
   void initState() {
@@ -56,6 +57,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
     birthDateController.text = widget.userStudent!.birthDate!;
     cepController.text = widget.userStudent!.cep!;
     addressController.text = widget.userStudent!.address!;
+    selectedTypeUnity = widget.userStudent!.unity;
   }
 
   String generateRegistration() {
@@ -91,6 +93,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
     required String rg,
     required String phone,
     required String sex,
+    required String unity,
     required String birthDate,
     required String cep,
     required String address,
@@ -130,6 +133,7 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
             'cep': cep,
             'address': address,
             'phone': phone,
+            'unity': unity,
             'role': 'student',
             'isActive': true,
             'created_at': DateTime.now().toLocal().toString(),
@@ -167,12 +171,14 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
             },
           );
           await SendEmail().sendEmailCreateStudent(
-              email: email,
-              password: password,
-              name: name,
-              rg: rg,
-              cpf: cpf,
-              phone: phone);
+            email: email,
+            password: password,
+            name: name,
+            rg: rg,
+            cpf: cpf,
+            unity: unity,
+            phone: phone,
+          );
         });
       } catch (e) {
         setState(() {
@@ -292,6 +298,13 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                               },
                                               addressController:
                                                   addressController,
+                                              selectedTypeUnity:
+                                                  selectedTypeUnity,
+                                              onChangedTypeUnity: (value) {
+                                                setState(() {
+                                                  selectedTypeUnity = value;
+                                                });
+                                              },
                                             ),
                                             builFormCreateTeacherPartTwo(
                                               context: context,
@@ -374,6 +387,13 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                                   },
                                                   addressController:
                                                       addressController,
+                                                  selectedTypeUnity:
+                                                      selectedTypeUnity,
+                                                  onChangedTypeUnity: (value) {
+                                                    setState(() {
+                                                      selectedTypeUnity = value;
+                                                    });
+                                                  },
                                                 ),
                                                 builFormCreateTeacherPartTwo(
                                                   context: context,
@@ -454,7 +474,8 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                         email: emailController.text,
                                         rg: rgController.text,
                                         phone: phoneController.text,
-                                        sex: _selectedSex!,
+                                        sex: _selectedSex ?? '',
+                                        unity: selectedTypeUnity ?? '',
                                         birthDate: birthDateController.text,
                                         address: addressController.text,
                                         cep: cepController.text,
@@ -509,6 +530,8 @@ Widget builFormCreateTeacherPartOne({
   required String? selectedSex,
   required TextEditingController addressController,
   required void Function(String?)? onChanged,
+  required String? selectedTypeUnity,
+  required void Function(String?)? onChangedTypeUnity,
 }) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
@@ -565,6 +588,23 @@ Widget builFormCreateTeacherPartOne({
         hint: 'Digite o endereço',
         label: 'Endereço',
         size: widthInput,
+      ),
+      const SizedBox(height: 25),
+      SizedBox(
+        width: widthInput,
+        child: dropDownField(
+          label: 'Unidade do Curso',
+          select: selectedTypeUnity,
+          onChanged: onChangedTypeUnity,
+          hintText: 'Selecione a unidade do curso',
+          items: <String>['Planaltina', 'Paranoa'].map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          validator: (value) => validatorDropdown(value),
+        ),
       ),
     ],
   );

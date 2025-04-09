@@ -148,6 +148,7 @@ class _ListUsersCardState extends State<ListUsersCard> {
                               Text('Email: ${user.email}'),
                               Text('CPF: ${user.cpf}'),
                               Text('Telefone: ${user.phone}'),
+                              Text('Unidade: ${user.unity ?? ''}'),
                               Text(
                                 'Status: ${user.isActive ? "Ativo" : "Desativado"}',
                               ),
@@ -161,10 +162,11 @@ class _ListUsersCardState extends State<ListUsersCard> {
                       columnWidths: const {
                         0: FlexColumnWidth(2),
                         1: FlexColumnWidth(3),
-                        2: FlexColumnWidth(2),
+                        2: FlexColumnWidth(4),
                         3: FlexColumnWidth(2),
-                        4: FlexColumnWidth(1),
-                        5: FixedColumnWidth(50),
+                        4: FlexColumnWidth(3),
+                        5: FixedColumnWidth(120),
+                        6: FixedColumnWidth(50),
                       },
                       children: [
                         TableRow(
@@ -200,6 +202,11 @@ class _ListUsersCardState extends State<ListUsersCard> {
                               padding: EdgeInsets.symmetric(vertical: 8.0),
                               child: Text('Telefone', style: textFontBold),
                             ),
+                            if (widget.title == "Lista de Alunos")
+                              const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text('Unidade', style: textFontBold),
+                              ),
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 8.0),
                               child: Text('Status', style: textFontBold),
@@ -242,6 +249,12 @@ class _ListUsersCardState extends State<ListUsersCard> {
                                     const EdgeInsets.symmetric(vertical: 8.0),
                                 child: Text(user.phone),
                               ),
+                              if (user.role == "student")
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(user.unity ?? ''),
+                                ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
@@ -307,7 +320,7 @@ class _ListUsersCardState extends State<ListUsersCard> {
                           ),
                           TableRow(
                             children: List.generate(
-                              user.role == "student" ? 7 : 6,
+                              user.role == "student" ? 8 : 6,
                               (_) => const Padding(
                                 padding: EdgeInsets.symmetric(vertical: 8.0),
                                 child: Divider(),

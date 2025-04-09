@@ -104,6 +104,7 @@ class SendEmail {
     required String rg,
     required String cpf,
     required String phone,
+    String? unity,
   }) async {
     var url = "${ApiConstants.baseUrl}/mail";
 
@@ -120,7 +121,7 @@ class SendEmail {
               "html": {
                 "stringValue": """
                     <p>Prezado(a) <strong>$name</strong>,</p>
-                    <p>Estamos felizes em informá-lo(a) que seu perfil de estudante foi criado com sucesso na <strong>AnnaNery</strong>.</p>
+                    <p>Estamos felizes em informá-lo(a) que seu perfil de estudante foi criado com sucesso na <strong>AnnaNery</strong> unidade $unity.</p>
                     <p>Abaixo estão os detalhes da sua conta:</p>
                     <ul>
                       <li><strong>Email:</strong> $email</li>

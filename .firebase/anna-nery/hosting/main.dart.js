@@ -120658,7 +120658,7 @@ g=A.b8(A.b8(A.dz(new A.c1(e)).gee().eb(null)).c.bu("users"))
 f=A.b8(g.c.bu(h))
 d=n.a.c.ax
 d===$&&A.b()
-f.c.cE(0,A.a3(["name",a4,"cpf",a2,"phone",a6,"isActive",d,"updated_at",new A.bp(Date.now(),0,!1).hf().j(0)],t.N,t.X)).bR(new A.aVF(n),t.P)}catch(b0){n.M(new A.aVG(n))}case 4:case 1:return A.x(q,r)
+f.c.cE(0,A.a3(["name",a4,"cpf",a2,"phone",a6,"rg",a7,"sex",a8,"birth_date",a0,"cep",a1,"address",a,"unity",a9,"isActive",d,"updated_at",new A.bp(Date.now(),0,!1).hf().j(0)],t.N,t.X)).bR(new A.aVF(n),t.P)}catch(b0){n.M(new A.aVG(n))}case 4:case 1:return A.x(q,r)
 case 2:return A.w(o.at(-1),r)}})
 return A.y($async$yO,r)},
 yI(a,b){return this.auM(a,b)},

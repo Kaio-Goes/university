@@ -333,6 +333,7 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                   previousPage: _previousPageClass,
                   nextPage: _nextPageClass,
                 ),
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.all(2),
                   child: SingleChildScrollView(

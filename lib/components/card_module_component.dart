@@ -143,8 +143,8 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
       color: const Color.fromARGB(255, 208, 223, 224),
       elevation: 8,
       child: SizedBox(
-        height: 300,
-        width: 380,
+        height: 350,
+        width: 400,
         child: Column(
           children: [
             const SizedBox(height: 15),
@@ -224,7 +224,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
             ),
             const SizedBox(height: 10),
             SizedBox(
-              height: 210,
+              height: 278,
               child: ListView.builder(
                 itemCount: widget.subjectModule?.length ?? 0,
                 itemBuilder: (context, index) {
@@ -263,15 +263,28 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                             ),
                           ),
                         ),
-                        title: Text(widget.subjectModule?[index].title ?? ''),
+                        title: Text(
+                          widget.subjectModule?[index].title ?? '',
+                          style: const TextStyle(fontSize: 14),
+                        ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Professor: $nameTeacher $surnameTeacher"),
+                            const Divider(),
                             Text(
-                                "Dias de aula: ${widget.subjectModule![index].daysWeek.toString().replaceAll('[', '').replaceAll(']', '')}"),
+                              "Professor: $nameTeacher $surnameTeacher",
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            const Divider(),
                             Text(
-                                "Horário: ${widget.subjectModule![index].startHour} a ${widget.subjectModule![index].endHour}"),
+                              "Dias de aula: ${widget.subjectModule![index].daysWeek.toString().replaceAll('[', '').replaceAll(']', '')}",
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            const Divider(),
+                            Text(
+                              "Horário: ${widget.subjectModule![index].startHour} a ${widget.subjectModule![index].endHour}",
+                              style: const TextStyle(fontSize: 12),
+                            ),
                           ],
                         ),
                         trailing: PopupMenuButton<String>(

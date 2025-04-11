@@ -33,7 +33,7 @@ class TextStudant extends StatelessWidget {
           style: texTitleCard,
         ),
         const Text(
-          'Inscreva-se no nosso vestibular. São mais de 30 opções de cursos, nas modalidades Presencial, Híbrido. Só no UniProjeção você tem acesso a bolsas de até 100%!',
+          'Inscreva-se no nossa pré matricula. São mais de 30 opções de cursos, nas modalidades Presencial, Híbrido. Só no UniProjeção você tem acesso a bolsas de até 100%!',
           style: TextStyle(color: Colors.white),
         ),
         const SizedBox(

@@ -84,7 +84,7 @@ class _RegisterStudantFormState extends State<RegisterStudantForm> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              'Comece sua inscrição no nosso vestibular',
+              'Faça sua pré matricula',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 24,

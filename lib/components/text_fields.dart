@@ -17,6 +17,7 @@ textFormField({
   void Function()? onTap,
   bool passwordVisible = false,
   void Function()? togglePasswordVisibility,
+  int? maxLength,
 }) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,6 +43,7 @@ textFormField({
           inputFormatters: inputFormatters,
           keyboardType: textInputType,
           onTap: onTap,
+          maxLength: maxLength,
           decoration: InputDecoration(
             enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey, width: 0.0),

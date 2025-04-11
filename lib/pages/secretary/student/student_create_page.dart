@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:university/components/app_bar_user_component.dart';
 import 'package:university/components/drawer_secretary_component.dart';
@@ -37,6 +38,17 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
   bool _passwordVisible = false;
   String _errorMessage = '';
   String? selectedTypeUnity;
+  String? selectedNacionality;
+  final naturalnessController = TextEditingController();
+  final ufController = TextEditingController();
+  final voterRegistrationController = TextEditingController();
+  final zonaController = TextEditingController();
+  final bloodTypeController = TextEditingController();
+  final motherNameController = TextEditingController();
+  final fatherNameController = TextEditingController();
+  final courseController = TextEditingController();
+  final regimeController = TextEditingController();
+  final monthYearController = TextEditingController();
 
   @override
   void initState() {
@@ -58,6 +70,18 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
     cepController.text = widget.userStudent!.cep!;
     addressController.text = widget.userStudent!.address!;
     selectedTypeUnity = widget.userStudent!.unity;
+    selectedNacionality = widget.userStudent!.nacionality;
+    naturalnessController.text = widget.userStudent!.naturalness ?? '';
+    ufController.text = widget.userStudent!.uf ?? '';
+    voterRegistrationController.text =
+        widget.userStudent!.voterRegistration ?? '';
+    zonaController.text = widget.userStudent!.zona ?? '';
+    bloodTypeController.text = widget.userStudent!.bloodType ?? '';
+    motherNameController.text = widget.userStudent!.motherName ?? '';
+    fatherNameController.text = widget.userStudent!.fatherName ?? '';
+    courseController.text = widget.userStudent!.course ?? '';
+    regimeController.text = widget.userStudent!.regime ?? '';
+    monthYearController.text = widget.userStudent!.monthYear ?? '';
   }
 
   String generateRegistration() {
@@ -97,6 +121,17 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
     required String birthDate,
     required String cep,
     required String address,
+    required String nacionality,
+    required String naturalness,
+    required String uf,
+    required String voterRegistration,
+    required String zona,
+    required String bloodType,
+    required String motherName,
+    required String fatherName,
+    required String course,
+    required String regime,
+    required String monthYear,
   }) async {
     bool formOk = _formKey.currentState!.validate();
 
@@ -128,12 +163,23 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
             'name': name,
             'cpf': cpf,
             'rg': rg,
+            'voter_registration': voterRegistration,
+            'zona': zona,
             'sex': sex,
             'birth_date': birthDate,
+            'mother_name': motherName,
+            'father_name': fatherName,
+            'blood_type': bloodType,
+            'course': course,
+            'regime': regime,
+            'month_year': monthYear,
             'cep': cep,
             'address': address,
             'phone': phone,
             'unity': unity,
+            'nacionality': nacionality,
+            'naturalness': naturalness,
+            'uf': uf,
             'role': 'student',
             'isActive': true,
             'created_at': DateTime.now().toLocal().toString(),
@@ -199,11 +245,22 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
             'cpf': cpf,
             'phone': phone,
             'rg': rg,
+            'voter_registration': voterRegistration,
+            'zona': zona,
             'sex': sex,
             'birth_date': birthDate,
+            'blood_type': bloodType,
+            'mother_name': motherName,
+            'father_name': fatherName,
+            'course': course,
+            'regime': regime,
+            'month_year': monthYear,
             'cep': cep,
             'address': address,
             'unity': unity,
+            'nacionality': nacionality,
+            'naturalness': naturalness,
+            'uf': uf,
             'isActive': widget.userStudent!.isActive,
             'updated_at': DateTime.now().toLocal().toString(),
           },
@@ -290,33 +347,44 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                           runSpacing: 20,
                                           children: [
                                             builFormCreateTeacherPartOne(
-                                              context: context,
-                                              isSmallScreen: isSmallScreen,
-                                              emailController: emailController,
-                                              nameController: nameController,
-                                              phoneController: phoneController,
-                                              userStudent: widget.userStudent,
-                                              selectedSex: _selectedSex,
-                                              onChanged: (sex) {
-                                                setState(() {
-                                                  _selectedSex = sex;
-                                                });
-                                              },
-                                              addressController:
-                                                  addressController,
-                                              selectedTypeUnity:
-                                                  selectedTypeUnity,
-                                              onChangedTypeUnity: (value) {
-                                                setState(() {
-                                                  selectedTypeUnity = value;
-                                                });
-                                              },
-                                            ),
+                                                context: context,
+                                                isSmallScreen: isSmallScreen,
+                                                emailController:
+                                                    emailController,
+                                                nameController: nameController,
+                                                voterRegistrationController:
+                                                    voterRegistrationController,
+                                                ufController: ufController,
+                                                userStudent: widget.userStudent,
+                                                selectedSex: _selectedSex,
+                                                onChanged: (sex) {
+                                                  setState(() {
+                                                    _selectedSex = sex;
+                                                  });
+                                                },
+                                                addressController:
+                                                    addressController,
+                                                selectedTypeUnity:
+                                                    selectedTypeUnity,
+                                                onChangedTypeUnity: (value) {
+                                                  setState(() {
+                                                    selectedTypeUnity = value;
+                                                  });
+                                                },
+                                                naturalnessController:
+                                                    naturalnessController,
+                                                bloodTypeController:
+                                                    bloodTypeController,
+                                                fatherNameController:
+                                                    fatherNameController,
+                                                regimeController:
+                                                    regimeController),
                                             builFormCreateTeacherPartTwo(
                                               context: context,
                                               isSmallScreen: isSmallScreen,
                                               rgController: rgController,
                                               cpfController: cpfController,
+                                              zonaController: zonaController,
                                               passwordController:
                                                   passwordController,
                                               passwordVisible: _passwordVisible,
@@ -351,6 +419,8 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                                       birthDateController);
                                                 },
                                               ),
+                                              motherNameController:
+                                                  motherNameController,
                                               userStudent: widget.userStudent,
                                               isActive:
                                                   widget.userStudent?.isActive,
@@ -360,7 +430,19 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                                       value;
                                                 });
                                               },
+                                              courseController:
+                                                  courseController,
                                               cepController: cepController,
+                                              selectedNacionality:
+                                                  selectedNacionality,
+                                              onChangedNacionality: (value) {
+                                                setState(() {
+                                                  selectedNacionality = value;
+                                                });
+                                              },
+                                              phoneController: phoneController,
+                                              monthYearController:
+                                                  monthYearController,
                                             )
                                           ],
                                         ),
@@ -375,37 +457,50 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                                       .spaceBetween,
                                               children: [
                                                 builFormCreateTeacherPartOne(
-                                                  context: context,
-                                                  isSmallScreen: isSmallScreen,
-                                                  nameController:
-                                                      nameController,
-                                                  emailController:
-                                                      emailController,
-                                                  phoneController:
-                                                      phoneController,
-                                                  userStudent:
-                                                      widget.userStudent,
-                                                  selectedSex: _selectedSex,
-                                                  onChanged: (sex) {
-                                                    setState(() {
-                                                      _selectedSex = sex;
-                                                    });
-                                                  },
-                                                  addressController:
-                                                      addressController,
-                                                  selectedTypeUnity:
-                                                      selectedTypeUnity,
-                                                  onChangedTypeUnity: (value) {
-                                                    setState(() {
-                                                      selectedTypeUnity = value;
-                                                    });
-                                                  },
-                                                ),
+                                                    context: context,
+                                                    isSmallScreen:
+                                                        isSmallScreen,
+                                                    nameController:
+                                                        nameController,
+                                                    emailController:
+                                                        emailController,
+                                                    voterRegistrationController:
+                                                        voterRegistrationController,
+                                                    ufController: ufController,
+                                                    userStudent:
+                                                        widget.userStudent,
+                                                    selectedSex: _selectedSex,
+                                                    onChanged: (sex) {
+                                                      setState(() {
+                                                        _selectedSex = sex;
+                                                      });
+                                                    },
+                                                    addressController:
+                                                        addressController,
+                                                    selectedTypeUnity:
+                                                        selectedTypeUnity,
+                                                    onChangedTypeUnity:
+                                                        (value) {
+                                                      setState(() {
+                                                        selectedTypeUnity =
+                                                            value;
+                                                      });
+                                                    },
+                                                    naturalnessController:
+                                                        naturalnessController,
+                                                    bloodTypeController:
+                                                        bloodTypeController,
+                                                    fatherNameController:
+                                                        fatherNameController,
+                                                    regimeController:
+                                                        regimeController),
                                                 builFormCreateTeacherPartTwo(
                                                   context: context,
                                                   isSmallScreen: isSmallScreen,
                                                   rgController: rgController,
                                                   cpfController: cpfController,
+                                                  zonaController:
+                                                      zonaController,
                                                   passwordController:
                                                       passwordController,
                                                   passwordVisible:
@@ -445,6 +540,8 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                                           birthDateController);
                                                     },
                                                   ),
+                                                  motherNameController:
+                                                      motherNameController,
                                                   userStudent:
                                                       widget.userStudent,
                                                   isActive: widget
@@ -455,7 +552,22 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                                           ?.isActive = value;
                                                     });
                                                   },
+                                                  courseController:
+                                                      courseController,
                                                   cepController: cepController,
+                                                  selectedNacionality:
+                                                      selectedNacionality,
+                                                  onChangedNacionality:
+                                                      (value) {
+                                                    setState(() {
+                                                      selectedNacionality =
+                                                          value;
+                                                    });
+                                                  },
+                                                  phoneController:
+                                                      phoneController,
+                                                  monthYearController:
+                                                      monthYearController,
                                                 ),
                                               ],
                                             ),
@@ -485,6 +597,18 @@ class _StudantCreatePageState extends State<StudantCreatePage> {
                                         birthDate: birthDateController.text,
                                         address: addressController.text,
                                         cep: cepController.text,
+                                        nacionality: selectedNacionality ?? '',
+                                        naturalness: naturalnessController.text,
+                                        uf: ufController.text,
+                                        voterRegistration:
+                                            voterRegistrationController.text,
+                                        zona: zonaController.text,
+                                        bloodType: bloodTypeController.text,
+                                        motherName: motherNameController.text,
+                                        fatherName: fatherNameController.text,
+                                        course: courseController.text,
+                                        regime: regimeController.text,
+                                        monthYear: monthYearController.text,
                                         password: passwordController.text,
                                       );
                                     },
@@ -531,13 +655,18 @@ Widget builFormCreateTeacherPartOne({
   required bool isSmallScreen,
   required TextEditingController nameController,
   required TextEditingController emailController,
-  required TextEditingController phoneController,
   required UserFirebase? userStudent,
   required String? selectedSex,
   required TextEditingController addressController,
   required void Function(String?)? onChanged,
   required String? selectedTypeUnity,
   required void Function(String?)? onChangedTypeUnity,
+  required TextEditingController naturalnessController,
+  required TextEditingController ufController,
+  required TextEditingController voterRegistrationController,
+  required TextEditingController bloodTypeController,
+  required TextEditingController fatherNameController,
+  required TextEditingController regimeController,
 }) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
@@ -561,6 +690,29 @@ Widget builFormCreateTeacherPartOne({
         size: widthInput,
       ),
       const SizedBox(height: 25),
+      textFormField(
+        controller: voterRegistrationController,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return "Este campo é obrigatório";
+          }
+          if (value.length < 12) {
+            return 'Não pode ser menor que 12 carectere';
+          }
+          return null;
+        },
+        hint: 'Digite seu título',
+        label: 'Título de Eleitor',
+        inputFormatters: [
+          MaskTextInputFormatter(
+            mask: '############',
+            filter: {"#": RegExp(r'^[0-9]*$')},
+            type: MaskAutoCompletionType.lazy,
+          )
+        ],
+        size: widthInput,
+      ),
+      const SizedBox(height: 25),
       SizedBox(
         width: widthInput,
         child: dropDownField(
@@ -578,11 +730,26 @@ Widget builFormCreateTeacherPartOne({
       ),
       const SizedBox(height: 25),
       textFormField(
-        controller: phoneController,
-        validator: (value) => validInputPhone(value),
-        hint: 'Digite o Telefone',
-        inputFormatters: [phoneMask],
-        label: 'Telefone',
+        controller: bloodTypeController,
+        validator: (value) => validInputNome(value),
+        hint: 'Digite o tipo sanguíneo',
+        label: 'Tipo Sanguineo',
+        size: widthInput,
+      ),
+      const SizedBox(height: 25),
+      textFormField(
+        controller: fatherNameController,
+        validator: (value) => validInputNome(value),
+        hint: 'Digite o nome do Pai',
+        label: 'Nome do Pai',
+        size: widthInput,
+      ),
+      const SizedBox(height: 25),
+      textFormField(
+        controller: regimeController,
+        validator: (value) => validInputNome(value),
+        hint: 'Digite o regime Ex: Modular (2º a 6º feira)',
+        label: 'Regime',
         size: widthInput,
       ),
       const SizedBox(height: 25),
@@ -596,6 +763,28 @@ Widget builFormCreateTeacherPartOne({
         size: widthInput,
       ),
       const SizedBox(height: 25),
+      textFormField(
+        controller: naturalnessController,
+        validator: (value) => validInputNome(value),
+        hint: 'Digite a naturalidade Ex: São Paulo',
+        label: 'Naturalidade',
+        size: widthInput,
+      ),
+      const SizedBox(height: 25),
+      textFormField(
+        controller: ufController,
+        validator: (value) => validInputNome(value),
+        hint: 'Digite a UF Ex: SP',
+        label: 'UF',
+        size: widthInput,
+        maxLength: 2,
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(
+              RegExp(r'[A-Za-z]')), // somente letras
+          UpperCaseTextFormatter(), // transforma em maiúsculas
+        ],
+      ),
+      const SizedBox(height: 5),
       SizedBox(
         width: widthInput,
         child: dropDownField(
@@ -621,6 +810,7 @@ Widget builFormCreateTeacherPartTwo({
   required bool isSmallScreen,
   required TextEditingController rgController,
   required TextEditingController cpfController,
+  required TextEditingController phoneController,
   required TextEditingController passwordController,
   required bool passwordVisible,
   required Function() togglePasswordVisibility,
@@ -629,6 +819,12 @@ Widget builFormCreateTeacherPartTwo({
   bool? isActive,
   Function(bool)? onChangedIsActive,
   required Widget birthDate,
+  required String? selectedNacionality,
+  required void Function(String?)? onChangedNacionality,
+  required TextEditingController zonaController,
+  required TextEditingController motherNameController,
+  required TextEditingController courseController,
+  required TextEditingController monthYearController,
 }) {
   var widthInput = isSmallScreen
       ? MediaQuery.of(context).size.width * 1
@@ -655,7 +851,60 @@ Widget builFormCreateTeacherPartTwo({
           label: 'CPF',
           size: widthInput),
       const SizedBox(height: 25),
+      textFormField(
+          controller: zonaController,
+          validator: (value) => validInputNome(value),
+          inputFormatters: [
+            MaskTextInputFormatter(
+              mask: '#######',
+              filter: {"#": RegExp(r'^[0-9]*$')},
+              type: MaskAutoCompletionType.lazy,
+            )
+          ],
+          label: 'Zona',
+          hint: 'Digite a zona do título',
+          size: widthInput),
+      const SizedBox(height: 25),
       birthDate,
+      const SizedBox(height: 25),
+      textFormField(
+        controller: motherNameController,
+        validator: (value) => validInputNome(value),
+        hint: 'Digite o nome da Mãe',
+        label: 'Nome da Mãe',
+        size: widthInput,
+      ),
+      const SizedBox(height: 25),
+      textFormField(
+        controller: courseController,
+        validator: (value) => validInputNome(value),
+        hint: 'Digite o curso',
+        label: 'Curso',
+        size: widthInput,
+      ),
+      const SizedBox(height: 25),
+      textFormField(
+        controller: monthYearController,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return "Este campo é obrigatório";
+          }
+          if (value.length < 7) {
+            return 'Não pode ser menor que 7 carectere';
+          }
+          return null;
+        },
+        inputFormatters: [
+          MaskTextInputFormatter(
+            mask: '##/####',
+            filter: {"#": RegExp(r'^[0-9]*$')},
+            type: MaskAutoCompletionType.lazy,
+          )
+        ],
+        hint: "Digite o mês/ano do Curso Ex: 01/2026",
+        label: 'Mês/Ano',
+        size: widthInput,
+      ),
       const SizedBox(height: 25),
       textFormField(
         controller: cepController,
@@ -669,8 +918,34 @@ Widget builFormCreateTeacherPartTwo({
             type: MaskAutoCompletionType.lazy,
           )
         ],
-        hint: "Digiete o CEP",
+        hint: "Digite o CEP",
         label: 'CEP',
+        size: widthInput,
+      ),
+      const SizedBox(height: 25),
+      SizedBox(
+        width: widthInput,
+        child: dropDownField(
+          label: 'Nacionalidade',
+          select: selectedNacionality,
+          onChanged: onChangedNacionality,
+          hintText: 'Selecione a nacionalidade',
+          items: <String>['Brasileira', 'Estrangeira'].map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          validator: (value) => validatorDropdown(value),
+        ),
+      ),
+      const SizedBox(height: 25),
+      textFormField(
+        controller: phoneController,
+        validator: (value) => validInputPhone(value),
+        hint: 'Digite o Telefone',
+        inputFormatters: [phoneMask],
+        label: 'Telefone',
         size: widthInput,
       ),
       const SizedBox(height: 25),

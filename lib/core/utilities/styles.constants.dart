@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 const colorPrimaty = Color.fromRGBO(0, 163, 166, 1);
@@ -83,3 +84,16 @@ const textStyleTopBarBody = TextStyle(
     fontSize: 20.0,
     fontFamily: 'inter',
     fontWeight: FontWeight.bold);
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    return newValue.copyWith(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
+    );
+  }
+}

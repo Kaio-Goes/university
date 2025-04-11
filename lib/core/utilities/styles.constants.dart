@@ -6,6 +6,10 @@ const colorPrimaty = Color.fromRGBO(0, 163, 166, 1);
 const colorPlaceholder = Color(0xFF757575);
 const colorLabel = Color(0xFF424242);
 
+var colorModule1 = Colors.pink.shade300;
+var colorModule2 = Colors.blue.shade300;
+var colorModule3 = Colors.red.shade300;
+
 const textStyleVisualizer = TextStyle(
   color: colorPlaceholder,
   fontSize: 14.0,

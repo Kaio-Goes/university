@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:university/components/app_bar_user_component.dart';
 import 'package:university/components/card_count.dart';
-import 'package:university/components/card_module_component.dart';
 import 'package:university/components/drawer_secretary_component.dart';
 import 'package:university/components/footer.dart';
 import 'package:university/components/list_class.dart';
+import 'package:university/components/list_module_unity.dart';
 import 'package:university/components/list_users_card.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/subject_module.dart';
@@ -28,9 +28,13 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
   List<UserFirebase> activeStudent = [];
   List<ClassFirebase> loadClass = [];
 
-  List<SubjectModule> subjectModule1 = [];
-  List<SubjectModule> subjectModule2 = [];
-  List<SubjectModule> subjectModule3 = [];
+  List<SubjectModule> subjectModulePlanaltina1 = [];
+  List<SubjectModule> subjectModulePlanaltina2 = [];
+  List<SubjectModule> subjectModulePlanaltina3 = [];
+
+  List<SubjectModule> subjectModuleParanoa1 = [];
+  List<SubjectModule> subjectModuleParanoa2 = [];
+  List<SubjectModule> subjectModuleParanoa3 = [];
 
   List<UserFirebase> filteredTeachers = [];
   List<UserFirebase> filteredStudents = [];
@@ -79,17 +83,32 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
           await AuthUserService().getAllUsers();
 
       List<SubjectModule> fetchedSubjectModule =
-          await SubjectService().getAllSubjectModule();
+          await SubjectService().getSubjectsByUnity(unity: 'Planaltina');
 
-      subjectModule1 = fetchedSubjectModule
+      subjectModulePlanaltina1 = fetchedSubjectModule
           .where((subject) => subject.module == '1')
           .toList();
 
-      subjectModule2 = fetchedSubjectModule
+      subjectModulePlanaltina2 = fetchedSubjectModule
           .where((subject) => subject.module == '2')
           .toList();
 
-      subjectModule3 = fetchedSubjectModule
+      subjectModulePlanaltina3 = fetchedSubjectModule
+          .where((subject) => subject.module == '3')
+          .toList();
+
+      List<SubjectModule> fetchedSubjectModuleUnity =
+          await SubjectService().getSubjectsByUnity(unity: 'Paranoa');
+
+      subjectModuleParanoa1 = fetchedSubjectModuleUnity
+          .where((subject) => subject.module == '1')
+          .toList();
+
+      subjectModuleParanoa2 = fetchedSubjectModuleUnity
+          .where((subject) => subject.module == '2')
+          .toList();
+
+      subjectModuleParanoa3 = fetchedSubjectModuleUnity
           .where((subject) => subject.module == '3')
           .toList();
 
@@ -333,37 +352,21 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
                   previousPage: _previousPageClass,
                   nextPage: _nextPageClass,
                 ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CardModuleComponent(
-                          isSmallScreen: isSmallScreen,
-                          userTeacher: activeTeachers,
-                          title: 'Módulo 1',
-                          subjectModule: subjectModule1,
-                        ),
-                        const SizedBox(width: 10),
-                        CardModuleComponent(
-                          isSmallScreen: isSmallScreen,
-                          userTeacher: activeTeachers,
-                          title: 'Módulo 2',
-                          subjectModule: subjectModule2,
-                        ),
-                        const SizedBox(width: 10),
-                        CardModuleComponent(
-                          isSmallScreen: isSmallScreen,
-                          userTeacher: activeTeachers,
-                          title: 'Módulo 3',
-                          subjectModule: subjectModule3,
-                        )
-                      ],
-                    ),
-                  ),
+                ListModuleUnity(
+                  title: 'Módulo de Planaltina',
+                  isSmallScreen: isSmallScreen,
+                  activeTeacher: activeTeachers,
+                  subjectModuleUnity1: subjectModulePlanaltina1,
+                  subjectModuleUnity2: subjectModulePlanaltina2,
+                  subjectModuleUnity3: subjectModulePlanaltina3,
+                ),
+                ListModuleUnity(
+                  title: 'Módulo de Paranoa',
+                  isSmallScreen: isSmallScreen,
+                  activeTeacher: activeTeachers,
+                  subjectModuleUnity1: subjectModuleParanoa1,
+                  subjectModuleUnity2: subjectModuleParanoa2,
+                  subjectModuleUnity3: subjectModuleParanoa3,
                 ),
                 const SizedBox(height: 20),
                 ListUsersCard(

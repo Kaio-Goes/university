@@ -3,6 +3,7 @@ import 'package:university/components/create_subject_form_component.dart';
 import 'package:university/core/models/subject_module.dart';
 import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/utilities/alerts.dart';
+import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/secretary/dashboard/dashboard_secretary_page.dart';
 import 'package:university/core/services/subject_service.dart';
 
@@ -260,10 +261,10 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                           width: 60,
                           decoration: BoxDecoration(
                             color: widget.subjectModule?[index].module == "1"
-                                ? Colors.pink.shade300
+                                ? colorModule1
                                 : widget.subjectModule?[index].module == "2"
-                                    ? Colors.blue.shade300
-                                    : Colors.red.shade300,
+                                    ? colorModule2
+                                    : colorModule3,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Center(

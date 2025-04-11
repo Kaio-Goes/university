@@ -135,4 +135,26 @@ class SubjectService {
 
     await subjectRef.remove();
   }
+
+  Future<List<SubjectModule>> getSubjectsByUnity(
+      {required String unity}) async {
+    DatabaseReference subjectRef =
+        FirebaseDatabase.instance.ref().child('subjects');
+    DataSnapshot snapshot = await subjectRef.get();
+
+    List<SubjectModule> subjectModules = [];
+
+    if (snapshot.exists) {
+      for (var child in snapshot.children) {
+        Map<dynamic, dynamic> data = child.value as Map<dynamic, dynamic>;
+        if (data['unity'] == unity) {
+          SubjectModule subjectModule =
+              SubjectModule.fromJson(Map<String, dynamic>.from(data));
+          subjectModules.add(subjectModule);
+        }
+      }
+    }
+
+    return subjectModules;
+  }
 }

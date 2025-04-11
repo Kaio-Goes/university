@@ -25,6 +25,8 @@ createSubjectFormComponent({
   required void Function(String?)? onChangedSelectedTeacher,
   required List<DropdownMenuItem<String>>? enumTeachers,
   required void Function()? onPressedClickButton,
+  String? selectedUnity,
+  void Function(String?)? onChangedTypeUnity,
 }) {
   return showDialog(
     context: context,
@@ -91,6 +93,24 @@ createSubjectFormComponent({
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 25),
+                  SizedBox(
+                    width: 600,
+                    child: dropDownField(
+                      label: 'Unidade do Curso',
+                      select: selectedUnity,
+                      onChanged: onChangedTypeUnity,
+                      hintText: 'Selecione a unidade da Matéria',
+                      items:
+                          <String>['Planaltina', 'Paranoa'].map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                      validator: (value) => validatorDropdown(value),
+                    ),
                   ),
                   const SizedBox(height: 25),
                   SizedBox(

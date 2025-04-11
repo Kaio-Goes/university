@@ -9,6 +9,7 @@ class SubjectService {
     required String startHour,
     required String endHour,
     required String module,
+    required String unity,
     required String idUser,
   }) async {
     // Referência para a coleção 'subjects'
@@ -30,6 +31,7 @@ class SubjectService {
       'user_id': idUser,
       'daysWeeks': daysWeek,
       'startHour': startHour,
+      'unity': unity,
       'endHour': endHour,
       'created_at': DateTime.now().toLocal().toString(),
       'updated_at': DateTime.now().toLocal().toString(),
@@ -98,7 +100,6 @@ class SubjectService {
         subjectModules.add(subjectModule);
       }
     }
-
     return subjectModules;
   }
 
@@ -111,6 +112,7 @@ class SubjectService {
     required String daysWeek,
     required String startHour,
     required String endHour,
+    required String unity,
   }) async {
     DatabaseReference subjectRef =
         FirebaseDatabase.instance.ref().child('subjects');
@@ -121,6 +123,7 @@ class SubjectService {
       'user_id': idUser,
       'daysWeeks': daysWeek,
       'startHour': startHour,
+      'unity': unity,
       'endHour': endHour,
       'updated_at': DateTime.now().toLocal().toString(),
     });

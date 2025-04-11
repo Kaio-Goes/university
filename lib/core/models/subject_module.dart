@@ -6,6 +6,7 @@ class SubjectModule {
   late String startHour;
   late String endHour;
   late String module;
+  String? unity;
   late String userId;
 
   SubjectModule({
@@ -15,6 +16,7 @@ class SubjectModule {
     required this.startHour,
     required this.endHour,
     required this.module,
+    this.unity,
     required this.userId,
   });
 
@@ -26,6 +28,7 @@ class SubjectModule {
     startHour = json["startHour"];
     endHour = json["endHour"];
     module = json["module"];
+    unity = json['unity'];
     userId = json["user_id"];
   }
 }

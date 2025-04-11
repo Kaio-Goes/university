@@ -33,6 +33,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
   String? _selectedModule;
   String? _selectedTeacher;
   List<String> _selectedDays = [];
+  String? selectedUnity;
 
   final List<String> _daysOfWeek = [
     'Segunda-feira',
@@ -52,14 +53,16 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
 
   List<DropdownMenuItem<String>>? enumTeachers = [];
 
-  _clickButton(
-      {required String title,
-      required String hour,
-      required String module,
-      required String daysWeeks,
-      required String startHour,
-      required String endHour,
-      required String idUser}) {
+  _clickButton({
+    required String title,
+    required String hour,
+    required String module,
+    required String daysWeeks,
+    required String startHour,
+    required String endHour,
+    required String unity,
+    required String idUser,
+  }) {
     bool formOk = _formKey.currentState!.validate();
 
     if (!formOk) {
@@ -74,6 +77,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
         startHour: startHour,
         endHour: endHour,
         module: module,
+        unity: unity,
         idUser: idUser,
       )
           .then((_) async {
@@ -125,6 +129,7 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
         .toList();
     startHourController.text = subject.startHour;
     endHourController.text = subject.endHour;
+    selectedUnity = subject.unity;
   }
 
   void clearInput() {
@@ -168,49 +173,57 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                 'Professor(a) ${e.name.toString()} ${e.surname.toString()}')))
                         .toList();
                     createSubjectFormComponent(
-                        context: context,
-                        formKey: _formKey,
-                        title: "Criar uma Matéria",
-                        subTitle:
-                            "Crie uma matéria para o módulo selecionado e adicione o Professor responsável.",
-                        isSmallScreen: widget.isSmallScreen,
-                        titleController: titleController,
-                        hourController: hourController,
-                        selectedModule: _selectedModule,
-                        onChangedSelectedModule: (value) {
-                          setState(() {
-                            _selectedModule = value;
-                          });
-                        },
-                        dropdownItemsModule: dropdownItemsModule,
-                        selectedTeacher: _selectedTeacher,
-                        onChangedSelectedTeacher: (value) {
-                          setState(() {
-                            _selectedTeacher = value;
-                          });
-                        },
-                        enumTeachers: enumTeachers,
-                        titleButton: 'Adicionar',
-                        onPressedClickButton: () {
-                          _clickButton(
-                            title: titleController.text,
-                            hour: hourController.text,
-                            daysWeeks: _selectedDays.toString(),
-                            startHour: startHourController.text,
-                            endHour: endHourController.text,
-                            module: _selectedModule ?? '',
-                            idUser: _selectedTeacher ?? '',
-                          );
-                        },
-                        selectedDays: _selectedDays,
-                        onChangedSelectedDays: (days) {
-                          setState(() {
-                            _selectedDays = days!;
-                          });
-                        },
-                        daysOfWeek: _daysOfWeek,
-                        startTimeHour: startHourController,
-                        endTimeHour: endHourController);
+                      context: context,
+                      formKey: _formKey,
+                      title: "Criar uma Matéria",
+                      subTitle:
+                          "Crie uma matéria para o módulo selecionado e adicione o Professor responsável.",
+                      isSmallScreen: widget.isSmallScreen,
+                      titleController: titleController,
+                      hourController: hourController,
+                      selectedModule: _selectedModule,
+                      onChangedSelectedModule: (value) {
+                        setState(() {
+                          _selectedModule = value;
+                        });
+                      },
+                      dropdownItemsModule: dropdownItemsModule,
+                      selectedTeacher: _selectedTeacher,
+                      onChangedSelectedTeacher: (value) {
+                        setState(() {
+                          _selectedTeacher = value;
+                        });
+                      },
+                      enumTeachers: enumTeachers,
+                      titleButton: 'Adicionar',
+                      onPressedClickButton: () {
+                        _clickButton(
+                          title: titleController.text,
+                          hour: hourController.text,
+                          daysWeeks: _selectedDays.toString(),
+                          startHour: startHourController.text,
+                          endHour: endHourController.text,
+                          module: _selectedModule ?? '',
+                          idUser: _selectedTeacher ?? '',
+                          unity: selectedUnity ?? '',
+                        );
+                      },
+                      selectedDays: _selectedDays,
+                      onChangedSelectedDays: (days) {
+                        setState(() {
+                          _selectedDays = days!;
+                        });
+                      },
+                      daysOfWeek: _daysOfWeek,
+                      startTimeHour: startHourController,
+                      endTimeHour: endHourController,
+                      selectedUnity: selectedUnity,
+                      onChangedTypeUnity: (unity) {
+                        setState(() {
+                          selectedUnity = unity;
+                        });
+                      },
+                    );
                   },
                   icon: const Icon(Icons.add),
                 )
@@ -304,60 +317,68 @@ class _CardModuleComponentState extends State<CardModuleComponent> {
                                     .toList();
 
                                 createSubjectFormComponent(
-                                    context: context,
-                                    formKey: _formKey,
-                                    title: "Editar Matéria",
-                                    subTitle:
-                                        "Edite matéria para o módulo selecionado e adicione o Professor responsável.",
-                                    isSmallScreen: widget.isSmallScreen,
-                                    titleController: titleController,
-                                    hourController: hourController,
-                                    selectedModule: _selectedModule,
-                                    onChangedSelectedModule: (value) {
-                                      setState(() {
-                                        _selectedModule = value;
+                                  context: context,
+                                  formKey: _formKey,
+                                  title: "Editar Matéria",
+                                  subTitle:
+                                      "Edite matéria para o módulo selecionado e adicione o Professor responsável.",
+                                  isSmallScreen: widget.isSmallScreen,
+                                  titleController: titleController,
+                                  hourController: hourController,
+                                  selectedModule: _selectedModule,
+                                  onChangedSelectedModule: (value) {
+                                    setState(() {
+                                      _selectedModule = value;
+                                    });
+                                  },
+                                  dropdownItemsModule: dropdownItemsModule,
+                                  selectedTeacher: _selectedTeacher,
+                                  onChangedSelectedTeacher: (value) {
+                                    setState(() {
+                                      _selectedTeacher = value;
+                                    });
+                                  },
+                                  enumTeachers: enumTeachers,
+                                  titleButton: 'Editar',
+                                  onPressedClickButton: () {
+                                    try {
+                                      SubjectService()
+                                          .updateSubject(
+                                        uid: subject.uid,
+                                        title: titleController.text,
+                                        hour: hourController.text,
+                                        module: _selectedModule!,
+                                        unity: selectedUnity!,
+                                        idUser: _selectedTeacher!,
+                                        daysWeek: _selectedDays.toString(),
+                                        startHour: startHourController.text,
+                                        endHour: endHourController.text,
+                                      )
+                                          .then((_) {
+                                        // ignore: use_build_context_synchronously
+                                        showSuccessDialog(context);
                                       });
-                                    },
-                                    dropdownItemsModule: dropdownItemsModule,
-                                    selectedTeacher: _selectedTeacher,
-                                    onChangedSelectedTeacher: (value) {
-                                      setState(() {
-                                        _selectedTeacher = value;
-                                      });
-                                    },
-                                    enumTeachers: enumTeachers,
-                                    titleButton: 'Editar',
-                                    onPressedClickButton: () {
-                                      try {
-                                        SubjectService()
-                                            .updateSubject(
-                                          uid: subject.uid,
-                                          title: titleController.text,
-                                          hour: hourController.text,
-                                          module: _selectedModule!,
-                                          idUser: _selectedTeacher!,
-                                          daysWeek: _selectedDays.toString(),
-                                          startHour: startHourController.text,
-                                          endHour: endHourController.text,
-                                        )
-                                            .then((_) {
-                                          // ignore: use_build_context_synchronously
-                                          showSuccessDialog(context);
-                                        });
-                                      } catch (e) {
-                                        Exception(
-                                            "Erro ao tentar atualizar o modulo == $e");
-                                      }
-                                    },
-                                    selectedDays: _selectedDays,
-                                    onChangedSelectedDays: (days) {
-                                      setState(() {
-                                        _selectedDays = days!;
-                                      });
-                                    },
-                                    daysOfWeek: _daysOfWeek,
-                                    startTimeHour: startHourController,
-                                    endTimeHour: endHourController);
+                                    } catch (e) {
+                                      Exception(
+                                          "Erro ao tentar atualizar o modulo == $e");
+                                    }
+                                  },
+                                  selectedDays: _selectedDays,
+                                  onChangedSelectedDays: (days) {
+                                    setState(() {
+                                      _selectedDays = days!;
+                                    });
+                                  },
+                                  daysOfWeek: _daysOfWeek,
+                                  startTimeHour: startHourController,
+                                  endTimeHour: endHourController,
+                                  selectedUnity: selectedUnity ?? '',
+                                  onChangedTypeUnity: (unity) {
+                                    setState(() {
+                                      selectedUnity = unity;
+                                    });
+                                  },
+                                );
                               }
                             } else if (value == 'delete') {
                               showDeleteDialog(

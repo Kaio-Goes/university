@@ -45,7 +45,7 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.85,
+          width: MediaQuery.of(context).size.width * 1,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -96,7 +96,9 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text('Matéria: ${subject.title}'),
+                                        Text(
+                                          'Matéria: ${subject.title.length > 18 ? '${subject.title.substring(0, 18)}...' : subject.title}',
+                                        ),
                                         PopupMenuButton<String>(
                                           icon: const Icon(Icons.more_vert),
                                           onSelected: (String result) {
@@ -169,12 +171,12 @@ class _ListClassTeacherState extends State<ListClassTeacher> {
                     )
                   : Table(
                       columnWidths: const {
-                        0: FlexColumnWidth(1),
+                        0: FlexColumnWidth(2),
                         1: FlexColumnWidth(1),
                         2: FlexColumnWidth(1),
                         3: FlexColumnWidth(1),
                         4: FlexColumnWidth(1),
-                        5: FixedColumnWidth(100),
+                        5: FixedColumnWidth(400),
                         6: FixedColumnWidth(50),
                       },
                       children: [

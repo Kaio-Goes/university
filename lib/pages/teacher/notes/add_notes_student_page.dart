@@ -28,12 +28,18 @@ class AddNotesStudentPage extends StatefulWidget {
   State<AddNotesStudentPage> createState() => _AddNotesStudentPageState();
 }
 
-class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
+class _AddNotesStudentPageState extends State<AddNotesStudentPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   List<UserFirebase> listUser = [];
+
   List<Note> listNotes = [];
   List<UserNote> listUserNote = [];
   bool isLoading = true;
   Map<String, Map<DateTime, String>> presencaMap = {};
+  late List<DateTime> datasAulas;
 
   @override
   initState() {
@@ -41,6 +47,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
     _loadUserInClass();
     _loadNotes();
     _loadUserNotes();
+    datasAulas = getDatesByWeekdays();
   }
 
   _loadUserInClass() async {
@@ -100,8 +107,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
   }
 
   List<DateTime> getDatesByWeekdays() {
-    // Mapeia o nome dos dias para números: segunda=1, ..., domingo=7
-    Map<String, int> diasSemanaMap = {
+    final Map<String, int> diasSemanaMap = {
       "Segunda-feira": DateTime.monday,
       "Terça-feira": DateTime.tuesday,
       "Quarta-feira": DateTime.wednesday,
@@ -111,20 +117,19 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
       "Domingo": DateTime.sunday,
     };
 
-    List<int> diasSelecionados = widget.subject.daysWeek
+    final diasSelecionados = widget.subject.daysWeek
         .replaceAll('[', '')
         .replaceAll(']', '')
-        .split(',') // <- aqui está o segredo
+        .split(',')
         .map((dia) => diasSemanaMap[dia.trim()])
         .whereType<int>()
         .toList();
 
-    final DateFormat formatter = DateFormat('d/M/y');
+    final formatter = DateFormat('d/M/y');
+    final dataInicial = formatter.parse(widget.classe.startDate);
+    final dataFinal = formatter.parse(widget.classe.endDate);
 
-    DateTime dataInicial = formatter.parse(widget.classe.startDate);
-    DateTime dataFinal = formatter.parse(widget.classe.endDate);
-
-    List<DateTime> datasFiltradas = [];
+    final datasFiltradas = <DateTime>[];
 
     for (DateTime data = dataInicial;
         !data.isAfter(dataFinal);
@@ -170,6 +175,10 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // importante
+
+    final datas = getDatesByWeekdays();
+
     return Scaffold(
       appBar: appBarUserComponent(
         userFirebase: AuthUserService().currentUser,
@@ -220,8 +229,6 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                     itemBuilder: (context, index) {
                                       final user = listUser[index];
 
-                                      final datas = getDatesByWeekdays();
-
                                       Map<String, String> userNotesUidMap = {
                                         for (var userNote in listUserNote.where(
                                             (note) => note.userId == user.uid))
@@ -241,262 +248,250 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage> {
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w800),
                                           ),
-                                          subtitle: Scrollbar(
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        "Matrícula: ${user.registration}",
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        style: const TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
-                                                      ),
-                                                      Text(
-                                                        "Email: ${user.email}",
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        style: const TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
-                                                      ),
-                                                      Text(
-                                                          "Celular: ${user.phone}"),
-                                                      const SizedBox(
-                                                          height: 30),
-                                                      const Text(
-                                                        "Notas de Provas e Trabalhos:",
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
-                                                      ),
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      Row(
-                                                        children: [
-                                                          Wrap(
-                                                            spacing: 12.0,
-                                                            children: listNotes
-                                                                .map((note) {
-                                                              String
-                                                                  userNoteValue =
-                                                                  userNotesUidMap[note
-                                                                              .uid]
-                                                                          ?.replaceAll(
-                                                                              '.',
-                                                                              ',') ??
-                                                                      "N/A";
+                                          subtitle: Builder(builder: (context) {
+                                            final ScrollController
+                                                horizontalScrollController =
+                                                ScrollController();
 
-                                                              return Chip(
-                                                                label: Text(
-                                                                    '${note.title}: $userNoteValue'),
-                                                              );
-                                                            }).toList(),
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 20),
-                                                          Text(
-                                                              "Soma das Notas: ${_calculateAverage(userNotesUidMap)}"),
-                                                        ],
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      const Text(
-                                                        "Data das Aulas",
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
-                                                      ),
-                                                      const Text(
-                                                          "Adicionar presença ao Aluno"),
-                                                      Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children:
-                                                            datas.map((data) {
-                                                          final formattedDate =
-                                                              "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
+                                            return Scrollbar(
+                                              controller:
+                                                  horizontalScrollController,
+                                              thumbVisibility: true,
+                                              child: SingleChildScrollView(
+                                                controller:
+                                                    horizontalScrollController,
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Matrícula: ${user.registration}",
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          style: const TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                        ),
+                                                        Text(
+                                                          "Email: ${user.email}",
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          style: const TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                        ),
+                                                        Text(
+                                                            "Celular: ${user.phone}"),
+                                                        const SizedBox(
+                                                            height: 30),
+                                                        const Text(
+                                                          "Notas de Provas e Trabalhos:",
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 10),
+                                                        Row(
+                                                          children: [
+                                                            Wrap(
+                                                              spacing: 12.0,
+                                                              children:
+                                                                  listNotes.map(
+                                                                      (note) {
+                                                                String
+                                                                    userNoteValue =
+                                                                    userNotesUidMap[note.uid]?.replaceAll(
+                                                                            '.',
+                                                                            ',') ??
+                                                                        "N/A";
 
-                                                          return Padding(
-                                                            padding:
-                                                                const EdgeInsets
+                                                                return Chip(
+                                                                  label: Text(
+                                                                      '${note.title}: $userNoteValue'),
+                                                                );
+                                                              }).toList(),
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 20),
+                                                            Text(
+                                                                "Soma das Notas: ${_calculateAverage(userNotesUidMap)}"),
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Text(
+                                                          "Data das Aulas",
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                        ),
+                                                        const Text(
+                                                            "Adicionar presença ao Aluno"),
+                                                        SizedBox(
+                                                          height:
+                                                              300, // altura máxima da lista horizontal
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width -
+                                                              64, // <-- largura controlada
+
+                                                          child:
+                                                              ListView.builder(
+                                                            scrollDirection:
+                                                                Axis.horizontal,
+                                                            itemCount:
+                                                                datas.length,
+                                                            itemBuilder:
+                                                                (context,
+                                                                    dateIndex) {
+                                                              final data = datas[
+                                                                  dateIndex];
+                                                              final formattedDate =
+                                                                  "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
+
+                                                              return Padding(
+                                                                padding: const EdgeInsets
                                                                     .symmetric(
                                                                     horizontal:
                                                                         8.0),
-                                                            child: Column(
-                                                              children: [
-                                                                Text(
-                                                                  formattedDate,
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          14),
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 120,
-                                                                  child:
-                                                                      DropdownButtonFormField<
+                                                                child: Column(
+                                                                  children: [
+                                                                    Text(
+                                                                      formattedDate,
+                                                                      style: const TextStyle(
+                                                                          fontSize:
+                                                                              14),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width:
+                                                                          120,
+                                                                      child: DropdownButtonFormField<
                                                                           String>(
-                                                                    value: presencaMap[
-                                                                            user.uid]
-                                                                        ?[data],
-                                                                    items: const [
-                                                                      DropdownMenuItem(
-                                                                        value:
-                                                                            "Presente",
-                                                                        child: Text(
-                                                                            "Presente"),
-                                                                      ),
-                                                                      DropdownMenuItem(
-                                                                        value:
-                                                                            "Falta",
-                                                                        child: Text(
-                                                                            "Falta"),
-                                                                      ),
-                                                                      DropdownMenuItem(
-                                                                        value:
-                                                                            "Feriado",
-                                                                        child: Text(
-                                                                            "Feriado"),
-                                                                      ),
-                                                                    ],
-                                                                    onChanged:
-                                                                        (value) async {
-                                                                      setState(
-                                                                          () {
-                                                                        presencaMap[user.uid] ??=
-                                                                            {};
-                                                                        presencaMap[user.uid]![data] =
-                                                                            value!;
-                                                                      });
+                                                                        value: presencaMap[user.uid]
+                                                                            ?[
+                                                                            data],
+                                                                        items: const [
+                                                                          DropdownMenuItem(
+                                                                              value: "Presente",
+                                                                              child: Text("Presente")),
+                                                                          DropdownMenuItem(
+                                                                              value: "Falta",
+                                                                              child: Text("Falta")),
+                                                                          DropdownMenuItem(
+                                                                              value: "Feriado",
+                                                                              child: Text("Feriado")),
+                                                                        ],
+                                                                        onChanged:
+                                                                            (value) async {
+                                                                          setState(
+                                                                              () {
+                                                                            presencaMap[user.uid] ??=
+                                                                                {};
+                                                                            presencaMap[user.uid]![data] =
+                                                                                value!;
+                                                                          });
 
-                                                                      final service =
-                                                                          AttendenceListService();
-                                                                      final attendenceList =
-                                                                          await service
-                                                                              .getAttendenceList(
-                                                                        studentId:
-                                                                            user.uid,
-                                                                        teacherId: AuthUserService()
-                                                                            .currentUser!
-                                                                            .uid,
-                                                                        classId: widget
-                                                                            .classe
-                                                                            .uid,
-                                                                        subjectId: widget
-                                                                            .subject
-                                                                            .uid,
-                                                                      );
-
-                                                                      // Verifica se já existe presença para essa data específica
-                                                                      bool
-                                                                          found =
-                                                                          false;
-                                                                      for (final presence
-                                                                          in attendenceList) {
-                                                                        if (presence.dateClass ==
-                                                                            formattedDate) {
-                                                                          // Já existe: atualiza
-                                                                          await service
-                                                                              .updateAttendenceList(
-                                                                            uid:
-                                                                                presence.uid,
+                                                                          final service =
+                                                                              AttendenceListService();
+                                                                          final attendenceList =
+                                                                              await service.getAttendenceList(
                                                                             studentId:
                                                                                 user.uid,
                                                                             teacherId:
                                                                                 AuthUserService().currentUser!.uid,
-                                                                            subjectId:
-                                                                                widget.subject.uid,
                                                                             classId:
                                                                                 widget.classe.uid,
-                                                                            status:
-                                                                                value!,
+                                                                            subjectId:
+                                                                                widget.subject.uid,
                                                                           );
-                                                                          found =
-                                                                              true;
-                                                                          break;
-                                                                        }
-                                                                      }
 
-                                                                      // Se não encontrou, cria nova presença
-                                                                      if (!found) {
-                                                                        await service
-                                                                            .createAttendenceList(
-                                                                          studentId:
-                                                                              user.uid,
-                                                                          teacherId: AuthUserService()
-                                                                              .currentUser!
-                                                                              .uid,
-                                                                          subjectId: widget
-                                                                              .subject
-                                                                              .uid,
-                                                                          classId: widget
-                                                                              .classe
-                                                                              .uid,
-                                                                          status:
-                                                                              value!,
-                                                                          classDate:
-                                                                              formattedDate,
-                                                                          roleUser:
-                                                                              'teacher',
-                                                                        );
-                                                                      }
-                                                                    },
-                                                                    decoration:
-                                                                        const InputDecoration(
-                                                                      isDense:
-                                                                          true,
-                                                                      contentPadding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                              8,
-                                                                          vertical:
-                                                                              10),
-                                                                      border:
-                                                                          OutlineInputBorder(),
+                                                                          bool
+                                                                              found =
+                                                                              false;
+                                                                          for (final presence
+                                                                              in attendenceList) {
+                                                                            if (presence.dateClass ==
+                                                                                formattedDate) {
+                                                                              await service.updateAttendenceList(
+                                                                                uid: presence.uid,
+                                                                                studentId: user.uid,
+                                                                                teacherId: AuthUserService().currentUser!.uid,
+                                                                                subjectId: widget.subject.uid,
+                                                                                classId: widget.classe.uid,
+                                                                                status: value!,
+                                                                              );
+                                                                              found = true;
+                                                                              break;
+                                                                            }
+                                                                          }
+
+                                                                          if (!found) {
+                                                                            await service.createAttendenceList(
+                                                                              studentId: user.uid,
+                                                                              teacherId: AuthUserService().currentUser!.uid,
+                                                                              subjectId: widget.subject.uid,
+                                                                              classId: widget.classe.uid,
+                                                                              status: value!,
+                                                                              classDate: formattedDate,
+                                                                              roleUser: 'teacher',
+                                                                            );
+                                                                          }
+                                                                        },
+                                                                        decoration:
+                                                                            const InputDecoration(
+                                                                          isDense:
+                                                                              true,
+                                                                          contentPadding: EdgeInsets.symmetric(
+                                                                              horizontal: 8,
+                                                                              vertical: 10),
+                                                                          border:
+                                                                              OutlineInputBorder(),
+                                                                        ),
+                                                                      ),
                                                                     ),
-                                                                  ),
+                                                                  ],
                                                                 ),
-                                                              ],
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ],
+                                                              );
+                                                            },
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ),
+                                            );
+                                          }),
                                           leading: Container(
                                             height: 50,
                                             width: 50,

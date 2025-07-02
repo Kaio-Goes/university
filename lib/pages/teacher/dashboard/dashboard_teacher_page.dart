@@ -26,6 +26,10 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
   int currentPageClass = 1;
   int itemsPerPageClass = 5;
 
+  final ScrollController _scrollController = ScrollController();
+  bool _showLeftArrow = false;
+  bool _showRightArrow = false;
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +38,22 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
     searchController.addListener(() {
       filterClass();
     });
+
+    _scrollController.addListener(() {
+      final maxScroll = _scrollController.position.maxScrollExtent;
+      final offset = _scrollController.offset;
+      setState(() {
+        _showLeftArrow = offset > 0;
+        _showRightArrow = offset < maxScroll;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    searchController.dispose();
+    super.dispose();
   }
 
   Future _loadClass() async {
@@ -132,30 +152,89 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
                           "Não possuo matéria, peça ao secretário para adicionar sua matéria",
                           style: TextStyle(fontSize: 14),
                         )
-                      : LayoutBuilder(
-                          builder: (context, constraints) {
-                            bool isSmallScreen = constraints.maxWidth < 800;
-                            return isSmallScreen
-                                ? Column(
-                                    children: listSubject
-                                        .map((subject) => CardSubject(
-                                              subjectModule: subject,
-                                              classFirebase: listClass,
-                                            ))
-                                        .toList(),
-                                  )
-                                : Wrap(
-                                    spacing: 10.0,
-                                    runSpacing: 10.0,
-                                    alignment: WrapAlignment.center,
-                                    children: listSubject
-                                        .map((subject) => CardSubject(
-                                              subjectModule: subject,
-                                              classFirebase: listClass,
-                                            ))
-                                        .toList(),
-                                  );
-                          },
+                      : Stack(
+                          children: [
+                            SingleChildScrollView(
+                              controller: _scrollController,
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      bool isSmallScreen =
+                                          constraints.maxWidth < 800;
+                                      return isSmallScreen
+                                          ? Column(
+                                              children: listSubject
+                                                  .map((subject) => CardSubject(
+                                                        subjectModule: subject,
+                                                        classFirebase:
+                                                            listClass,
+                                                      ))
+                                                  .toList(),
+                                            )
+                                          : Wrap(
+                                              spacing: 10.0,
+                                              runSpacing: 10.0,
+                                              alignment: WrapAlignment.center,
+                                              children: listSubject
+                                                  .map((subject) => CardSubject(
+                                                        subjectModule: subject,
+                                                        classFirebase:
+                                                            listClass,
+                                                      ))
+                                                  .toList(),
+                                            );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (_showLeftArrow)
+                              Positioned(
+                                left: 0,
+                                top: 0,
+                                bottom: 0,
+                                child: Container(
+                                  width: 30,
+                                  alignment: Alignment.centerLeft,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                      colors: [
+                                        Colors.grey,
+                                        Colors.grey.withAlpha(40)
+                                      ],
+                                    ),
+                                  ),
+                                  child: const Icon(Icons.arrow_back_ios,
+                                      size: 25, color: Colors.white),
+                                ),
+                              ),
+                            if (_showRightArrow)
+                              Positioned(
+                                right: 0,
+                                top: 0,
+                                bottom: 0,
+                                child: Container(
+                                  width: 30,
+                                  alignment: Alignment.centerRight,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.centerRight,
+                                      end: Alignment.centerLeft,
+                                      colors: [
+                                        Colors.grey,
+                                        Colors.grey.withAlpha(40),
+                                      ],
+                                    ),
+                                  ),
+                                  child: const Icon(Icons.arrow_forward_ios,
+                                      size: 25, color: Colors.white),
+                                ),
+                              ),
+                          ],
                         ),
                   const SizedBox(height: 15),
                   ListClassTeacher(

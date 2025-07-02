@@ -39,7 +39,12 @@ class _ClassCreatePageState extends State<ClassCreatePage> {
   List<MultiSelectItem<UserFirebase>> buildStudents(
       List<UserFirebase> students) {
     return students
-        .map(((e) => MultiSelectItem<UserFirebase>(e, e.name.toString())))
+        .map(((e) => MultiSelectItem<UserFirebase>(
+              e,
+              '${e.name.toString()}\n'
+              'Unidade: ${e.unity}\n'
+              'Situação: ${e.isActive == true ? "Ativo" : "Desativado"}\n',
+            )))
         .toList();
   }
 

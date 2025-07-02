@@ -31,8 +31,8 @@ class CardSubject extends StatelessWidget {
         .toList();
 
     return SizedBox(
-      height: 160,
-      width: 350,
+      height: 200,
+      width: 380,
       child: Card(
         elevation: 3,
         shape: RoundedRectangleBorder(
@@ -58,8 +58,9 @@ class CardSubject extends StatelessWidget {
                   children: [
                     Text(
                       subjectModule.title,
+                      textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

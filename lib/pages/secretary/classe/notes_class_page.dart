@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:university/components/app_bar_user_component.dart';
@@ -50,6 +52,7 @@ class _NotesClassPageState extends State<NotesClassPage> {
           .getUsersByUids(uids: widget.classFirebase.students);
 
       setState(() {
+        log(users.length.toString());
         listUser = users..sort((a, b) => a.name.compareTo(b.name));
         isLoading = false;
       });

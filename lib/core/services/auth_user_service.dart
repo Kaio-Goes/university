@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:university/core/models/user_firebase.dart';
@@ -123,16 +125,33 @@ class AuthUserService {
     DatabaseReference usersRef = FirebaseDatabase.instance.ref().child('users');
     List<UserFirebase> usersList = [];
 
-    for (String uid in uids) {
-      DatabaseEvent event = await usersRef.child(uid).once();
-      DataSnapshot snapshot = event.snapshot;
+    await Future.forEach<String>(uids, (uid) async {
+      try {
+        log('Buscando UID: $uid');
+        DatabaseEvent event = await usersRef.child(uid).once().timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {
+            log('Timeout ao buscar UID: $uid');
+            return Future.error('Timeout');
+          },
+        );
+        DataSnapshot snapshot = event.snapshot;
+        log('AAA $uid => ${snapshot.value}');
 
-      if (snapshot.value != null) {
-        Map<String, dynamic> userData =
-            Map<String, dynamic>.from(snapshot.value as Map);
-        usersList.add(UserFirebase.fromJson(userData));
+        if (snapshot.value != null) {
+          Map<String, dynamic> userData =
+              Map<String, dynamic>.from(snapshot.value as Map);
+          UserFirebase user = UserFirebase.fromJson(userData);
+          usersList.add(user);
+          log('Usuário encontrado: ${user.name} ($uid)');
+        } else {
+          log('UID sem dados: $uid');
+        }
+      } catch (e) {
+        log('Erro ao buscar UID: $uid - $e');
       }
-    }
+    });
+
     return usersList;
   }
 }

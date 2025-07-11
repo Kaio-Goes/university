@@ -125,33 +125,41 @@ class AuthUserService {
     DatabaseReference usersRef = FirebaseDatabase.instance.ref().child('users');
     List<UserFirebase> usersList = [];
 
-    await Future.forEach<String>(uids, (uid) async {
-      try {
-        log('Buscando UID: $uid');
-        DatabaseEvent event = await usersRef.child(uid).once().timeout(
-          const Duration(seconds: 5),
-          onTimeout: () {
-            log('Timeout ao buscar UID: $uid');
-            return Future.error('Timeout');
-          },
-        );
-        DataSnapshot snapshot = event.snapshot;
-        log('AAA $uid => ${snapshot.value}');
+    log('Uids === $uids eeeee ${uids.length}');
 
+    // 1. Cria uma lista de Futures, um para cada busca de UID
+    final List<Future<DataSnapshot>> futures = uids.map((uid) {
+      return usersRef.child(uid).once().then((event) => event.snapshot);
+    }).toList();
+
+    try {
+      // 2. Espera todas as buscas terminarem em paralelo
+      final List<DataSnapshot> snapshots = await Future.wait(futures).timeout(
+        const Duration(seconds: 20), // Timeout para o conjunto de buscas
+      );
+
+      // 3. Itera sobre os resultados já obtidos
+      for (var snapshot in snapshots) {
         if (snapshot.value != null) {
-          Map<String, dynamic> userData =
-              Map<String, dynamic>.from(snapshot.value as Map);
-          UserFirebase user = UserFirebase.fromJson(userData);
-          usersList.add(user);
-          log('Usuário encontrado: ${user.name} ($uid)');
+          try {
+            Map<String, dynamic> userData =
+                Map<String, dynamic>.from(snapshot.value as Map);
+            UserFirebase user = UserFirebase.fromJson(userData);
+            usersList.add(user);
+            log('Usuário processado: ${user.name} (${snapshot.key})');
+          } catch (e) {
+            log('Erro ao processar dados para o UID: ${snapshot.key} - $e');
+          }
         } else {
-          log('UID sem dados: $uid');
+          log('UID sem dados: ${snapshot.key}');
         }
-      } catch (e) {
-        log('Erro ao buscar UID: $uid - $e');
       }
-    });
+    } catch (e) {
+      log('Erro ao buscar múltiplos UIDs: $e');
+      // Você pode decidir como tratar o erro geral (ex: retornar lista vazia ou lançar o erro)
+    }
 
+    log('${usersList.length}');
     return usersList;
   }
 }

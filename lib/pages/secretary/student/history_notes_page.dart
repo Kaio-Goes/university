@@ -9,6 +9,7 @@ import 'package:university/core/models/user_firebase.dart';
 import 'package:university/core/models/user_note.dart';
 import 'package:university/core/services/auth_user_service.dart';
 import 'package:university/core/services/class_service.dart';
+import 'package:university/core/services/generate_excel_service.dart';
 import 'package:university/core/services/note_service.dart';
 import 'package:university/core/services/subject_service.dart';
 import 'package:university/core/services/user_note_service.dart';
@@ -91,10 +92,11 @@ class _HistoryNotesPageState extends State<HistoryNotesPage> {
     }
   }
 
-  _loadNotes(
-      {required String subjectId,
-      required String teacherId,
-      required String classId}) async {
+  _loadNotes({
+    required String subjectId,
+    required String teacherId,
+    required String classId,
+  }) async {
     try {
       var notes = await NoteService().getListNotesByClass(
         userId: teacherId,
@@ -164,6 +166,65 @@ class _HistoryNotesPageState extends State<HistoryNotesPage> {
                         ),
                       ),
                       const SizedBox(height: 5),
+                      const Text("Boletim do Aluno"),
+                      const SizedBox(height: 10),
+                      isLoadingUserNote
+                          ? const Center(child: CircularProgressIndicator())
+                          : listClass.isEmpty
+                              ? const Center(
+                                  child: Text("Nenhuma Matéria adicionada"),
+                                )
+                              : SizedBox(
+                                  height: listClass.length * 30,
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: listClass.length,
+                                    itemBuilder: (context, index) {
+                                      final classe = listClass[index];
+
+                                      return Wrap(
+                                        spacing: 12,
+                                        runSpacing: 12,
+                                        children: [
+                                          ElevatedButton.icon(
+                                            onPressed: () {
+                                              setState(
+                                                () => isLoadingUserNote = true,
+                                              );
+
+                                              generateExcelBoletim(
+                                                user: widget.user,
+                                                listSubject: listSubject,
+                                                listUserNote: listUserNote,
+                                                listNotes: listNotes,
+                                              );
+
+                                              setState(
+                                                () => isLoadingUserNote = false,
+                                              );
+                                            },
+                                            iconAlignment: IconAlignment.end,
+                                            label: Text(
+                                              classe.name,
+                                              style: const TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                            icon: const Icon(
+                                              Icons.description_outlined,
+                                              color: Colors.white,
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color.fromARGB(
+                                                      255, 69, 106, 185),
+                                            ),
+                                          )
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ),
+                      const SizedBox(height: 20),
                       const Text("Histórico de notas do Aluno"),
                       const SizedBox(height: 20),
                       isLoading

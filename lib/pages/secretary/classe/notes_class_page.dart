@@ -341,9 +341,9 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                                 const Text(
                                                   "Matérias:",
                                                   style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w700),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
                                                 ),
                                                 const SizedBox(height: 5),
                                                 ...listSubject.map((subject) {

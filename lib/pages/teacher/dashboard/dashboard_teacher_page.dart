@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:university/components/app_bar_user_component.dart';
 import 'package:university/components/card_subject.dart';
@@ -70,6 +72,7 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
 
       setState(() {
         listSubject = subjects;
+        log('aaaaaaaa ${listSubject.length}');
         listClass = classList;
         filteredClass = listClass;
       });
@@ -147,7 +150,7 @@ class _DashboardTeacherPageState extends State<DashboardTeacherPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  listClass.isEmpty
+                  listSubject.isEmpty
                       ? const Text(
                           "Não possuo matéria, peça ao secretário para adicionar sua matéria",
                           style: TextStyle(fontSize: 14),

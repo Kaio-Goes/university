@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:university/components/create_note_card.dart';
+import 'package:university/components/create_note_card.dart'; // Certifique-se de que sucessUserNoteCreate está aqui
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/class_firebase.dart';
@@ -12,13 +12,17 @@ import 'package:university/core/services/auth_user_service.dart';
 import 'package:university/core/services/user_note_service.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 
-addNotesCard({
+// Definindo um typedef para o callback onSave
+typedef OnSaveCallback = Future<void> Function();
+
+Future<void> addNotesCard({
   required BuildContext context,
   required UserFirebase user,
   required ClassFirebase classe,
   required SubjectModule subject,
   required List<Note> listNotes,
   required List<UserNote> listUserNotes,
+  required OnSaveCallback onSave, // <-- NOVO PARÂMETRO AQUI
 }) async {
   Map<String, String> userNotesMap = {
     for (var userNote in listUserNotes)
@@ -38,10 +42,12 @@ addNotesCard({
 
   return showDialog(
     context: context,
-    builder: (context) {
+    builder: (dialogContext) {
+      // Usar dialogContext para evitar conflito com o context externo
       return SingleChildScrollView(
         child: StatefulBuilder(
-          builder: (context, setState) {
+          builder: (stfContext, setState) {
+            // Usar stfContext para o builder do StatefulBuilder
             return AlertDialog(
               titlePadding: const EdgeInsets.all(20),
               actionsPadding: const EdgeInsets.all(10),
@@ -51,7 +57,7 @@ addNotesCard({
                   const Text("Adicionar Notas"),
                   IconButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(stfContext).pop(); // Usar stfContext
                     },
                     icon: const Icon(Icons.close),
                   )
@@ -104,7 +110,7 @@ addNotesCard({
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(stfContext); // Usar stfContext
                   },
                   style: ElevatedButton.styleFrom(
                       elevation: 5,
@@ -127,53 +133,51 @@ addNotesCard({
                         userNote.noteId: userNote.uid
                     };
 
+                    bool allSavedSuccessfully =
+                        true; // Flag para controlar o sucesso de todas as operações
+
                     for (int i = 0; i < listNotes.length; i++) {
                       String noteId = listNotes[i].uid;
-                      String? userNoteUid = userNotesUidMap[
-                          noteId]; // Pegando o uid da UserNote se existir
+                      String? userNoteUid = userNotesUidMap[noteId];
 
                       try {
                         if (userNoteUid == null) {
-                          await UserNoteService()
-                              .createUserNote(
+                          await UserNoteService().createUserNote(
                             note: controllers[i].text,
                             classId: classe.uid,
                             studentId: user.uid,
                             teacherId: AuthUserService().currentUser!.uid,
                             noteId: noteId,
                             subjectId: subject.uid,
-                          )
-                              .then(
-                            (_) {
-                              sucessUserNoteCreate(
-                                // ignore: use_build_context_synchronously
-                                context: context,
-                                classe: classe,
-                                subject: subject,
-                              );
-                            },
                           );
                         } else {
-                          await UserNoteService()
-                              .updateUserNote(
+                          await UserNoteService().updateUserNote(
                             uid: userNoteUid,
                             newNote: controllers[i].text,
                             teacherId: AuthUserService().currentUser!.uid,
-                          )
-                              .then(
-                            (_) {
-                              sucessUserNoteCreate(
-                                // ignore: use_build_context_synchronously
-                                context: context,
-                                classe: classe,
-                                subject: subject,
-                              );
-                            },
                           );
                         }
                       } catch (e) {
-                        Exception("Erro create UserNoteService $e");
+                        allSavedSuccessfully =
+                            false; // Marcar como falso se houver erro
+                        print("Erro ao criar/atualizar UserNoteService: $e");
+                        ScaffoldMessenger.of(stfContext).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  'Erro ao salvar nota para ${listNotes[i].title}.')),
+                        );
                       }
+                    }
+
+                    if (allSavedSuccessfully) {
+                      await onSave(); // <--- CHAMA O CALLBACK onSave APÓS TODAS AS OPERAÇÕES CONCLUÍDAS COM SUCESSO
+                      // ignore: use_build_context_synchronously
+                      Navigator.of(stfContext).pop(); // Fechar o diálogo
+                      // ignore: use_build_context_synchronously
+                      sucessUserNoteCreate(
+                          context: stfContext,
+                          classe: classe,
+                          subject: subject); // Exibir feedback de sucesso
                     }
                   },
                   style: ElevatedButton.styleFrom(

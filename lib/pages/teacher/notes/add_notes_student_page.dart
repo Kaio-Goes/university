@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:university/components/add_notes_card.dart';
 import 'package:university/components/app_bar_user_component.dart';
-import 'package:university/components/footer.dart';
 import 'package:university/core/models/attendence_list.dart';
 import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/note.dart';

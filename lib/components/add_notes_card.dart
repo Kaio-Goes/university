@@ -1,6 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:university/components/create_note_card.dart'; // Certifique-se de que sucessUserNoteCreate está aqui
+import 'package:university/components/create_note_card.dart';
 import 'package:university/components/text_fields.dart';
 import 'package:university/components/validation/validation.dart';
 import 'package:university/core/models/class_firebase.dart';
@@ -12,7 +14,6 @@ import 'package:university/core/services/auth_user_service.dart';
 import 'package:university/core/services/user_note_service.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 
-// Definindo um typedef para o callback onSave
 typedef OnSaveCallback = Future<void> Function();
 
 Future<void> addNotesCard({
@@ -22,32 +23,82 @@ Future<void> addNotesCard({
   required SubjectModule subject,
   required List<Note> listNotes,
   required List<UserNote> listUserNotes,
-  required OnSaveCallback onSave, // <-- NOVO PARÂMETRO AQUI
+  required OnSaveCallback onSave,
 }) async {
   Map<String, String> userNotesMap = {
     for (var userNote in listUserNotes)
       userNote.noteId: userNote.value.replaceAll(".", ",")
   };
 
-  // Criando controladores e preenchendo caso haja notas salvas
   List<TextEditingController> controllers = List.generate(
     listNotes.length,
     (index) => TextEditingController(
-      text:
-          userNotesMap[listNotes[index].uid] ?? '', // Define o valor se existir
+      text: userNotesMap[listNotes[index].uid] ?? '',
     ),
   );
 
   final formKey = GlobalKey<FormState>();
 
+  // Armazenar os valores iniciais para comparação de mudanças
+  final Map<String, String> initialValues = {};
+  for (int i = 0; i < listNotes.length; i++) {
+    initialValues[listNotes[i].uid] = controllers[i].text;
+  }
+
   return showDialog(
     context: context,
+    // Use barrierDismissible: false para evitar que o diálogo seja fechado por um toque fora dele,
+    // garantindo que você tenha controle total sobre o fechamento.
+    barrierDismissible: false,
     builder: (dialogContext) {
-      // Usar dialogContext para evitar conflito com o context externo
       return SingleChildScrollView(
         child: StatefulBuilder(
           builder: (stfContext, setState) {
-            // Usar stfContext para o builder do StatefulBuilder
+            final ValueNotifier<bool> isSaveButtonEnabled =
+                ValueNotifier(false);
+
+            // Função para verificar se houve alguma alteração nos inputs
+            void checkChanges() {
+              bool hasChanged = false;
+              for (int i = 0; i < listNotes.length; i++) {
+                if (initialValues[listNotes[i].uid] != controllers[i].text) {
+                  hasChanged = true;
+                  break;
+                }
+              }
+              isSaveButtonEnabled.value = hasChanged;
+            }
+
+            // Adicionar listeners aos controladores para detectar mudanças
+            // Certifique-se de que os listeners sejam adicionados apenas uma vez
+            // e removidos quando os controllers não forem mais necessários.
+            // Isso é feito no dispose do State, mas como estamos em um showDialog
+            // e o controller é criado aqui, a remoção precisa ser manual
+            // ao fechar o diálogo.
+            for (var controller in controllers) {
+              // Only add listener if it hasn't been added yet (to prevent multiple listeners)
+              // This check is a bit complex for TextEditingController directly.
+              // A simpler approach for a dialog is to ensure cleanup on dialog close.
+              controller.addListener(checkChanges);
+            }
+
+            // Inicializar o estado do botão (pode ser desabilitado inicialmente)
+            // Use addPostFrameCallback para garantir que os widgets foram renderizados
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              checkChanges();
+            });
+
+            // Adicione um DisposableListener para garantir a limpeza quando o diálogo for fechado
+            // Esta é uma prática recomendada para recursos criados em um StatefulBuilder
+            // dentro de um showDialog.
+            void disposeResources() {
+              for (var controller in controllers) {
+                controller.removeListener(checkChanges);
+                controller.dispose();
+              }
+              isSaveButtonEnabled.dispose();
+            }
+
             return AlertDialog(
               titlePadding: const EdgeInsets.all(20),
               actionsPadding: const EdgeInsets.all(10),
@@ -57,7 +108,8 @@ Future<void> addNotesCard({
                   const Text("Adicionar Notas"),
                   IconButton(
                     onPressed: () {
-                      Navigator.of(stfContext).pop(); // Usar stfContext
+                      disposeResources(); // Limpa recursos antes de fechar
+                      Navigator.of(stfContext).pop();
                     },
                     icon: const Icon(Icons.close),
                   )
@@ -110,7 +162,8 @@ Future<void> addNotesCard({
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(stfContext); // Usar stfContext
+                    disposeResources(); // Limpa recursos antes de fechar
+                    Navigator.pop(stfContext);
                   },
                   style: ElevatedButton.styleFrom(
                       elevation: 5,
@@ -121,73 +174,102 @@ Future<void> addNotesCard({
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-                TextButton(
-                  onPressed: () async {
-                    bool formOk = formKey.currentState!.validate();
+                ValueListenableBuilder<bool>(
+                  valueListenable: isSaveButtonEnabled,
+                  builder: (context, isEnabled, child) {
+                    return TextButton(
+                      onPressed: isEnabled
+                          ? () async {
+                              bool formOk = formKey.currentState!.validate();
 
-                    if (!formOk) {
-                      return;
-                    }
-                    Map<String, String> userNotesUidMap = {
-                      for (var userNote in listUserNotes)
-                        userNote.noteId: userNote.uid
-                    };
+                              if (!formOk) {
+                                return;
+                              }
 
-                    bool allSavedSuccessfully =
-                        true; // Flag para controlar o sucesso de todas as operações
+                              // Desabilitar o botão imediatamente após o clique
+                              isSaveButtonEnabled.value = false;
 
-                    for (int i = 0; i < listNotes.length; i++) {
-                      String noteId = listNotes[i].uid;
-                      String? userNoteUid = userNotesUidMap[noteId];
+                              Map<String, String> userNotesUidMap = {
+                                for (var userNote in listUserNotes)
+                                  userNote.noteId: userNote.uid
+                              };
 
-                      try {
-                        if (userNoteUid == null) {
-                          await UserNoteService().createUserNote(
-                            note: controllers[i].text,
-                            classId: classe.uid,
-                            studentId: user.uid,
-                            teacherId: AuthUserService().currentUser!.uid,
-                            noteId: noteId,
-                            subjectId: subject.uid,
-                          );
-                        } else {
-                          await UserNoteService().updateUserNote(
-                            uid: userNoteUid,
-                            newNote: controllers[i].text,
-                            teacherId: AuthUserService().currentUser!.uid,
-                          );
-                        }
-                      } catch (e) {
-                        allSavedSuccessfully =
-                            false; // Marcar como falso se houver erro
-                        print("Erro ao criar/atualizar UserNoteService: $e");
-                        ScaffoldMessenger.of(stfContext).showSnackBar(
-                          SnackBar(
-                              content: Text(
-                                  'Erro ao salvar nota para ${listNotes[i].title}.')),
-                        );
-                      }
-                    }
+                              bool allSavedSuccessfully = true;
 
-                    if (allSavedSuccessfully) {
-                      await onSave(); // <--- CHAMA O CALLBACK onSave APÓS TODAS AS OPERAÇÕES CONCLUÍDAS COM SUCESSO
-                      // ignore: use_build_context_synchronously
-                      Navigator.of(stfContext).pop(); // Fechar o diálogo
-                      // ignore: use_build_context_synchronously
-                      sucessUserNoteCreate(
-                          context: stfContext,
-                          classe: classe,
-                          subject: subject); // Exibir feedback de sucesso
-                    }
+                              for (int i = 0; i < listNotes.length; i++) {
+                                String noteId = listNotes[i].uid;
+                                String? userNoteUid = userNotesUidMap[noteId];
+
+                                try {
+                                  if (userNoteUid == null) {
+                                    await UserNoteService().createUserNote(
+                                      note: controllers[i].text,
+                                      classId: classe.uid,
+                                      studentId: user.uid,
+                                      teacherId:
+                                          AuthUserService().currentUser!.uid,
+                                      noteId: noteId,
+                                      subjectId: subject.uid,
+                                    );
+                                  } else {
+                                    await UserNoteService().updateUserNote(
+                                      uid: userNoteUid,
+                                      newNote: controllers[i].text,
+                                      teacherId:
+                                          AuthUserService().currentUser!.uid,
+                                    );
+                                  }
+                                } catch (e) {
+                                  allSavedSuccessfully = false;
+                                  log("Erro ao criar/atualizar UserNoteService: $e");
+                                  // ignore: use_build_context_synchronously
+                                  ScaffoldMessenger.of(stfContext).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Erro ao salvar nota para ${listNotes[i].title}.')),
+                                  );
+                                  // Em caso de erro, reabilitar o botão se quiser que o usuário tente novamente
+                                  isSaveButtonEnabled.value = true;
+                                  break; // Interrompe o loop em caso de erro
+                                }
+                              }
+
+                              if (allSavedSuccessfully) {
+                                await onSave();
+                                // Atualizar os valores iniciais após salvar com sucesso
+                                for (int i = 0; i < listNotes.length; i++) {
+                                  initialValues[listNotes[i].uid] =
+                                      controllers[i].text;
+                                }
+                                // O botão permanece desabilitado se não houver mais alterações
+                                checkChanges();
+
+                                // Fechar o diálogo SOMENTE após todas as operações e feedback
+                                // e apenas UMA VEZ.
+                                disposeResources(); // Limpa recursos antes de fechar
+                                // ignore: use_build_context_synchronously
+                                Navigator.of(stfContext).pop();
+
+                                // ignore: use_build_context_synchronously
+                                sucessUserNoteCreate(
+                                    // ignore: use_build_context_synchronously
+                                    context: stfContext,
+                                    classe: classe,
+                                    subject: subject);
+                              }
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                          elevation: 5,
+                          backgroundColor:
+                              isEnabled ? colorPrimaty : Colors.grey,
+                          padding: const EdgeInsets.symmetric(horizontal: 45)),
+                      child: const Text(
+                        'Salvar',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
                   },
-                  style: ElevatedButton.styleFrom(
-                      elevation: 5,
-                      backgroundColor: colorPrimaty,
-                      padding: const EdgeInsets.symmetric(horizontal: 45)),
-                  child: const Text(
-                    'Salvar',
-                    style: TextStyle(color: Colors.white),
-                  ),
                 ),
               ],
             );

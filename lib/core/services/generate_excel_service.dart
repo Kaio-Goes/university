@@ -123,14 +123,20 @@ Future<void> generateExcel({
     ..backColor = '#C6EFCE' // verde claro
     ..fontColor = '#006100'; // verde escuro
 
+  // --- ALTERAÇÃO AQUI ---
+  // Filtra listNotes para incluir apenas as notas que pertencem ao subject atual
+  final List<Note> filteredNotes =
+      listNotes?.where((note) => note.subjectId == subject?.uid).toList() ?? [];
+
   final headers = [
     'Nº',
     'MATRÍCULA',
     'NOME',
     ...datasFiltradas.map((d) => dateHeaderFormat.format(d)),
-    ...?listNotes?.map((note) => note.title),
+    ...filteredNotes.map((note) => note.title), // Usa as notas filtradas aqui
     'NOTA FINAL'
   ];
+  // --- FIM DA ALTERAÇÃO ---
 
 // Ajuste de largura das colunas principais
   sheet.getRangeByName('A1').columnWidth = 5;
@@ -138,8 +144,8 @@ Future<void> generateExcel({
   sheet.getRangeByName('C1').columnWidth = 30;
 
   // Aqui entra o novo ajuste
-  if (listNotes != null) {
-    for (int i = 0; i < listNotes.length; i++) {
+  if (filteredNotes.isNotEmpty) {
+    for (int i = 0; i < filteredNotes.length; i++) {
       final colIndex = 4 + datasFiltradas.length + i;
       sheet.getRangeByIndex(1, colIndex).columnWidth = 13;
     }
@@ -186,7 +192,11 @@ Future<void> generateExcel({
     final user = users[i];
     final row = headersRowIndex + i + 1;
 
-    final lastCol = 3 + datasFiltradas.length + (listNotes?.length ?? 0) + 1;
+    // --- ALTERAÇÃO AQUI ---
+    // A variável notaFinalCol deve usar filteredNotes.length
+    final lastCol = 3 + datasFiltradas.length + filteredNotes.length + 1;
+    // --- FIM DA ALTERAÇÃO ---
+
     for (int col = 1; col <= lastCol; col++) {
       final cell = sheet.getRangeByIndex(row, col);
       cell.cellStyle.borders.left.lineStyle = xlsio.LineStyle.thin;
@@ -215,8 +225,11 @@ Future<void> generateExcel({
       sheet.getRangeByIndex(row, col).setText(status);
     }
 
+    // --- ALTERAÇÃO AQUI ---
+    // Use filteredNotes.length para o cálculo das colunas de nota
     int notaStartCol = 4 + datasFiltradas.length;
-    int notaFinalCol = notaStartCol + (listNotes?.length ?? 0);
+    int notaFinalCol = notaStartCol + filteredNotes.length;
+    // --- FIM DA ALTERAÇÃO ---
 
 // Mapa para armazenar as notas do aluno atual (usando o título da nota como chave)
     Map<String, double> notasDoAluno = {};
@@ -227,8 +240,11 @@ Future<void> generateExcel({
 
       if (userNote.userId == user.uid && userNote.subjectId == subject?.uid) {
         // Procurar o note correspondente sem usar firstWhere
-        for (var j = 0; j < (listNotes?.length ?? 0); j++) {
-          final note = listNotes![j];
+        // --- ALTERAÇÃO AQUI ---
+        // Itera sobre as notas FILTRADAS para encontrar a correspondência
+        for (var j = 0; j < filteredNotes.length; j++) {
+          final note = filteredNotes[j];
+          // --- FIM DA ALTERAÇÃO ---
 
           if (note.uid == userNote.noteId) {
             notasDoAluno[note.title] = double.parse(userNote.value);
@@ -240,8 +256,11 @@ Future<void> generateExcel({
     const numberFormat = '#,##0.00';
 
 // Agora vamos preencher as colunas de nota
-    for (var n = 0; n < (listNotes?.length ?? 0); n++) {
-      final note = listNotes![n];
+    // --- ALTERAÇÃO AQUI ---
+    // Itera sobre as notas FILTRADAS para preencher as colunas
+    for (var n = 0; n < filteredNotes.length; n++) {
+      final note = filteredNotes[n];
+      // --- FIM DA ALTERAÇÃO ---
       final col = notaStartCol + n;
 
       if (notasDoAluno.containsKey(note.title)) {

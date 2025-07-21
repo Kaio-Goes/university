@@ -202,9 +202,6 @@ sucessUserNoteCreate({
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => AddNotesStudentPage(

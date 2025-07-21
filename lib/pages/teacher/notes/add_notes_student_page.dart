@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:university/components/add_notes_card.dart';
@@ -83,7 +85,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage>
       // Calcular datas das aulas uma única vez
       datasAulas = _getDatesByWeekdays();
     } catch (e) {
-      print("Erro ao carregar dados iniciais: $e");
+      log("Erro ao carregar dados iniciais: $e");
       // Opcional: mostrar um diálogo ou snackbar de erro
     } finally {
       setState(() {
@@ -186,7 +188,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage>
         }
       });
     } catch (e) {
-      print("Erro ao carregar notas do usuário: $e");
+      log("Erro ao carregar notas do usuário: $e");
     }
   }
 
@@ -287,7 +289,8 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage>
                             );
                           }
                         } catch (e) {
-                          print("Erro ao salvar presença: $e");
+                          log("Erro ao salvar presença: $e");
+                          // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content: Text(

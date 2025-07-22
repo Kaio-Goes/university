@@ -153,22 +153,22 @@ class _ListClassState extends State<ListClass> {
                                           ],
                                         ),
                                       ),
-                                      const PopupMenuItem<String>(
-                                        value: 'delete',
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'Excluir',
-                                              style:
-                                                  TextStyle(color: Colors.red),
-                                            ),
-                                            Icon(Icons.delete,
-                                                size: 16, color: Colors.red)
-                                          ],
-                                        ),
-                                      ),
+                                      // const PopupMenuItem<String>(
+                                      //   value: 'delete',
+                                      //   child: Row(
+                                      //     mainAxisAlignment:
+                                      //         MainAxisAlignment.spaceBetween,
+                                      //     children: [
+                                      //       Text(
+                                      //         'Excluir',
+                                      //         style:
+                                      //             TextStyle(color: Colors.red),
+                                      //       ),
+                                      //       Icon(Icons.delete,
+                                      //           size: 16, color: Colors.red)
+                                      //     ],
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ],
@@ -331,21 +331,21 @@ class _ListClassState extends State<ListClass> {
                                         ],
                                       ),
                                     ),
-                                    const PopupMenuItem<String>(
-                                      value: 'delete',
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Excluir',
-                                            style: TextStyle(color: Colors.red),
-                                          ),
-                                          Icon(Icons.delete,
-                                              size: 16, color: Colors.red)
-                                        ],
-                                      ),
-                                    ),
+                                    // const PopupMenuItem<String>(
+                                    //   value: 'delete',
+                                    //   child: Row(
+                                    //     mainAxisAlignment:
+                                    //         MainAxisAlignment.spaceBetween,
+                                    //     children: [
+                                    //       Text(
+                                    //         'Excluir',
+                                    //         style: TextStyle(color: Colors.red),
+                                    //       ),
+                                    //       Icon(Icons.delete,
+                                    //           size: 16, color: Colors.red)
+                                    //     ],
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                               )

@@ -15,6 +15,7 @@ import 'package:university/core/services/generate_excel_service.dart';
 import 'package:university/core/services/note_service.dart';
 import 'package:university/core/services/subject_service.dart';
 import 'package:university/core/services/user_note_service.dart';
+import 'package:university/pages/secretary/student/student_create_page.dart';
 
 class NotesClassPage extends StatefulWidget {
   final ClassFirebase classFirebase;
@@ -26,41 +27,68 @@ class NotesClassPage extends StatefulWidget {
 
 class _NotesClassPageState extends State<NotesClassPage> {
   List<UserFirebase> listUser = [];
+  List<UserFirebase> filteredListUser =
+      []; // Nova lista para usuários filtrados
   List<UserFirebase> listTeacher = [];
   List<Note> listNotes = [];
   List<UserNote> listUserNote = [];
   List<SubjectModule> listSubject = [];
-  Map<String, UserFirebase> teachersMap =
-      {}; // Para busca rápida de professores
+  Map<String, UserFirebase> teachersMap = {};
   Map<String, Map<DateTime, String>> presencaMap = {};
-  bool isLoadingData = true; // Unificado para todas as cargas iniciais
-  bool isGeneratingExcel = false; // Novo estado para geração de excel
+  bool isLoadingData = true;
+  bool isGeneratingExcel = false;
+
+  final TextEditingController _searchController =
+      TextEditingController(); // Controlador para o campo de pesquisa
 
   @override
   void initState() {
     super.initState();
-    _loadAllData(); // Chamada única para carregar tudo em paralelo
+    _loadAllData();
+    _searchController
+        .addListener(_filterUsers); // Adiciona listener para filtrar ao digitar
   }
 
-  // Carrega todos os dados iniciais em paralelo
+  @override
+  void dispose() {
+    _searchController.dispose(); // Libera o controlador
+    super.dispose();
+  }
+
+  // Função para filtrar a lista de usuários
+  void _filterUsers() {
+    setState(() {
+      if (_searchController.text.isEmpty) {
+        filteredListUser =
+            listUser; // Se a pesquisa estiver vazia, mostra todos
+      } else {
+        filteredListUser = listUser
+            .where((user) => user.name
+                .toLowerCase()
+                .contains(_searchController.text.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
   _loadAllData() async {
     try {
       await Future.wait([
         _loadUserInClass(),
-        _loadTeachers(), // Carrega professores em paralelo
-        _loadSubjectsAndNotes(), // Carrega matérias e suas notas
+        _loadTeachers(),
+        _loadSubjectsAndNotes(),
         _loadUserNotes(),
       ]);
 
       setState(() {
         isLoadingData = false;
+        _filterUsers(); // Filtra a lista inicial assim que os dados são carregados
       });
     } catch (e) {
       log("Erro ao carregar todos os dados: $e");
       setState(() {
         isLoadingData = false;
       });
-      // Poderia exibir um erro ao usuário aqui
     }
   }
 
@@ -70,19 +98,19 @@ class _NotesClassPageState extends State<NotesClassPage> {
           .getUsersByUids(uids: widget.classFirebase.students);
       setState(() {
         listUser = users..sort((a, b) => a.name.compareTo(b.name));
+        filteredListUser =
+            listUser; // Inicializa a lista filtrada com todos os usuários
       });
     } catch (e) {
       log("Erro ao carregar alunos na turma: $e");
     }
   }
 
-  // Carrega as matérias e, em seguida, as notas para cada matéria
   Future<void> _loadSubjectsAndNotes() async {
     try {
       var subjects = await SubjectService()
           .getSubjectsByUids(uids: widget.classFirebase.subject);
 
-      // Carrega notas para todas as matérias em paralelo
       List<Future<void>> noteLoadFutures = [];
       for (var subject in subjects) {
         noteLoadFutures
@@ -107,7 +135,6 @@ class _NotesClassPageState extends State<NotesClassPage> {
       var activeTeachers =
           fetchedTeachers.where((teacher) => teacher.isActive).toList();
 
-      // Otimização: Criar um mapa de professores para busca O(1)
       teachersMap = {for (var t in activeTeachers) t.uid: t};
 
       setState(() {
@@ -141,10 +168,6 @@ class _NotesClassPageState extends State<NotesClassPage> {
         subjectId: subjectId,
       );
 
-      // Adiciona notas de forma segura, evitando duplicatas e garantindo que o setState não seja chamado em excesso.
-      // A atualização do estado é feita uma única vez após o carregamento de todas as notas em _loadSubjectsAndNotes.
-      // Se _loadNotes for chamado individualmente em outro contexto, o setState seria necessário aqui.
-      // Como estamos agrupando, podemos apenas adicionar à lista.
       listNotes.addAll(notes.where((newNote) =>
           !listNotes.any((existingNote) => existingNote.uid == newNote.uid)));
     } catch (e) {
@@ -155,7 +178,6 @@ class _NotesClassPageState extends State<NotesClassPage> {
   Future<void> _loadPresence(
       {required String subjectId, required String teacherId}) async {
     final service = AttendenceListService();
-    // Limpa o mapa de presença para evitar dados de matérias anteriores
     presencaMap = {};
 
     List<Future<void>> presenceFutures = [];
@@ -175,10 +197,10 @@ class _NotesClassPageState extends State<NotesClassPage> {
           presencaMap[aluno.uid] ??= {};
           presencaMap[aluno.uid]![parsedDate] = presence.status;
         }
-      }()); // Imediatamente invoca a função assíncrona
+      }());
     }
     await Future.wait(presenceFutures);
-    setState(() {}); // Atualiza a UI após todas as presenças serem carregadas
+    setState(() {});
   }
 
   double _calculateTotalScoreBySubject(String userId, String subjectId) {
@@ -222,13 +244,12 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                   child: Text("Nenhuma Matéria adicionada"),
                                 )
                               : SizedBox(
-                                  height: listSubject.length * 5,
+                                  height: 50,
                                   child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
                                     itemCount: listSubject.length,
                                     itemBuilder: (context, index) {
                                       final subject = listSubject[index];
-                                      // Usa o mapa para busca O(1)
                                       var teacher = teachersMap[subject.userId];
 
                                       return Padding(
@@ -260,7 +281,6 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                             : ElevatedButton.icon(
                                                 onPressed: () async {
                                                   if (teacher == null) {
-                                                    // Tratar caso o professor não seja encontrado
                                                     log("Professor não encontrado para a matéria ${subject.title}");
                                                     return;
                                                   }
@@ -318,156 +338,264 @@ class _NotesClassPageState extends State<NotesClassPage> {
                       const SizedBox(height: 5),
                       const Text("Visualize as notas dos Alunos"),
                       const SizedBox(height: 20),
+                      // Campo de pesquisa
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20.0),
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            labelText: 'Pesquisar Aluno',
+                            hintText: 'Digite o nome do aluno',
+                            prefixIcon: const Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            suffixIcon: _searchController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      _filterUsers(); // Limpa a pesquisa e mostra todos os usuários
+                                    },
+                                  )
+                                : null,
+                          ),
+                        ),
+                      ),
                       isLoadingData
                           ? const Center(
                               child: CircularProgressIndicator(),
                             )
-                          : listUser.isEmpty
-                              ? const Center(
-                                  child: Text("Nenhum aluno encontrado."),
+                          : filteredListUser.isEmpty // Usa filteredListUser
+                              ? Center(
+                                  child: Text(_searchController.text.isEmpty
+                                      ? "Nenhum aluno encontrado."
+                                      : "Nenhum aluno encontrado com o nome '${_searchController.text}'."),
                                 )
                               : ListView.builder(
-                                  shrinkWrap:
-                                      true, // Importante para evitar erros de altura
-                                  physics:
-                                      const NeverScrollableScrollPhysics(), // Desabilita o scroll interno
-                                  itemCount: listUser.length,
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: filteredListUser
+                                      .length, // Usa filteredListUser
                                   itemBuilder: (context, index) {
-                                    final user = listUser[index];
+                                    final user = filteredListUser[
+                                        index]; // Usa filteredListUser
 
                                     return Card.outlined(
-                                      child: ListTile(
-                                        contentPadding:
-                                            const EdgeInsets.all(16),
-                                        hoverColor: Colors.grey[200],
-                                        title: Text(
-                                          user.name,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          style: const TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w800),
+                                      color: const Color.fromARGB(
+                                          255, 237, 248, 248),
+                                      shape: RoundedRectangleBorder(
+                                        side: const BorderSide(
+                                          color: Color.fromARGB(255, 160, 207,
+                                              229), // cor da borda
+                                          width: 1, // espessura da borda
                                         ),
-                                        subtitle: SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Text(
-                                                "Matérias:",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
+                                        borderRadius: BorderRadius.circular(
+                                            12), // opcional
+                                      ),
+                                      child: ExpansionTile(
+                                        initiallyExpanded: false,
+                                        title: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Matrícula: ${user.registration.toString()}",
+                                                    style: const TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w800),
+                                                  ),
+                                                  Text(
+                                                    "Nome: ${user.name}",
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w800),
+                                                  ),
+                                                  Text(
+                                                    "Email: ${user.email}",
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w800),
+                                                  ),
+                                                  Text(
+                                                    "CPF: ${user.cpf}",
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w800),
+                                                  ),
+                                                ],
                                               ),
-                                              const SizedBox(height: 5),
-                                              ...listSubject.map((subject) {
-                                                // Usa o mapa para busca O(1)
-                                                var teacher =
-                                                    teachersMap[subject.userId];
-                                                return Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const SizedBox(height: 5),
-                                                    Row(
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(
+                                                  Icons.person_search),
+                                              onPressed: () {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        StudantCreatePage(
+                                                      userStudent: user,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16.0,
+                                                vertical: 8.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Text(
+                                                  "Matérias:",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 5),
+                                                ...listSubject.map((subject) {
+                                                  var teacher = teachersMap[
+                                                      subject.userId];
+                                                  return SingleChildScrollView(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
-                                                        SizedBox(
-                                                          width: 180,
-                                                          child: Text(
-                                                            subject.title,
+                                                        const SizedBox(
+                                                            height: 5),
+                                                        Row(
+                                                          children: [
+                                                            SizedBox(
+                                                              width: 180,
+                                                              child: Text(
+                                                                subject.title,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 16,
+                                                                ),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 20),
+                                                            Wrap(
+                                                              spacing: 12.0,
+                                                              children: listUserNote
+                                                                  .where((userNote) =>
+                                                                      userNote.userId ==
+                                                                          user
+                                                                              .uid &&
+                                                                      userNote.subjectId ==
+                                                                          subject
+                                                                              .uid)
+                                                                  .expand(
+                                                                      (userNote) {
+                                                                var matchingNotes =
+                                                                    listNotes
+                                                                        .where(
+                                                                  (n) =>
+                                                                      n.uid ==
+                                                                      userNote
+                                                                          .noteId,
+                                                                );
+                                                                return matchingNotes
+                                                                    .map(
+                                                                  (note) =>
+                                                                      Chip(
+                                                                    label: Text(
+                                                                        "${note.title}: ${userNote.value.replaceAll(".", ",")}"),
+                                                                    backgroundColor:
+                                                                        const Color
+                                                                            .fromARGB(
+                                                                            24,
+                                                                            224,
+                                                                            248,
+                                                                            250),
+                                                                  ),
+                                                                );
+                                                              }).toList(),
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 20),
+                                                            Text(
+                                                              "Soma: ${_calculateTotalScoreBySubject(user.uid, subject.uid).toStringAsFixed(2).replaceAll('.', ',')}",
+                                                              style: const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        if (teacher != null)
+                                                          Text(
+                                                            "Professor ${teacher.name} ${teacher.surname}",
                                                             style:
                                                                 const TextStyle(
-                                                              fontSize: 16,
-                                                            ),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
+                                                                    fontSize:
+                                                                        12),
                                                           ),
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 20),
-                                                        Wrap(
-                                                          spacing: 12.0,
-                                                          children: listUserNote
-                                                              .where((userNote) =>
-                                                                  userNote.userId ==
-                                                                      user
-                                                                          .uid &&
-                                                                  userNote.subjectId ==
-                                                                      subject
-                                                                          .uid)
-                                                              .expand(
-                                                                  (userNote) {
-                                                            var matchingNotes =
-                                                                listNotes.where(
-                                                              (n) =>
-                                                                  n.uid ==
-                                                                  userNote
-                                                                      .noteId,
-                                                            );
-                                                            return matchingNotes
-                                                                .map(
-                                                              (note) => Chip(
-                                                                label: Text(
-                                                                    "${note.title}: ${userNote.value.replaceAll(".", ",")}"),
-                                                                backgroundColor:
-                                                                    const Color
-                                                                        .fromARGB(
-                                                                        24,
-                                                                        224,
-                                                                        248,
-                                                                        250),
-                                                              ),
-                                                            );
-                                                          }).toList(),
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 20),
                                                         Text(
-                                                          "Soma: ${_calculateTotalScoreBySubject(user.uid, subject.uid).toStringAsFixed(2).replaceAll('.', ',')}",
-                                                          style: const TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
+                                                          "Módulo ${subject.module}",
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 12),
                                                         ),
-                                                      ],
-                                                    ),
-                                                    if (teacher != null)
-                                                      Text(
-                                                        "Professor ${teacher.name} ${teacher.surname}",
-                                                        style: const TextStyle(
-                                                            fontSize: 12),
-                                                      ),
-                                                    Text(
-                                                      "Módulo ${subject.module}",
-                                                      style: const TextStyle(
-                                                          fontSize: 12),
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                    Container(
-                                                      height: 1,
-                                                      width:
-                                                          MediaQuery.of(context)
+                                                        const SizedBox(
+                                                            height: 5),
+                                                        Container(
+                                                          height: 1,
+                                                          width: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .width *
                                                               1,
-                                                      color:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              133,
-                                                              215,
-                                                              226),
+                                                          color: const Color
+                                                              .fromARGB(255,
+                                                              133, 215, 226),
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 5),
+                                                      ],
                                                     ),
-                                                    const SizedBox(height: 5),
-                                                  ],
-                                                );
-                                              }),
-                                            ],
+                                                  );
+                                                }),
+                                              ],
+                                            ),
                                           ),
-                                        ),
+                                        ],
                                       ),
                                     );
                                   },

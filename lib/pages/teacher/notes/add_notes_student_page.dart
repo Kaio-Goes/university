@@ -389,102 +389,106 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage>
                                       fontSize: 16,
                                       fontWeight: FontWeight.w800),
                                 ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Matrícula: ${user.registration}"),
-                                    Text("Email: ${user.email}"),
-                                    Text("Celular: ${user.phone}"),
-                                    const SizedBox(height: 15),
-                                    const Text(
-                                      "Notas de Provas e Trabalhos:",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    SingleChildScrollView(
-                                      // Para notas que ultrapassam a largura
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        children: [
-                                          Wrap(
-                                            spacing: 12.0,
-                                            children: listNotes.map((note) {
-                                              String userNoteValue =
-                                                  userNotesUidMap[note.uid]
-                                                          ?.replaceAll(
-                                                              '.', ',') ??
-                                                      "N/A";
-                                              return Chip(
-                                                label: Text(
-                                                    '${note.title}: $userNoteValue'),
-                                              );
-                                            }).toList(),
-                                          ),
-                                          const SizedBox(width: 20),
-                                          Text(
-                                              "Soma das Notas: ${_calculateAverage(userNotesUidMap)}"),
-                                        ],
+                                subtitle: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Matrícula: ${user.registration}"),
+                                      Text("Email: ${user.email}"),
+                                      Text("Celular: ${user.phone}"),
+                                      const SizedBox(height: 15),
+                                      const Text(
+                                        "Notas de Provas e Trabalhos:",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600),
                                       ),
-                                    ),
-                                    const SizedBox(height: 15),
-                                    ElevatedButton.icon(
-                                      onPressed: () async {
-                                        await showDialog(
-                                          context: context,
-                                          builder: (dialogContext) {
-                                            return AlertDialog(
-                                              title: Text(
-                                                  "Gerenciar Presença de ${user.name}"),
-                                              content: SizedBox(
-                                                width: double.maxFinite,
-                                                height:
-                                                    MediaQuery.of(dialogContext)
-                                                            .size
-                                                            .height *
-                                                        0.7,
-                                                child:
-                                                    _buildAttendanceManagementList(
-                                                        user, datasAulas),
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(
-                                                        dialogContext);
-                                                  },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                          backgroundColor:
-                                                              Colors
-                                                                  .blueAccent),
-                                                  child: const Text(
-                                                    "Fechar",
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
+                                      const SizedBox(height: 10),
+                                      SingleChildScrollView(
+                                        // Para notas que ultrapassam a largura
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: [
+                                            Wrap(
+                                              spacing: 12.0,
+                                              children: listNotes.map((note) {
+                                                String userNoteValue =
+                                                    userNotesUidMap[note.uid]
+                                                            ?.replaceAll(
+                                                                '.', ',') ??
+                                                        "N/A";
+                                                return Chip(
+                                                  label: Text(
+                                                      '${note.title}: $userNoteValue'),
+                                                );
+                                              }).toList(),
+                                            ),
+                                            const SizedBox(width: 20),
+                                            Text(
+                                                "Soma das Notas: ${_calculateAverage(userNotesUidMap)}"),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 15),
+                                      ElevatedButton.icon(
+                                        onPressed: () async {
+                                          await showDialog(
+                                            context: context,
+                                            builder: (dialogContext) {
+                                              return AlertDialog(
+                                                title: Text(
+                                                    "Gerenciar Presença de ${user.name}"),
+                                                content: SizedBox(
+                                                  width: double.maxFinite,
+                                                  height: MediaQuery.of(
+                                                              dialogContext)
+                                                          .size
+                                                          .height *
+                                                      0.7,
+                                                  child:
+                                                      _buildAttendanceManagementList(
+                                                          user, datasAulas),
                                                 ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                        // Após fechar o modal, se houver alteração que precise ser refletida na tela principal,
-                                        // você pode disparar um recarregamento das presenças.
-                                        // setState(() { }); // Um setState vazio aqui forçaria a rebuild da página principal se necessário
-                                      },
-                                      icon: const Icon(
-                                        Icons.calendar_today,
-                                        color: Colors.white,
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(
+                                                          dialogContext);
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .blueAccent),
+                                                    child: const Text(
+                                                      "Fechar",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                          // Após fechar o modal, se houver alteração que precise ser refletida na tela principal,
+                                          // você pode disparar um recarregamento das presenças.
+                                          // setState(() { }); // Um setState vazio aqui forçaria a rebuild da página principal se necessário
+                                        },
+                                        icon: const Icon(
+                                          Icons.calendar_today,
+                                          color: Colors.white,
+                                        ),
+                                        label: const Text(
+                                          "Gerenciar Presença",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.pinkAccent),
                                       ),
-                                      label: const Text(
-                                        "Gerenciar Presença",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.pinkAccent),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                                 leading: Container(
                                   height: 50,
@@ -591,10 +595,12 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage>
                                     Icons.edit,
                                     color: Colors.white,
                                   ),
-                                  label: const Text(
-                                    "Adicionar Nota",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
+                                  label: MediaQuery.of(context).size.width < 600
+                                      ? const Text("")
+                                      : const Text(
+                                          "Adicionar Nota",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue,
                                   ),

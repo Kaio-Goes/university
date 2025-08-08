@@ -20,7 +20,7 @@ class TextStudant extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(20))),
           child: const Center(
             child: Text(
-              'ENSINO TECNICO 2025.2',
+              'TECNICO 2025.2',
               style: textBold,
             ),
           ),

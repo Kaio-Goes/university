@@ -194,6 +194,7 @@ class _HistoryNotesPageState extends State<HistoryNotesPage> {
 
                                               generateExcelBoletim(
                                                 user: widget.user,
+                                                classe: classe,
                                                 listSubject: listSubject,
                                                 listUserNote: listUserNote,
                                                 listNotes: listNotes,

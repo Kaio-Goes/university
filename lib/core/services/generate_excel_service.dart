@@ -5,6 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
 import 'package:path_provider/path_provider.dart';
+import 'package:university/core/models/class_firebase.dart';
 import 'package:university/core/models/note.dart';
 import 'package:university/core/models/subject_module.dart';
 
@@ -325,6 +326,7 @@ Future<void> generateExcelBoletim({
   required List<SubjectModule> listSubject,
   required List<UserNote> listUserNote,
   required List<Note> listNotes,
+  required ClassFirebase classe,
 }) async {
   final workbook = xlsio.Workbook();
   final sheet = workbook.worksheets[0];
@@ -383,11 +385,13 @@ Future<void> generateExcelBoletim({
 
   sheet.getRangeByName('G12').setText('Ano:');
   sheet.getRangeByName('G12').cellStyle.bold = true; // Bold
-  sheet.getRangeByName('H12').setText('2024');
+  final data = DateFormat('d/M/yyyy').parse(classe.startDate);
+  sheet.getRangeByName('H12').setText(data.year.toString());
   sheet.getRangeByName('H12').cellStyle.hAlign = xlsio.HAlignType.left;
 
 // 🔷 CABEÇALHO DA TABELA
   const headerRow = 14;
+
   final headers = [
     'MÓDULO',
     'DISCIPLINA',

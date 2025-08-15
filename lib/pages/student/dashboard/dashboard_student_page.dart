@@ -6,6 +6,8 @@ import 'package:university/core/services/auth_user_service.dart';
 import 'package:university/core/services/class_service.dart';
 import 'package:university/core/utilities/styles.constants.dart';
 import 'package:university/pages/student/notes/notes_class_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class DashboardStudentPage extends StatefulWidget {
   const DashboardStudentPage({super.key});
@@ -39,6 +41,104 @@ class _DashboardStudentPageState extends State<DashboardStudentPage> {
       setState(() => isLoading = false);
       Exception("Erro loading classes in user $e");
     }
+  }
+
+  Future<void> _updateEmail(String newEmail) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return;
+    }
+
+    try {
+      // Atualiza o e-mail no Firebase Authentication (envia link de verificação)
+      await user.verifyBeforeUpdateEmail(newEmail);
+
+      // Atualiza o e-mail no Realtime Database
+      DatabaseReference userRef =
+          FirebaseDatabase.instance.ref().child('users').child(user.uid);
+      await userRef.update({
+        'email': newEmail,
+      });
+
+      // Opcional: Atualizar o usuário no cache local
+      if (AuthUserService().currentUser != null) {
+        AuthUserService().currentUser!.email = newEmail;
+      }
+
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'E-mail alterado com sucesso! Verifique sua caixa de entrada para confirmar.'),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'É necessário fazer login novamente para alterar o e-mail.'),
+          ),
+        );
+      } else {
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao alterar e-mail: ${e.message}'),
+          ),
+        );
+      }
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Ocorreu um erro inesperado.'),
+        ),
+      );
+    }
+  }
+
+  // NOVA FUNÇÃO PARA MOSTRAR O DIALOG DE ALTERAÇÃO
+  void _showUpdateEmailDialog(BuildContext context) {
+    final TextEditingController newEmailController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Alterar E-mail'),
+          content: TextField(
+            controller: newEmailController,
+            decoration: const InputDecoration(labelText: 'Novo E-mail'),
+            keyboardType: TextInputType.emailAddress,
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Salvar'),
+              onPressed: () {
+                String newEmail = newEmailController.text.trim();
+                if (newEmail.isNotEmpty) {
+                  _updateEmail(newEmail);
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Por favor, insira um e-mail válido.')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -84,8 +184,7 @@ class _DashboardStudentPageState extends State<DashboardStudentPage> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Wrap(
-                                            spacing:
-                                                8, // Espaço entre ícone e texto
+                                            spacing: 8,
                                             children: [
                                               const Icon(
                                                 Icons.school,
@@ -104,8 +203,7 @@ class _DashboardStudentPageState extends State<DashboardStudentPage> {
                                           ),
                                           const SizedBox(height: 10),
                                           Wrap(
-                                            spacing:
-                                                8, // Espaço entre ícone e texto
+                                            spacing: 8,
                                             children: [
                                               const Icon(
                                                 Icons.date_range,
@@ -119,8 +217,7 @@ class _DashboardStudentPageState extends State<DashboardStudentPage> {
                                           ),
                                           const SizedBox(height: 10),
                                           Wrap(
-                                            spacing:
-                                                8, // Espaço entre ícone e texto
+                                            spacing: 8,
                                             children: [
                                               const Icon(
                                                 Icons.computer,
@@ -169,6 +266,14 @@ class _DashboardStudentPageState extends State<DashboardStudentPage> {
               ),
             ),
             const SizedBox(height: 330),
+            TextButton(
+              onPressed: () {
+                _showUpdateEmailDialog(context);
+              },
+              style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 0)),
+              child: const Text(''),
+            ),
             const Footer(),
           ],
         ),

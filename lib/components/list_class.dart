@@ -173,8 +173,8 @@ class ListClass extends StatefulWidget {
 
 class _ListClassState extends State<ListClass> {
   // Alterado para Set<String> para permitir múltiplas expansões
-  Set<String> _expandedClassIds = {}; // Para painéis de alunos
-  Set<String> _expandedSubjectForClassIds = {}; // Para painéis de matérias
+  Set<String> expandedClassIds = {}; // Para painéis de alunos
+  Set<String> expandedSubjectForClassIds = {}; // Para painéis de matérias
 
   final Map<String, List<UserFirebase>> _cachedStudents = {};
   final Map<String, List<SubjectModule>> _cachedSubjects = {};
@@ -235,7 +235,7 @@ class _ListClassState extends State<ListClass> {
       _cachedStudents[cacheKey] = studentsDetails;
       return _filterStudents(studentsDetails);
     } catch (e) {
-      print('Erro ao buscar alunos para a turma: $e');
+      Exception('Erro ao buscar alunos para a turma: $e');
       return [];
     }
   }
@@ -272,7 +272,7 @@ class _ListClassState extends State<ListClass> {
       _cachedSubjects[cacheKey] = subjectsDetails;
       return _filterSubjects(subjectsDetails);
     } catch (e) {
-      print('Erro ao buscar matérias para a turma: $e');
+      Exception('Erro ao buscar matérias para a turma: $e');
       return [];
     }
   }
@@ -345,9 +345,9 @@ class _ListClassState extends State<ListClass> {
     return Column(
       children: widget.paginetedClass.map((classe) {
         // Verifica se a turma está no conjunto de IDs expandidos
-        final isStudentsExpanded = _expandedClassIds.contains(classe.uid);
+        final isStudentsExpanded = expandedClassIds.contains(classe.uid);
         final isSubjectsExpanded =
-            _expandedSubjectForClassIds.contains(classe.uid);
+            expandedSubjectForClassIds.contains(classe.uid);
 
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -356,13 +356,13 @@ class _ListClassState extends State<ListClass> {
               // A expansão da turma principal (nome/datas) é independente dos sub-painéis
               // Apenas limpa as pesquisas ao expandir/recolher a turma principal
               setState(() {
-                if (_expandedClassIds.contains(classe.uid) ||
-                    _expandedSubjectForClassIds.contains(classe.uid)) {
-                  _expandedClassIds.remove(classe.uid);
-                  _expandedSubjectForClassIds.remove(classe.uid);
+                if (expandedClassIds.contains(classe.uid) ||
+                    expandedSubjectForClassIds.contains(classe.uid)) {
+                  expandedClassIds.remove(classe.uid);
+                  expandedSubjectForClassIds.remove(classe.uid);
                 } else {
                   // Ação padrão ao clicar na turma: expandir alunos
-                  _expandedClassIds.add(classe.uid);
+                  expandedClassIds.add(classe.uid);
                 }
                 _studentSearchController.clear();
                 _currentStudentSearchTerm = '';
@@ -470,8 +470,8 @@ class _ListClassState extends State<ListClass> {
 
   TableRow _buildClassTableRow(ClassFirebase classe) {
     // Verifica se a turma está no conjunto de IDs expandidos para colorir a linha
-    final isAnyExpanded = _expandedClassIds.contains(classe.uid) ||
-        _expandedSubjectForClassIds.contains(classe.uid);
+    final isAnyExpanded = expandedClassIds.contains(classe.uid) ||
+        expandedSubjectForClassIds.contains(classe.uid);
 
     return TableRow(
       decoration: BoxDecoration(
@@ -526,10 +526,10 @@ class _ListClassState extends State<ListClass> {
     return InkWell(
       onTap: () {
         setState(() {
-          if (_expandedClassIds.contains(classe.uid)) {
-            _expandedClassIds.remove(classe.uid);
+          if (expandedClassIds.contains(classe.uid)) {
+            expandedClassIds.remove(classe.uid);
           } else {
-            _expandedClassIds.add(classe.uid);
+            expandedClassIds.add(classe.uid);
           }
           _studentSearchController
               .clear(); // Limpa a pesquisa ao expandir/recolher
@@ -577,14 +577,14 @@ class _ListClassState extends State<ListClass> {
   }
 
   Widget _buildStudentsSectionLargeScreen(ClassFirebase classe) {
-    final isExpanded = _expandedClassIds.contains(classe.uid);
+    final isExpanded = expandedClassIds.contains(classe.uid);
     return InkWell(
       onTap: () {
         setState(() {
-          if (_expandedClassIds.contains(classe.uid)) {
-            _expandedClassIds.remove(classe.uid);
+          if (expandedClassIds.contains(classe.uid)) {
+            expandedClassIds.remove(classe.uid);
           } else {
-            _expandedClassIds.add(classe.uid);
+            expandedClassIds.add(classe.uid);
           }
           _studentSearchController
               .clear(); // Limpa a pesquisa ao expandir/recolher
@@ -638,10 +638,10 @@ class _ListClassState extends State<ListClass> {
     return InkWell(
       onTap: () {
         setState(() {
-          if (_expandedSubjectForClassIds.contains(classe.uid)) {
-            _expandedSubjectForClassIds.remove(classe.uid);
+          if (expandedSubjectForClassIds.contains(classe.uid)) {
+            expandedSubjectForClassIds.remove(classe.uid);
           } else {
-            _expandedSubjectForClassIds.add(classe.uid);
+            expandedSubjectForClassIds.add(classe.uid);
           }
           _subjectSearchController
               .clear(); // Limpa a pesquisa ao expandir/recolher
@@ -689,14 +689,14 @@ class _ListClassState extends State<ListClass> {
   }
 
   Widget _buildSubjectsSectionLargeScreen(ClassFirebase classe) {
-    final isSubjectsExpanded = _expandedSubjectForClassIds.contains(classe.uid);
+    final isSubjectsExpanded = expandedSubjectForClassIds.contains(classe.uid);
     return InkWell(
       onTap: () {
         setState(() {
-          if (_expandedSubjectForClassIds.contains(classe.uid)) {
-            _expandedSubjectForClassIds.remove(classe.uid);
+          if (expandedSubjectForClassIds.contains(classe.uid)) {
+            expandedSubjectForClassIds.remove(classe.uid);
           } else {
-            _expandedSubjectForClassIds.add(classe.uid);
+            expandedSubjectForClassIds.add(classe.uid);
           }
           _subjectSearchController
               .clear(); // Limpa a pesquisa ao expandir/recolher

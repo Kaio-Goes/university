@@ -239,6 +239,8 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage>
                         DropdownMenuItem(value: "Falta", child: Text("Falta")),
                         DropdownMenuItem(
                             value: "Feriado", child: Text("Feriado")),
+                        DropdownMenuItem(
+                            value: "Atestado", child: Text("Atestado")),
                       ],
                       onChanged: (value) async {
                         // Atualiza o mapa de presenças localmente no modal

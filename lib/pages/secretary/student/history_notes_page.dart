@@ -133,12 +133,13 @@ class _HistoryNotesPageState extends State<HistoryNotesPage> {
   double _calculateTotalScoreBySubject(
       String userId, String subjectId, String classId) {
     return listUserNote
-        .where((userNote) =>
-            userNote.userId == userId &&
-            userNote.subjectId == subjectId &&
-            userNote.classId == classId)
-        .map((userNote) => double.tryParse(userNote.value) ?? 0.0)
-        .fold(0.0, (sum, value) => sum + value);
+            .where((userNote) =>
+                userNote.userId == userId &&
+                userNote.subjectId == subjectId &&
+                userNote.classId == classId)
+            .map((userNote) => double.tryParse(userNote.value) ?? 0.0)
+            .fold(0.0, (sum, value) => sum + value) /
+        2;
   }
 
   @override
@@ -331,7 +332,7 @@ class _HistoryNotesPageState extends State<HistoryNotesPage> {
                                                                 const SizedBox(
                                                                     width: 20),
                                                                 Text(
-                                                                  "Soma: ${_calculateTotalScoreBySubject(widget.user.uid, subject.uid, classe.uid).toStringAsFixed(2).replaceAll('.', ',')}",
+                                                                  "Média: ${_calculateTotalScoreBySubject(widget.user.uid, subject.uid, classe.uid).toStringAsFixed(2).replaceAll('.', ',')}",
                                                                   style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight

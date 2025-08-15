@@ -82,7 +82,11 @@ class _CreateNotesPageState extends State<CreateNotesPage> {
   }
 
   double get totalSum =>
-      listNotes.fold(0, (sum, note) => sum + double.parse(note.value));
+      listNotes.fold(0.0, (sum, note) {
+        final val = double.tryParse(note.value) ?? 0.0;
+        return sum + val;
+      }) /
+      2;
   double get average => listNotes.isNotEmpty ? totalSum / 2 : 0;
 
   @override
@@ -290,7 +294,7 @@ class _CreateNotesPageState extends State<CreateNotesPage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
-                                    "Soma Total das Notas:",
+                                    "Média das Notas:",
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,

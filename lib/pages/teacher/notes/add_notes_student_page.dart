@@ -201,7 +201,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage>
     if (validNotes.isEmpty) return "N/A";
 
     double sum = validNotes.reduce((a, b) => a + b);
-    double average = sum; // Conforme sua lógica, é a soma, não a média.
+    double average = sum / 2;
 
     return average.toStringAsFixed(2);
   }
@@ -429,7 +429,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage>
                                             ),
                                             const SizedBox(width: 20),
                                             Text(
-                                                "Soma das Notas: ${_calculateAverage(userNotesUidMap)}"),
+                                                "Média das Notas: ${_calculateAverage(userNotesUidMap)}"),
                                           ],
                                         ),
                                       ),
@@ -588,7 +588,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage>
                                         // Recarrega as notas do usuário específico após o salvamento
                                         await _loadUserNotes(
                                             studentId: user.uid);
-                                        // Se a UI principal precisar ser reconstruída para refletir a soma das notas, etc.
+                                        // Se a UI principal precisar ser reconstruída para refletir a media das notas, etc.
                                         if (mounted) setState(() {});
                                       },
                                     );

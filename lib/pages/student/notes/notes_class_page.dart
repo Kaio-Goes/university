@@ -57,8 +57,6 @@ class _NotesClassPageState extends State<NotesClassPage> {
 
   Future _loadTeachers() async {
     try {
-      // Problemas com as duas requisições rodando ao mesmo tempo por isso o delayed
-      // await Future.delayed(const Duration(seconds: 1));
       Map<String, List<UserFirebase>> fetchedUsers =
           await AuthUserService().getAllUsers();
 
@@ -83,10 +81,8 @@ class _NotesClassPageState extends State<NotesClassPage> {
       );
 
       setState(() {
-        setState(() {
-          listNotes.addAll(notes.where((newNote) => !listNotes
-              .any((existingNote) => existingNote.uid == newNote.uid)));
-        });
+        listNotes.addAll(notes.where((newNote) =>
+            !listNotes.any((existingNote) => existingNote.uid == newNote.uid)));
       });
     } catch (e) {
       Exception('Erro ao carregar notas do usuário $e');
@@ -95,7 +91,6 @@ class _NotesClassPageState extends State<NotesClassPage> {
 
   _loadUserNotes() async {
     try {
-      // uid do logado vai no teacherId :)
       var userNotes = await UserNoteService().getListUserNote(
         classId: widget.classFirebase.uid,
         userId: AuthUserService().currentUser!.uid,
@@ -127,7 +122,6 @@ class _NotesClassPageState extends State<NotesClassPage> {
       body: SingleChildScrollView(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            // bool isSmallScreen = constraints.maxWidth < 800;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -151,7 +145,7 @@ class _NotesClassPageState extends State<NotesClassPage> {
                           : listSubject.isEmpty
                               ? const Center(child: Text("Não possui Matérias"))
                               : SizedBox(
-                                  height: listSubject.length * 190,
+                                  height: listSubject.length * 220,
                                   child: ListView.builder(
                                     itemCount: listSubject.length,
                                     itemBuilder: (context, index) {
@@ -174,51 +168,35 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                                 fontSize: 17,
                                                 fontWeight: FontWeight.w800),
                                           ),
-                                          subtitle: SingleChildScrollView(
-                                            scrollDirection: Axis.horizontal,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                SizedBox(
-                                                  width: 400,
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      if (teacher != null)
-                                                        Text(
-                                                          "Professor ${teacher.name} ${teacher.surname}",
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 16),
-                                                        ),
-                                                      Text(
-                                                          "Módulo: ${subject.module}"),
-                                                      Text(
-                                                          "Dias de Aulas: ${subject.daysWeek.replaceAll('[', '').replaceAll(']', '')}"),
-                                                      Text(
-                                                          "Horário: ${subject.startHour} as ${subject.endHour}"),
-                                                      Text(
-                                                          "Total de Horas: ${subject.hour}hr")
-                                                    ],
-                                                  ),
+                                          subtitle: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              if (teacher != null)
+                                                Text(
+                                                  "Professor ${teacher.name} ${teacher.surname}",
+                                                  style: const TextStyle(
+                                                      fontSize: 16),
                                                 ),
-                                                const SizedBox(width: 15),
-                                                Wrap(
-                                                  spacing: 12.0,
-                                                  children: isLoadingUserNote
-                                                      ? [
-                                                          const SizedBox(
-                                                            height: 15,
-                                                            width: 15,
-                                                            child:
-                                                                CircularProgressIndicator(),
-                                                          ),
-                                                        ]
-                                                      : listUserNote
+                                              Text("Módulo: ${subject.module}"),
+                                              Text(
+                                                  "Dias de Aulas: ${subject.daysWeek.replaceAll('[', '').replaceAll(']', '')}"),
+                                              Text(
+                                                  "Horário: ${subject.startHour} as ${subject.endHour}"),
+                                              Text(
+                                                  "Total de Horas: ${subject.hour}hr"),
+                                              const SizedBox(height: 10),
+                                              isLoadingUserNote
+                                                  ? const SizedBox(
+                                                      height: 15,
+                                                      width: 15,
+                                                      child:
+                                                          CircularProgressIndicator(),
+                                                    )
+                                                  : Wrap(
+                                                      spacing: 8.0,
+                                                      runSpacing: 4.0,
+                                                      children: listUserNote
                                                           .where((userNote) =>
                                                               userNote.userId ==
                                                                   AuthUserService()
@@ -227,40 +205,36 @@ class _NotesClassPageState extends State<NotesClassPage> {
                                                               userNote.subjectId ==
                                                                   subject.uid)
                                                           .expand((userNote) {
-                                                          // Filtra todas as notas que correspondem ao userNote.noteId
-                                                          var matchingNotes =
-                                                              listNotes.where(
-                                                            (n) =>
-                                                                n.uid ==
-                                                                userNote.noteId,
-                                                          );
-
-                                                          // Mapeia cada nota correspondente para um Chip
-                                                          return matchingNotes
-                                                              .map(
-                                                            (note) => Chip(
-                                                              label: Text(
-                                                                  "${note.title}: ${userNote.value.replaceAll(".", ",")}"),
-                                                              backgroundColor:
-                                                                  const Color
-                                                                      .fromARGB(
-                                                                      24,
-                                                                      224,
-                                                                      248,
-                                                                      250),
-                                                            ),
-                                                          );
-                                                        }).toList(),
-                                                ),
-                                                const SizedBox(width: 20),
-                                                Text(
-                                                  "Média: ${_calculateTotalScoreBySubject(AuthUserService().currentUser!.uid, subject.uid).toStringAsFixed(2).replaceAll('.', ',')}",
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ],
-                                            ),
+                                                        var matchingNotes =
+                                                            listNotes.where(
+                                                          (n) =>
+                                                              n.uid ==
+                                                              userNote.noteId,
+                                                        );
+                                                        return matchingNotes
+                                                            .map(
+                                                          (note) => Chip(
+                                                            label: Text(
+                                                                "${note.title}: ${userNote.value.replaceAll(".", ",")}"),
+                                                            backgroundColor:
+                                                                const Color
+                                                                    .fromARGB(
+                                                                    24,
+                                                                    224,
+                                                                    248,
+                                                                    250),
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                    ),
+                                              const SizedBox(height: 10),
+                                              Text(
+                                                "Média: ${_calculateTotalScoreBySubject(AuthUserService().currentUser!.uid, subject.uid).toStringAsFixed(2).replaceAll('.', ',')}",
+                                                style: const TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       );

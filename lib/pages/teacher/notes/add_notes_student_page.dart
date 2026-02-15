@@ -232,7 +232,7 @@ class _AddNotesStudentPageState extends State<AddNotesStudentPage>
                   Expanded(
                     flex: 3,
                     child: DropdownButtonFormField<String>(
-                      value: presencaMap[user.uid]?[data],
+                      initialValue: presencaMap[user.uid]?[data],
                       items: const [
                         DropdownMenuItem(
                             value: "Presente", child: Text("Presente")),

@@ -312,96 +312,212 @@ class _DashboardSecretaryPageState extends State<DashboardSecretaryPage> {
     return Scaffold(
       appBar: appBarUserComponent(userFirebase: AuthUserService().currentUser),
       drawer: const DrawerSecretaryComponent(),
+      backgroundColor: Colors.grey[50],
       body: SingleChildScrollView(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             bool isSmallScreen = constraints.maxWidth < 800;
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: isSmallScreen
-                      ? Column(
-                          children: cardBuild(
-                            countStudent: activeStudent.length.toString(),
-                            countTeacher: activeTeachers.length.toString(),
-                            countClass: loadClass.length.toString(),
-                          ),
-                        )
-                      : SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: cardBuild(
-                              countStudent: activeStudent.length.toString(),
-                              countTeacher: activeTeachers.length.toString(),
-                              countClass: loadClass.length.toString(),
-                            ),
-                          ),
+                // Header Section
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.deepPurple, Colors.deepPurple.shade300],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Dashboard da Secretaria',
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 24 : 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Visão geral do sistema',
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 14 : 16,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                ListClass(
-                  isSmallScreen: isSmallScreen,
-                  searchController: searchClassController,
-                  paginetedClass: paginetedClass,
-                  sortTeachersByName: _sortClassByName,
-                  isAscending: isAscendingClass,
-                  filteredClass: filteredClass,
-                  currentPage: currentPageClass,
-                  itemsPerPage: itemsPerPageClass,
-                  previousPage: _previousPageClass,
-                  nextPage: _nextPageClass,
+
+                // Cards de Estatísticas
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Estatísticas Gerais',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      isSmallScreen
+                          ? Column(
+                              children: cardBuild(
+                                countStudent: activeStudent.length.toString(),
+                                countTeacher: activeTeachers.length.toString(),
+                                countClass: loadClass.length.toString(),
+                              ),
+                            )
+                          : SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: cardBuild(
+                                  countStudent: activeStudent.length.toString(),
+                                  countTeacher: activeTeachers.length.toString(),
+                                  countClass: loadClass.length.toString(),
+                                ),
+                              ),
+                            ),
+                    ],
+                  ),
                 ),
-                ListModuleUnity(
-                  title: 'Módulo de Planaltina',
-                  isSmallScreen: isSmallScreen,
-                  activeTeacher: activeTeachers,
-                  subjectModuleUnity1: subjectModulePlanaltina1,
-                  subjectModuleUnity2: subjectModulePlanaltina2,
-                  subjectModuleUnity3: subjectModulePlanaltina3,
+
+                // Turmas Section
+                _buildSection(
+                  title: '📚 Turmas',
+                  child: ListClass(
+                    isSmallScreen: isSmallScreen,
+                    searchController: searchClassController,
+                    paginetedClass: paginetedClass,
+                    sortTeachersByName: _sortClassByName,
+                    isAscending: isAscendingClass,
+                    filteredClass: filteredClass,
+                    currentPage: currentPageClass,
+                    itemsPerPage: itemsPerPageClass,
+                    previousPage: _previousPageClass,
+                    nextPage: _nextPageClass,
+                  ),
                 ),
-                ListModuleUnity(
-                  title: 'Módulo de Paranoa',
-                  isSmallScreen: isSmallScreen,
-                  activeTeacher: activeTeachers,
-                  subjectModuleUnity1: subjectModuleParanoa1,
-                  subjectModuleUnity2: subjectModuleParanoa2,
-                  subjectModuleUnity3: subjectModuleParanoa3,
+
+                const SizedBox(height: 32),
+
+                // Módulos Section
+                _buildSection(
+                  title: '🎓 Módulos por Unidade',
+                  child: Column(
+                    children: [
+                      ListModuleUnity(
+                        title: 'Módulo de Planaltina',
+                        isSmallScreen: isSmallScreen,
+                        activeTeacher: activeTeachers,
+                        subjectModuleUnity1: subjectModulePlanaltina1,
+                        subjectModuleUnity2: subjectModulePlanaltina2,
+                        subjectModuleUnity3: subjectModulePlanaltina3,
+                      ),
+                      const SizedBox(height: 16),
+                      ListModuleUnity(
+                        title: 'Módulo de Paranoa',
+                        isSmallScreen: isSmallScreen,
+                        activeTeacher: activeTeachers,
+                        subjectModuleUnity1: subjectModuleParanoa1,
+                        subjectModuleUnity2: subjectModuleParanoa2,
+                        subjectModuleUnity3: subjectModuleParanoa3,
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 20),
-                ListUsersCard(
-                  isSmallScreen: isSmallScreen,
-                  title: 'Lista de Professores',
-                  searchController: searchTeachersController,
-                  paginetedUsers: paginatedTeachers,
-                  sortTeachersByName: _sortTeachersByName,
-                  isAscending: isAscendingTeachers,
-                  previousPage: _previousPageTeacher,
-                  currentPage: currentPageTeacher,
-                  filteredUsers: filteredTeachers,
-                  itemsPerPage: itemsPerPageTeacher,
-                  nextPage: _nextPage,
+
+                const SizedBox(height: 32),
+
+                // Professores Section
+                _buildSection(
+                  title: '👨‍🏫 Professores',
+                  child: ListUsersCard(
+                    isSmallScreen: isSmallScreen,
+                    title: 'Lista de Professores',
+                    searchController: searchTeachersController,
+                    paginetedUsers: paginatedTeachers,
+                    sortTeachersByName: _sortTeachersByName,
+                    isAscending: isAscendingTeachers,
+                    previousPage: _previousPageTeacher,
+                    currentPage: currentPageTeacher,
+                    filteredUsers: filteredTeachers,
+                    itemsPerPage: itemsPerPageTeacher,
+                    nextPage: _nextPage,
+                  ),
                 ),
-                const SizedBox(height: 40),
-                ListUsersCard(
-                  isSmallScreen: isSmallScreen,
-                  title: 'Lista de Alunos',
-                  searchController: searchStudentsController,
-                  paginetedUsers: paginatedStudants,
-                  sortTeachersByName: _sortStudentsByName,
-                  isAscending: isAscendingStudent,
-                  previousPage: _previousPageStudent,
-                  currentPage: currentPageStudent,
-                  filteredUsers: filteredStudents,
-                  itemsPerPage: itemsPerPageStudent,
-                  nextPage: _nextPageStudent,
+
+                const SizedBox(height: 32),
+
+                // Alunos Section
+                _buildSection(
+                  title: '👨‍🎓 Alunos',
+                  child: ListUsersCard(
+                    isSmallScreen: isSmallScreen,
+                    title: 'Lista de Alunos',
+                    searchController: searchStudentsController,
+                    paginetedUsers: paginatedStudants,
+                    sortTeachersByName: _sortStudentsByName,
+                    isAscending: isAscendingStudent,
+                    previousPage: _previousPageStudent,
+                    currentPage: currentPageStudent,
+                    filteredUsers: filteredStudents,
+                    itemsPerPage: itemsPerPageStudent,
+                    nextPage: _nextPageStudent,
+                  ),
                 ),
-                const SizedBox(height: 15),
+
+                const SizedBox(height: 32),
                 const Footer()
               ],
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildSection({required String title, required Widget child}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple,
+              ),
+            ),
+          ),
+          const Divider(height: 1),
+          child,
+        ],
       ),
     );
   }

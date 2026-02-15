@@ -87,7 +87,7 @@ dropDownField(
       ),
       const SizedBox(height: 5),
       DropdownButtonFormField<String>(
-        value: select,
+        initialValue: select,
         items: items,
         style: const TextStyle(fontSize: 13),
         decoration: const InputDecoration(
